@@ -1,0 +1,19 @@
+!|script                                                                   |
+|select item |caption:drag drop                                            |
+|check       |value of control|id:dragFrom        |Drag from here          |
+|check       |value of control|id:dropTo          |Drop text or a file here|
+|drag control|id:dragFrom     |and drop on control|id:dropTo               |
+|check       |value of control|id:dragFrom        |...                     |
+|check       |value of control|id:dropTo          |Drag from here          |
+
+!|script                                                                    |
+|check       |value of control  |id:ColorDropTextBlock|Color is DarkGray    |
+|drag control|id:PapayaWhipItem |and drop on control  |id:ColorDropTextBlock|
+|check       |value of control  |id:ColorDropTextBlock|Color is PapayaWhip  |
+|drag control|caption:Aquamarine|and drop on control  |id:ColorDropTextBlock|
+|check       |value of control  |id:ColorDropTextBlock|Color is Aquamarine  |
+
+!|script                                                                                 |
+|drag control|id:DragFrom     |and drop on control  |id:ColorDropTextBlock               |
+|check       |value of control|id:ColorDropTextBlock|Could not convert '...' into a color|
+

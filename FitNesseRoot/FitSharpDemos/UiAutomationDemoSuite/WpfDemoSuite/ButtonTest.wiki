@@ -1,0 +1,3 @@
+!|script                                                      |
+|click control|id:Button1                                    |
+|check        |value of control|id:TextBlock1|Clicked Button1|

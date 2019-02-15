@@ -1,0 +1,11 @@
+!|script                                                                                                                         |
+|select item         |Caption:Usual Controls                                                                                     |
+|check               |value of control              |id:MultiValueListBox          |MultiValueListBoxItem3;MultiValueListBoxItem5|
+|Set Value of control|id:MultiValueListBox          |to                            |                                             |
+|Set Value of control|id:MultiValueListBox          |to                            |MultiValueListBoxItem1                       |
+|Set Value of control|id:MultiValueListBox          |to                            |MultiValueListBoxItem2                       |
+|check               |value of control              |id:MultiValueListBox          |MultiValueListBoxItem1;MultiValueListBoxItem2|
+|Set Value of control|caption:MultiValueListBoxItem2|to                            |                                             |
+|check               |value of control              |id:MultiValueListBox          |MultiValueListBoxItem1                       |
+|reject              |Set Value of control          |caption:MultiValueListBoxItem3|to                |wrong value               |
+|check               |value of control              |id:MultiValueListBox          |MultiValueListBoxItem1                       |

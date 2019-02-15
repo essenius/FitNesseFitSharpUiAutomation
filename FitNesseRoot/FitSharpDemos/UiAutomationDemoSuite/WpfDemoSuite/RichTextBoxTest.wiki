@@ -1,0 +1,5 @@
+!|script                                                                |
+|select item         |caption:Text Controls                             |
+|check               |value of control|id:RichTextBox1|=~/Rich Text Box/|
+|set value of control|id:RichTextBox1 |to             |FitNesse         |
+|check               |value of control|id:RichTextBox1|FitNesse         |

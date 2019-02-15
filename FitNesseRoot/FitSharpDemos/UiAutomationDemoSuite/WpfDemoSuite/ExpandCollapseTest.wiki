@@ -1,0 +1,21 @@
+|scenario            |set focus and expand|control|
+|set focus to control|@control                    |
+|expand control      |@control                    |
+
+!|script                                                  |
+|search by           |Caption                             |
+|select item         |Tree View                           |
+|reject              |Control Exists    |Scrum            |
+|expand control      |Processes                           |
+|set focus and expand|Main Process 1                      |
+|set focus and expand|Sub Process 1                       |
+|Control Exists      |Step 1                              |
+|set focus to control|Step 1                              |
+|Control             |Step 1            |is visible       |
+|set focus and expand|Products                            |
+|control is visible  |Core Products                       |
+|Collapse Control    |Processes                           |
+|Control Exists      |Step 1                              |
+|reject              |control           |step 1|is visible|
+|Collapse Control    |id:TreeView1                        |
+|reject              |Control is Visible|Product 1        |

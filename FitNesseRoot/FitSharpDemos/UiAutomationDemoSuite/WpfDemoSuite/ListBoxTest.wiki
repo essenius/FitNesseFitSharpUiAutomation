@@ -1,0 +1,14 @@
+!define ListBox {id:ListBox1}
+
+!|scenario           |Set             |control |to|value|and check|
+|set value of control|@control        |to      |@value            |
+|check               |value of control|@control|@value            |
+
+!|script                                                                    |
+|select item|Caption:Usual Controls                                         |
+|check      |value of control    |${ListBox}|                               |
+|set        |${ListBox}          |to        |ListBoxItem3|and check         |
+|set        |${ListBox}          |to        |ListBoxItem5|and check         |
+|reject     |set value of control|${ListBox}|to          |non-existing value|
+|check      |value of control    |${ListBox}|ListBoxItem5                   |
+|set        |${ListBox}          |to        |            |and check         |

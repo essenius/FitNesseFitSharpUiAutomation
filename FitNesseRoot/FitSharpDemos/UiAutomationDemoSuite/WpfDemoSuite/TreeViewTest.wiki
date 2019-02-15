@@ -1,0 +1,19 @@
+|scenario            |set focus and expand|control|
+|set focus to control|@control                    |
+|expand control      |@control                    |
+
+
+!|script                                                                  |
+|select item         |Caption:Tree View                                   |
+|set value of control|ControlType:Tree|to                  |Core Product 3|
+|check               |value of control|id:TreeView1        |Core Product 3|
+|Click Control       |id:TreeViewButton                                   |
+|check               |value of control|id:TreeView1        |Core Product 1|
+|expand control      |id:TreeView1                                        |
+|set focus and expand|Main Process 1                                      |
+|set focus and expand|Sub Process 1                                       |
+|set focus to control|Step 3                                              |
+|set value of control|id:TreeView1    |to                  |Step 2        |
+|check               |value of control|ControlType:Tree    |Step 2        |
+|click control       |id:ShowTreeInTextBlockButton                        |
+|check               |value of control|id:TreeViewTextBlock|=~/Product 4/ |

@@ -1,0 +1,23 @@
+!|scenario     |toggling control|control |sets it to|state|
+|Toggle Control|@control                                  |
+|check         |Value Of Control|@control|@state          |
+
+!|scenario       |toggling control|control   |sets it to|state|with message|message|
+|Toggling control|@control        |sets it to|@state                               |
+|check           |Value Of Control|TextBlock1|@message @control                    |
+
+!|script                                                                |
+|select item     |Usual Controls                                        |
+|search by       |id                                                    |
+|check           |Value Of Control|CheckBox1 |Off                       |
+|Toggling control|CheckBox1       |sets it to|On |with message|Checked  |
+|Toggling control|CheckBox1       |sets it to|Off|with message|Unchecked|
+
+!|script                                                                          |
+|check           |Value Of Control  |ThreeStateCheckBox|Off                       |
+|Toggling control|ThreeStateCheckBox|sets it to        |On |with message|Checked  |
+|Toggling control|ThreeStateCheckBox|sets it to        |Indeterminate             |
+|Toggling control|ThreeStateCheckBox|sets it to        |Off|with message|Unchecked|
+
+!|script                               |
+|reject|toggle control|DisabledCheckbox|

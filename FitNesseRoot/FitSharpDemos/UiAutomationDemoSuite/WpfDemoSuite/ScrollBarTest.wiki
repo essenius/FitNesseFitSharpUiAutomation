@@ -1,0 +1,6 @@
+!|script                                                 |
+|select item         |caption:More Controls              |
+|set value of control|id:ScrollBar1   |to             |28|
+|check               |value of control|id:ScrollBar1  |28|
+|check               |value of control|id:ProgressBar1|72|
+|check               |value of control|id:Slider1     |72|

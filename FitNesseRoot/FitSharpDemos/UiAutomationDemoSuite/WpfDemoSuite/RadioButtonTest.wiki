@@ -1,0 +1,19 @@
+!|scenario|check if button 1|value1      |button 2|value2|button 3|value3|
+|check    |value of control |RadioButton1|@value1                        |
+|check    |value of control |RadioButton2|@value2                        |
+|check    |value of control |RadioButton3|@value3                        |
+
+
+!|script                                                                    |
+|search by        |caption                                                  |
+|select item|Caption:Usual Controls                                         |
+|check if button 1|                |button 2     |        |button 3|        |
+|select item      |RadioButton1                                             |
+|check if button 1|Selected        |button 2     |        |button 3|        |
+|check            |value of control|id:TextBlock1|Checked RadioButton1      |
+|select item      |RadioButton2                                             |
+|check if button 1|                |button 2     |Selected|button 3|        |
+|check            |value of control|id:TextBlock1|Checked RadioButton2      |
+|select item      |RadioButton3                                             |
+|check if button 1|                |button 2     |        |button 3|Selected|
+|check            |value of control|id:TextBlock1|Checked RadioButton3      |

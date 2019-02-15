@@ -1,0 +1,2 @@
+!path UiAutomation\UiAutomation\bin\release\UiAutomation.dll
+!contents -R2 -g -p -f -h

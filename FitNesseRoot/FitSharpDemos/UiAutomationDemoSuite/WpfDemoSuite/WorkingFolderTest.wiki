@@ -1,0 +1,3 @@
+!|script                                                         |
+|select item|usual controls                                      |
+|check      |value of control|id:WorkingFolder|=~/(?i)(fitNessefitsharpuiautomation)/|

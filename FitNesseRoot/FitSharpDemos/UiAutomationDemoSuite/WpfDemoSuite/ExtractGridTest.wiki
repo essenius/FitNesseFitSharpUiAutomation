@@ -1,0 +1,17 @@
+!|script                      |
+|select item|caption:Data Grid|
+
+!|Query: Extract Grid|id:DataGrid1                                            |
+|Id                  |Title                                          |Status  |
+|100                 |Create UI Automation fixture                   |Done    |
+|101                 |Create demo UI Automation application          |Active  |
+|102                 |Add UI Automation fixture to application       |Approved|
+|103                 |Test UI Automation fixture with GridData object|New     |
+|104                 |http://localhost:8080                          |Resolved|
+
+!|Subset Query: Extract Grid|id:DataGrid1                                |
+|Id                         |Title                                |Status|
+|100                        |Create UI Automation fixture         |Done  |
+|101                        |Create demo UI Automation application|Active|
+
+

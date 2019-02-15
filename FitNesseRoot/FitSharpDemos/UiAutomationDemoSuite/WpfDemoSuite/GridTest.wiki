@@ -1,0 +1,18 @@
+!|script                                                                                            |
+|search by  |id                                                                                     |
+|select item|Caption:Data Grid                                                                      |
+|check      |row count of control   |DataGrid1|5                                                    |
+|check      |column count of control|DataGrid1|3                                                    |
+|check      |row number of control  |DataGrid1|containing|100                                  |1   |
+|check      |row number of control  |DataGrid1|containing|Create demo UI Automation application|2   |
+|check      |row number of control  |DataGrid1|containing|Approved                             |3   |
+|check      |row number of control  |DataGrid1|containing|Non-existing value                   |none|
+
+Some negative cases. Non-existing controls and buttons don't have rows, list boxes don't have columns, and !-TreeViews-! don't have cells
+
+!|script                                                                                 |
+|select item|Caption:Usual Controls                                                      |
+|check      |row number of control  |NonexistingGrid  |containing|Non-existing value|none|
+|check      |row count of control   |Button1          |0                                 |
+|check      |column count of control|MultiValueListBox|0                                 |
+|check      |row number of control  |TreeView1        |containing|Core Product 1    |none|

@@ -1,0 +1,8 @@
+!|script                                                                        |
+|select item         |caption:text controls                                     |
+|check               |value of control    |id:TextBox1       |TextBox           |
+|Set Value of Control|id:TextBox1         |to                |Enterprise        |
+|check               |value of control    |id:TextBox1       |Enterprise        |
+|check               |value of control    |id:DisabledTextbox|Disabled TextBox  |
+|reject              |Set Value of Control|id:DisabledTextbox|to|Should Not Work|
+|check               |value of control    |id:DisabledTextbox|Disabled TextBox  |

@@ -1,0 +1,5 @@
+!|script                                                                          |
+|select item         |Caption:More Controls                                       |
+|set value of control|id:DatePicker1  |to                    |23-02-2015 16:10    |
+|check               |value of control|id:DatePicker1        |23-Feb-2015 16:10:00|
+|check               |value of control|id:DatePickerTextBlock|23-Feb-2015         |

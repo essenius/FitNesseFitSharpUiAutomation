@@ -1,0 +1,23 @@
+For this to work, make sure that the date formats match the Long date format of the system you run the test on
+
+!define Today {!today (EEEE, MMMM dd, yyyy)}
+!define Yesterday {!today (EEEE, MMMM dd, yyyy) -1}
+!define Tomorrow {!today (EEEE, MMMM dd, yyyy) +1}
+
+!| import    |
+|UiAutomation|
+
+!|Script                                                 |
+|Select Item      |Caption:More Controls                 |
+|check            |value of control|ControlType:Calendar||
+
+Now set the value. We need to take a value in the current month, so we just take today
+Note that this test will fail if run on the first or last day of the month.
+
+|script                                                         |
+|set value of control|id:Calendar1    |to          |${Today}    |
+|check               |value of control|id:Calendar1|${Today}    |
+|set value of control|id:Calendar1    |to          |${Yesterday}|
+|check               |value of control|id:Calendar1|${Yesterday}|
+|set value of control|id:Calendar1    |to          |${Tomorrow} |
+|check               |value of control|id:Calendar1|${Tomorrow} |

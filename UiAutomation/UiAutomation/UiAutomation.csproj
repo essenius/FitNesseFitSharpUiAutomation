@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CF651DC7-4350-41FF-BEA2-A80757B8D02B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UiAutomation</RootNamespace>
+    <AssemblyName>UiAutomation</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ImageHandler, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageHandler.2.0.1\lib\net461\ImageHandler.dll</HintPath>
+    </Reference>
+    <Reference Include="interop.UIAutomationCore">
+      <HintPath>lib\interop.UIAutomationCore.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Model\AppLauncher.cs" />
+    <Compile Include="Model\ApplicationFactory.cs" />
+    <Compile Include="Model\ClassicApplication.cs" />
+    <Compile Include="Model\ConditionTypeMapper.cs" />
+    <Compile Include="Model\Control.cs" />
+    <Compile Include="Model\ControlTypeMapper.cs" />
+    <Compile Include="ExtractGrid.cs" />
+    <Compile Include="Model\ExtensionFunctions.cs" />
+    <Compile Include="Model\FileSystem.cs" />
+    <Compile Include="Model\IApplication.cs" />
+    <Compile Include="Model\IUIAutomationElementExtensions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Model\Mapping.cs" />
+    <Compile Include="Model\Mouse.cs" />
+    <Compile Include="Model\NativeMethods.cs" />
+    <Compile Include="Model\PropertyMapper.cs" />
+    <Compile Include="Model\UwpApplication.cs" />
+    <Compile Include="Patterns\TogglePattern.cs" />
+    <Compile Include="Patterns\LegacyIAccessiblePattern.cs" />
+    <Compile Include="Patterns\FallBackPattern.cs" />
+    <Compile Include="Patterns\TextPattern.cs" />
+    <Compile Include="Patterns\ValuePattern.cs" />
+    <Compile Include="Patterns\SelectionItemPattern.cs" />
+    <Compile Include="Patterns\RangeValuePattern.cs" />
+    <Compile Include="Patterns\IPattern.cs" />
+    <Compile Include="Patterns\SelectionPattern.cs" />
+    <Compile Include="Model\SearchParser.cs" />
+    <Compile Include="Model\ProcessHandler.cs" />
+    <Compile Include="UiAutomationFixture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Lib\interop.UIAutomationCore.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Model\Locator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="CustomDictionary.xml" />
+    <Content Include="ReleaseNotes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>"%25PROGRAMFILES(X86)%25\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\tlbimp.exe" %25windir%25\system32\UIAutomationCore.dll /out:..\interop.UIAutomationCore.dll"</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

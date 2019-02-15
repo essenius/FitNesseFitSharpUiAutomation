@@ -1,0 +1,7 @@
+﻿1.3.7 Added ClassName in ConditionTypeMapper, so they can be used as control search methods
+1.3.8 Breaking change: replaced AndDelimiter by " && " to allow for using single & in criteria.
+	  Added HelpText, IsPassword and IsEnagled in ConditionTypeMapper
+2.0.0 Adopted Semantic Versioning (across SuinesseFixtures)
+2.1.0 Introduced SwitchToProcess, WaitForProcess and WaitUntilProcessEnds; updated FallBackPattern to search for child Text controls 
+      (as used a lot in UWP apps); introduced FirstTextUnder function; allowed UWP apps selection by family name as well as full name 
+	  (vs. just full name before); migrated Calculator tests to Windows UWP version of Calc.

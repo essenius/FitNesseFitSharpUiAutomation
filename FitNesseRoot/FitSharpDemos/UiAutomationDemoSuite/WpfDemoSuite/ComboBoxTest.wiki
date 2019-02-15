@@ -1,0 +1,7 @@
+!|script                                                                               |
+|check               |value of control|id:ComboBox1 |                                  |
+|set value of control|id:ComboBox1    |to           |ComboItem2                        |
+|check               |value of control|id:ComboBox1 |ComboItem2                        |
+|check               |value of control|id:TextBlock1|Selected ComboBox1 item ComboItem2|
+|set value of control|id:ComboBox1    |to           |                                  |
+|check               |value of control|id:ComboBox1 |                                  |
