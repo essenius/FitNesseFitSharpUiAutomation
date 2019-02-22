@@ -11,13 +11,10 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Microsoft.Design", "CA2210:AssembliesShouldHaveValidStrongNames")]
-[assembly:
-    SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Deci", Scope = "member",
-        Target = "UiAutomation.Control.#WaitTillFound(System.Int32)",
-        Justification = "False positive. Deci is a valid spelling")]
-[assembly:
-    SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Deci", Scope = "member",
-        Target = "UiAutomation.Control.#WaitTillNotFound(System.Int32)",
-        Justification = "False positive. Deci is a valid spelling")]
-[assembly:
-    SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "UiAutomation")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Deci", Scope = "member",
+    Target = "UiAutomation.Control.#WaitTillFound(System.Int32)",
+    Justification = "False positive. Deci is a valid spelling")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Deci", Scope = "member",
+    Target = "UiAutomation.Control.#WaitTillNotFound(System.Int32)",
+    Justification = "False positive. Deci is a valid spelling")]
+[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "UiAutomation")]

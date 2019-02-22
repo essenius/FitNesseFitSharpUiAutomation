@@ -38,15 +38,6 @@ namespace UiAutomation.Model
             }
         }
 
-        public static string DefaultConditionType
-        {
-            get => _defaultMethod;
-            set
-            {
-                if (ConditionTypes.ContainsKey(value)) _defaultMethod = value;
-            }
-        }
-
         public int ConditionType => ConditionTypes.Map(Method);
 
         public object ConditionValue
@@ -63,6 +54,15 @@ namespace UiAutomation.Model
         private int ControlType => ControlTypes.Map(Criterion);
 
         public string Criterion { get; }
+
+        public static string DefaultConditionType
+        {
+            get => _defaultMethod;
+            set
+            {
+                if (ConditionTypes.ContainsKey(value)) _defaultMethod = value;
+            }
+        }
 
         public bool IsWindowSearch =>
             ConditionTypeMapper.IsControlType(Method) &&

@@ -10,15 +10,12 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using interop.UIAutomationCore;
 using ImageHandler;
 using UiAutomation.Model;
 using Control = UiAutomation.Model.Control;
@@ -48,114 +45,36 @@ namespace UiAutomation
     ///     Unless stated otherwise, design decisions have been made because they seemed reasonable.
     /// </remarks>
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global", Justification = "FitSharp entry point"),
-     SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Used in FitSharp")]
+     SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Used in FitSharp"),
+     Documentation("Script table interface for thick client (WinForms/WPF) testing via the UI Automation Framework")]
     public class UiAutomationFixture
     {
         private bool _automaticSwitchToStartedApplication = true;
         private int _defaultTimeoutInDeciSeconds = 100;
-
-        //private readonly SystemUnderTest _sut = new SystemUnderTest();
         private IApplication _sut;
-
-        //private string _screenshotPath;
         private Control _window;
 
-        /// <summary>
-        ///     Documentation for FixtureExplorer
-        /// </summary>
-        public static Dictionary<string, string> FixtureDocumentation { get; } = new Dictionary<string, string>
-        {
-            {string.Empty, "Script table interface for thick client (WinForms/WPF) testing via the UI Automation Framework"},
-            {nameof(ApplicationProcessId), "The process Id of the currently active application under test"},
-            {nameof(ClickControl), "Click a clickable control (e.g. Button)"},
-            {
-                nameof(CloseApplication),
-                "Close a running application. It does so by closing the main window. It does not force a close if warnings or notifications pop up (e.g. 'are you sure?')"
-            },
-            {nameof(CollapseControl), "Expand a collapsible control (e.g. TreeItem)"},
-            {nameof(ColumnCountOfControl), "Returns the number of columns in a grid control"},
-            {nameof(ControlExists), "Returns whether a certain control exists"},
-            {nameof(ControlIsVisible), "Returns whether a certain control is visible"},
-            {nameof(DragControl), "Drag the mouse from a control. Use together with Drop On Control"},
-            {nameof(DragControlAndDropOnControl), "Drag the mouse from a control and drop onto another control"},
-            {nameof(DropOnControl), "Drop a dragged control onto another one. Use together with Drag Control"},
-            {nameof(ExpandControl), "Expand an expandable control (e.g. TreeItem)"},
-            {
-                nameof(ForcedCloseApplication),
-                "Close a running application by closing the main window. If the close does not succeed, it will try and kill the process (i.e. forced close)"
-            },
-            {nameof(IsUwpApp), "Returns whether the current application is an UWP app"},
-            {nameof(NameOfControl), "Return the name of a control"},
-            {
-                nameof(NoAutomaticSwitchToStartedApplication),
-                "If an application gets started, no automatic switch to the application window will be attempted. This will then need to be done manually with a Switch To Window command."
-            },
-            {
-                nameof(PressKey),
-                "Use the SendKeys.SendWait method to simulate keypresses. For more details on formats see http://msdn.microsoft.com/en-us/library/vstudio/system.windows.forms.sendkeys(v=vs.100).aspx"
-            },
-            {nameof(PropertyOf), "Returns a property of a control"},
-            {nameof(RowCountOfControl), "Returns the number of rows in a grid control"},
-            {nameof(RowNumberOfControlContaining), "Returns the row number of a control that contains a specific value of rows in a grid control "},
-            {nameof(SearchBy), "Sets the default search method. If this command is not called, Name will be assumed"},
-            {nameof(SelectItem), "Select a selectable item (e.g. RadioButton, Tab)"},
-            {nameof(SetAutomaticSwitchToStartedApplication), "Enable automatic switching to an application that gets started (default setting)"},
-            {nameof(SetFocusToControl), "Set the focus to a control"},
-            {nameof(SetTimeoutSeconds), "Set the default timeout for all wait commands. Default value is 3 seconds"},
-            {nameof(SetValueOfControlTo), "Set the value of a control. Tries to use an appropriate method based on the control type"},
-            {nameof(SnapshotObjectOfControl), "Take a snapshot of a control on the screen and return it as a Snapshot object"},
-            {nameof(SnapshotOfControl), "Take a snapshot of a control on the screen and render it as an HTML base 64 image"},
-            {nameof(StartApplication), "Start an executable without arguments and default working folder"},
-            {nameof(StartApplicationWithArguments), "Start an executable with arguments and default working folder"},
-            {nameof(StartApplicationWithArgumentsAndWorkingFolder), "Start an executable with arguments and working folder"},
-            {nameof(StartApplicationWithWorkingFolder), "Start an executable without arguments, with working folder"},
-            {nameof(SwitchToParentWindow), "Switch to the parent window of the current app (useful for UWP apps)"},
-            {nameof(SwitchToProcess), "Switch to a process (using either ProcessId or Name)"},
-            {nameof(ToggleControl), "Toggles the value of a control"},
-            {nameof(ValueOfControl), "Returns the value of a control. Tries to return an appropriate value based on the control type"},
-            {nameof(WaitForControl), "Waits for a control to appear"},
-            {nameof(WaitForControlAndClick), "Waits for a control to appear, and then click it"},
-            {nameof(WaitForProcess), "Waits for a process to become active (typically via Name, can also use ProcessId"},
-            {nameof(WaitUntilProcessEnds), "Waits for a process to end (via ProcessId or Name)"},
-            {nameof(WaitUntilControlDisappears), "Wait for a control to disappear"},
-            {nameof(WindowSnapshot), "Take a snapshot of the current window and render it as an HTML base 64 image"},
-            {nameof(WindowSnapshotObject), "Take a snapshot of the current window and return it as a Snapshot object"}
-        };
-
+        [Documentation("The process Id of the currently active application under test")]
         public int ApplicationProcessId => _sut.ProcessId;
 
-        private static Snapshot CaptureWindow(IUIAutomationElement element)
-        {
-            var rect = element.CurrentBoundingRectangle;
-            var bounds = new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
-            return Snapshot.CaptureScreen(bounds);
-        }
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
+         SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local", Justification = "Used in unit test (PrivateType)")]
+        private static Version PlatformVersion { get; set; } = Environment.OSVersion.Version;
 
-        // todo: convert this into a query fixture or table fixture.
-        public static string ListOfControlsFromRoot(string searchCriterion)
-        {
-            var controlList = Control.RootChildControls(searchCriterion);
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture, "Found {0} items\n", controlList.Length);
-            foreach (var control in controlList)
-            {
-                sb.AppendFormat(CultureInfo.CurrentCulture, "Automation Id={0} Name={1} Value={2}", control.AutomationId,
-                    control.Name, control.Value);
-                var p = Mouse.AbsolutePosition(control.AutomationElement);
-                sb.AppendFormat(CultureInfo.CurrentCulture, " (x:{0},y:{1})\n", p.X, p.Y);
-            }
+        [Documentation("Returns whether the platform supports UWP apps")]
+        public static bool UwpAppsAreSupported => PlatformVersion.Major > 6 || PlatformVersion.Major == 6 && PlatformVersion.Minor >= 2;
 
-            return sb.ToString();
-        }
+        [Documentation("Height of the window of the system under test. 0 if nothing open")]
+        public double WindowHeight => _window == null ? 0 : new Window(_window.AutomationElement).Height;
 
-        public static bool SearchBy(string conditionType)
-        {
-            Locator.DefaultConditionType = conditionType;
-            // will only be set to a valid value
-            return Locator.DefaultConditionType.Equals(conditionType, StringComparison.OrdinalIgnoreCase);
-        }
+        [Documentation("Width of the window of the system under test. 0 if nothing open")]
+        public double WindowWidth => _window == null ? 0 : new Window(_window.AutomationElement).Width;
 
-        public static void WaitSeconds(double seconds) => Thread.Sleep(TimeSpan.FromSeconds(seconds));
+        [Documentation("X position of the upper left corner of the window of the system under test. 0 if nothing open")]
+        public double WindowX => _window == null ? 0 : new Window(_window.AutomationElement).Left;
+
+        [Documentation("Y position of the upper left corner of the window of the system under test. 0 if nothing open")]
+        public double WindowY => _window == null ? 0 : new Window(_window.AutomationElement).Top;
 
         private T ApplyMethodToControl<T>(Func<Control, T> methodToApply, string searchCriterion)
         {
@@ -165,22 +84,30 @@ namespace UiAutomation
             return methodToApply(control);
         }
 
+        [Documentation("Click a clickable control (e.g. Button)")]
         public bool ClickControl(string searchCriterion) => ApplyMethodToControl(x => x.Click(), searchCriterion);
 
+        [Documentation("Close a running application. It does so by closing the main window. " +
+                       "It does not force a close if warnings or notifications pop up (e.g. 'are you sure?')")]
         public bool CloseApplication()
         {
             const bool noForce = false;
             return _sut == null || _sut.Exit(noForce);
         }
 
+        [Documentation("Collapse a collapsible control (e.g. TreeItem)")]
         public bool CollapseControl(string searchCriterion) => ApplyMethodToControl(x => x.Collapse(), searchCriterion);
 
+        [Documentation("Returns the number of columns in a grid control")]
         public int ColumnCountOfControl(string searchCriterion) => ApplyMethodToControl(x => x.ColumnCount, searchCriterion);
 
+        [Documentation("Returns whether a certain control exists")]
         public bool ControlExists(string searchCriterion) => ApplyMethodToControl(x => x.Exists(), searchCriterion);
 
+        [Documentation("Returns whether a certain control is visible")]
         public bool ControlIsVisible(string searchCriterion) => ApplyMethodToControl(x => x.IsVisible(), searchCriterion);
 
+        [Documentation("Drag the mouse from a control. Use together with Drop On Control")]
         public bool DragControl(string searchCriterion)
         {
             return ApplyMethodToControl(x =>
@@ -190,6 +117,7 @@ namespace UiAutomation
             }, searchCriterion);
         }
 
+        [Documentation("Drag the mouse from a control and drop onto another control")]
         public bool DragControlAndDropOnControl(string dragCriterion, string dropCriterion)
         {
             return ApplyMethodToControl(x =>
@@ -200,6 +128,7 @@ namespace UiAutomation
             }, dragCriterion);
         }
 
+        [Documentation("Drop a dragged control onto another one. Use together with Drag Control")]
         public bool DropOnControl(string searchCriterion)
         {
             return ApplyMethodToControl(x =>
@@ -209,17 +138,20 @@ namespace UiAutomation
             }, searchCriterion);
         }
 
+        [Documentation("Expand an expandable control (e.g. TreeItem)")]
         public bool ExpandControl(string searchCriterion) => ApplyMethodToControl(x => x.Expand(), searchCriterion);
 
+        [Documentation("Return the content of the first text control under the current control. Useful for UWP apps")]
         public string FirstTextUnder(string searchCriterion) => ApplyMethodToControl(x => x.FirstTextUnder(), searchCriterion);
 
+        [Documentation("Close a running application by closing the main window. " +
+                       "If the close does not succeed, it will try and kill the process (i.e. forced close)")]
         public bool ForcedCloseApplication()
         {
             const bool force = true;
             return _sut == null || _sut.Exit(force, _defaultTimeoutInDeciSeconds * 100);
         }
 
-        // testing purposes only
         internal Control GetControl(string locator)
         {
             var control = new Control(_window, SearchType.Deep, locator);
@@ -227,9 +159,10 @@ namespace UiAutomation
             return control;
         }
 
+        [Documentation("Returns whether the current application is an UWP app")]
         public bool IsUwpApp() => _sut != null && _sut.ApplicationType == "UWP";
 
-        // For exploration of window contents
+        [Documentation("Support exploration of window contents")]
         public string ListOfControls(string searchCriterion)
         {
             if (_window == null || _sut == null) return string.Empty;
@@ -243,14 +176,53 @@ namespace UiAutomation
                 var p = Mouse.AbsolutePosition(control.AutomationElement);
                 sb.AppendFormat(CultureInfo.CurrentCulture, " (x:{0},y:{1})\n", p.X, p.Y);
             }
-
             return sb.ToString();
         }
 
+        // todo: convert this into a query fixture or table fixture.
+        public static string ListOfControlsFromRoot(string searchCriterion)
+        {
+            var controlList = Control.RootChildControls(searchCriterion);
+            var sb = new StringBuilder();
+            sb.AppendFormat(CultureInfo.InvariantCulture, "Found {0} items\n", controlList.Length);
+            foreach (var control in controlList)
+            {
+                sb.AppendFormat(CultureInfo.CurrentCulture, "Automation Id={0} Name={1} Value={2}", control.AutomationId, control.Name,
+                    control.Value);
+                var p = Mouse.AbsolutePosition(control.AutomationElement);
+                sb.AppendFormat(CultureInfo.CurrentCulture, " (x:{0},y:{1})\n", p.X, p.Y);
+            }
+            return sb.ToString();
+        }
+
+        [Documentation("Maximize the window of the system under test")]
+        public bool MaximizeWindow() => new Window(_window?.AutomationElement).Maximize();
+
+        [Documentation("Minimize the window of the system under test")]
+        public bool MinimizeWindow() => new Window(_window?.AutomationElement).Minimize();
+
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x"),
+         SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y"),
+         Documentation("Move a window to a certain x and y position")]
+        public bool MoveWindow(int x, int y)
+        {
+            if (_window == null || _sut == null) return false;
+            _sut.WaitForInputIdle();
+            return new Window(_window.AutomationElement).Move(x, y);
+        }
+
+        [Documentation("Return the name of a control")]
         public string NameOfControl(string searchCriterion) => ApplyMethodToControl(x => x.Name, searchCriterion);
 
+        [Documentation("If an application gets started, no automatic switch to the application window will be attempted. " +
+                       "This will then need to be done manually with a Switch To Window command.")]
         public void NoAutomaticSwitchToStartedApplication() => _automaticSwitchToStartedApplication = false;
 
+        [Documentation("'Restore' the window od the system under test")]
+        public bool NormalWindow() => new Window(_window?.AutomationElement).Normal();
+
+        [Documentation("Use the SendKeys.SendWait method to simulate keypresses. " +
+                       "For more details on formats see https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys")]
         public bool PressKey(string key)
         {
             if (_window == null || _sut == null) return false;
@@ -262,17 +234,39 @@ namespace UiAutomation
             return true;
         }
 
+        [Documentation("Returns a property of a control")]
         public object PropertyOf(string property, string searchCriterion) => ApplyMethodToControl(x => x.Property(property), searchCriterion);
 
+        [Documentation("Resize a window to a certain width and height")]
+        public bool ResizeWindow(int width, int height)
+        {
+            if (_window == null || _sut == null) return false;
+            _sut.WaitForInputIdle();
+            return new Window(_window.AutomationElement).Resize(width, height);
+        }
+
+        [Documentation("Returns the number of rows in a grid control")]
         public int RowCountOfControl(string searchCriterion) => ApplyMethodToControl(x => x.RowCount, searchCriterion);
 
+        [Documentation("Returns the row number of a control that contains a specific value of rows in a grid control")]
         public string RowNumberOfControlContaining(string searchCriterion, string value) =>
             ApplyMethodToControl(x => x.RowNumberContaining(value), searchCriterion);
 
+        [Documentation("Sets the default search method. If this command is not called, Name will be assumed")]
+        public static bool SearchBy(string conditionType)
+        {
+            Locator.DefaultConditionType = conditionType;
+            // will only be set to a valid value
+            return Locator.DefaultConditionType.Equals(conditionType, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Documentation("Select a selectable item (e.g. RadioButton, Tab)")]
         public bool SelectItem(string searchCriterion) => ApplyMethodToControl(x => x.Select(), searchCriterion);
 
+        [Documentation("Enable automatic switching to an application that gets started (default setting)")]
         public void SetAutomaticSwitchToStartedApplication() => _automaticSwitchToStartedApplication = true;
 
+        [Documentation("Set the focus to a control")]
         public bool SetFocusToControl(string searchCriterion)
         {
             return ApplyMethodToControl(x =>
@@ -283,25 +277,31 @@ namespace UiAutomation
             }, searchCriterion);
         }
 
+        [Documentation("Set the default timeout for all wait commands. Default value is 3 seconds. Max is 3600 * 24 * 31 (i.e. a month)")]
         public int SetTimeoutSeconds(double timeout)
         {
-            // don't think anyone wants to wait longer than a month - ever.
             const int maxTimeoutSeconds = 3600 * 24 * 31;
             _defaultTimeoutInDeciSeconds = timeout > 0 ? Convert.ToInt32(Math.Min(timeout, maxTimeoutSeconds) * 10) : 1;
             return _defaultTimeoutInDeciSeconds;
         }
 
+        [Documentation("Set the value of a control. Tries to use an appropriate method based on the control type")]
         public bool SetValueOfControlTo(string searchCriterion, string newValue) => ApplyMethodToControl(x => x.SetValue(newValue), searchCriterion);
 
-        public Snapshot SnapshotObjectOfControl(string locator) => ApplyMethodToControl(x => CaptureWindow(x.AutomationElement), locator);
+        [Documentation("Take a snapshot of a control on the screen and return it as a Snapshot object")]
+        public Snapshot SnapshotObjectOfControl(string locator) => ApplyMethodToControl(x => x.AutomationElement.Capture(), locator);
 
+        [Documentation("Take a snapshot of a control on the screen and render it as an HTML base 64 image")]
         public string SnapshotOfControl(string locator) => SnapshotObjectOfControl(locator).Rendering;
 
+        [Documentation("Start an executable without arguments and default working folder")]
         public bool StartApplication(string path) => StartApplicationWithArgumentsAndWorkingFolder(path, string.Empty, string.Empty);
 
+        [Documentation("Start an executable with arguments and default working folder")]
         public bool StartApplicationWithArguments(string path, string arguments) =>
             StartApplicationWithArgumentsAndWorkingFolder(path, arguments, string.Empty);
 
+        [Documentation("Start an executable with arguments and working folder")]
         public bool StartApplicationWithArgumentsAndWorkingFolder(string path, string arguments, string workingFolder)
         {
             _sut = ApplicationFactory.Start(path, arguments, workingFolder);
@@ -310,6 +310,7 @@ namespace UiAutomation
             return !_automaticSwitchToStartedApplication || SwitchToAppWindow();
         }
 
+        [Documentation("Start an executable without arguments, with working folder")]
         public bool StartApplicationWithWorkingFolder(string path, string workingFolder) =>
             StartApplicationWithArgumentsAndWorkingFolder(path, string.Empty, workingFolder);
 
@@ -318,7 +319,6 @@ namespace UiAutomation
             if (app == null) return false;
             _sut = app;
             app.WaitForInputIdle();
-            Debug.Print("ST:" + app.ProcessId);
             _window = app.WindowControl;
             if (_window == null) return false;
             var found = _window.WaitTillFound(_defaultTimeoutInDeciSeconds);
@@ -327,18 +327,45 @@ namespace UiAutomation
 
         internal bool SwitchToAppWindow() => SwitchTo(_sut);
 
+        [Documentation("Switch to the parent window of the current app (useful for UWP apps)")]
         public bool SwitchToParentWindow()
         {
             var parent = _window?.Parent;
             return parent != null && SwitchToProcess("ProcessId:" + parent.CurrentProcessId);
         }
 
+        [Documentation("Switch to a process (using either ProcessId or Name)")]
         public bool SwitchToProcess(string searchCriterion)
         {
             var processId = new ProcessHandler(searchCriterion).Id();
-            Debug.WriteLine("ProcessId StP:" + processId);
             return processId != null && SwitchTo(ApplicationFactory.AttachToProcess(processId.Value));
         }
+
+        [Obsolete("Use SwitchToProcess instead")]
+        public bool SwitchToProcessById(int processId) => SwitchTo(ApplicationFactory.AttachToProcess(processId));
+
+        [Obsolete("Only works for classical applications. Use SwitchToProcess instead")]
+        public bool SwitchToWindow(string locator)
+        {
+            var window = new Control(null, SearchType.Shallow, locator);
+            return window.FindControl() && SwitchToProcessById(window.AutomationElement.CurrentProcessId);
+        }
+
+        [Obsolete("Use SwitchToProcess instead")]
+        public bool SwitchToWindowByProcessName(string processName) => SwitchToProcess("name:" + processName);
+
+        [Documentation("Toggles the value of a control")]
+        public bool ToggleControl(string searchCriterion) => ApplyMethodToControl(x => x.Toggle(), searchCriterion);
+
+        [Documentation("Returns the value of a control. Tries to return an appropriate value based on the control type")]
+        public string ValueOfControl(string searchCriterion) => ApplyMethodToControl(x => x.Value, searchCriterion);
+
+        [Documentation("Waits for a control to appear")]
+        public bool WaitForControl(string searchCriterion) =>
+            ApplyMethodToControl(x => x.WaitTillFound(_defaultTimeoutInDeciSeconds), searchCriterion);
+
+        [Documentation("Waits for a control to appear, and then click it")]
+        public bool WaitForControlAndClick(string searchCriterion) => WaitForControl(searchCriterion) && ClickControl(searchCriterion);
 
         private bool WaitForProcess(string searchCriterion, bool shouldbeAlive)
         {
@@ -349,38 +376,34 @@ namespace UiAutomation
             }, _defaultTimeoutInDeciSeconds);
         }
 
+        [Documentation("Waits for a process to become active (typically via Name, can also use ProcessId")]
         public bool WaitForProcess(string searchCriterion) => WaitForProcess(searchCriterion, true);
 
-        public bool WaitUntilProcessEnds(string searchCriterion) => WaitForProcess(searchCriterion, false);
+        [Documentation("Wait the specified number of seconds (can be fractions)")]
+        public static void WaitSeconds(double seconds) => Thread.Sleep(TimeSpan.FromSeconds(seconds));
 
-        [Obsolete("Use SwitchToProcess instead")]
-        public bool SwitchToProcessById(int processId) => SwitchTo(ApplicationFactory.AttachToProcess(processId));
-
-        // only works for classical applications. 
-        [Obsolete("Use SwitchToProcess instead")]
-        public bool SwitchToWindow(string locator)
-        {
-            var window = new Control(null, SearchType.Shallow, locator);
-            return window.FindControl() && SwitchToProcessById(window.AutomationElement.CurrentProcessId);
-        }
-
-        [Obsolete("Use SwitchToProcess instead")]
-        public bool SwitchToWindowByProcessName(string processName) => SwitchToProcess("name:" + processName);
-
-        public bool ToggleControl(string searchCriterion) => ApplyMethodToControl(x => x.Toggle(), searchCriterion);
-
-        public string ValueOfControl(string searchCriterion) => ApplyMethodToControl(x => x.Value, searchCriterion);
-
-        public bool WaitForControl(string searchCriterion) =>
-            ApplyMethodToControl(x => x.WaitTillFound(_defaultTimeoutInDeciSeconds), searchCriterion);
-
-        public bool WaitForControlAndClick(string searchCriterion) => WaitForControl(searchCriterion) && ClickControl(searchCriterion);
-
+        [Documentation("Wait for a control to disappear")]
         public bool WaitUntilControlDisappears(string searchCriterion) =>
             ApplyMethodToControl(x => x.WaitTillNotFound(_defaultTimeoutInDeciSeconds), searchCriterion);
 
-        public string WindowSnapshot() => WindowSnapshotObject().Rendering;
+        [Documentation("Waits for a process to end (via ProcessId or Name)")]
+        public bool WaitUntilProcessEnds(string searchCriterion) => WaitForProcess(searchCriterion, false);
 
-        public Snapshot WindowSnapshotObject() => _window == null ? null : CaptureWindow(_window.AutomationElement);
+        [Documentation("Take a snapshot of the current window and render it as an HTML base 64 image")]
+        public string WindowSnapshot() => WindowSnapshot(0);
+
+        [Documentation("Take a snapshot of the current window removing a border width and render it as an HTML base 64 image")]
+        public string WindowSnapshot(int border) => WindowSnapshotObject(border).Rendering;
+
+        [Documentation("Take a snapshot of the current window and return it as a Snapshot object")]
+        public Snapshot WindowSnapshotObject() => WindowSnapshotObject(0);
+
+        [Documentation("Take a snapshot of the current window removing a border width and return it as a Snapshot object")]
+        public Snapshot WindowSnapshotObject(int border)
+        {
+            NativeMethods.SetForegroundWindow(_window.WindowHandle);
+            new Window(_window.AutomationElement).WaitTillOnScreen();
+            return _window.AutomationElement.Capture(border);
+        }
     }
 }

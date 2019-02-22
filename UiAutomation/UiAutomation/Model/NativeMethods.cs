@@ -14,53 +14,47 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
-// ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable FieldCanBeMadeReadOnly.Global
-// Justification: don't want to mess around with native methods
-
 namespace UiAutomation.Model
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Want to be reasonably complete"),
+     SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Legacy Windows naming followed")]
     internal static class NativeMethods
     {
         public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
 
-        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Legacy Windows naming followed")]
         public enum WMessages
         {
             WM_LBUTTONDOWN = 0x201,
             WM_LBUTTONUP = 0x202,
-
             WM_KEYDOWN = 0x100,
             WM_KEYUP = 0x101,
-
             WH_KEYBOARD_LL = 13,
             WH_MOUSE_LL = 14
         }
 
-        // testing
-        [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        public static extern int GetPackagesByPackageFamily(
-            [MarshalAs(UnmanagedType.LPWStr)] string packageFamilyName, ref int count,
-            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] StringBuilder[] packageFullName,
-            out int bufferLength, char[] buffer);
-
-        //Used to get Handle for Foreground Window
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr GetForegroundWindow();
+        // these are App related APIs which do not exist in Win7 and before
+        [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
+        public static extern int ClosePackageInfo(IntPtr pir);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
 
-        // these are App related APIs which do not exist in Win7 and before
-        [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
-        public static extern int ClosePackageInfo(IntPtr pir);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetForegroundWindow();
 
         [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
         public static extern int GetPackageApplicationIds(IntPtr pir, ref int bufferLength, byte[] buffer, out int count);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         public static extern uint GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, StringBuilder packageFamilyName);
+
+        [DllImport("kernel32", CharSet = CharSet.Unicode)]
+        public static extern int GetPackagesByPackageFamily(
+            [MarshalAs(UnmanagedType.LPWStr)] string packageFamilyName, ref int count,
+            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)]
+            StringBuilder[] packageFullName,
+            out int bufferLength, char[] buffer);
 
         [DllImport("user32.dll")]
         public static extern int GetSystemMetrics(int smIndex);
@@ -69,18 +63,6 @@ namespace UiAutomation.Model
         [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
         public static extern int OpenPackageInfoByFullName([MarshalAs(UnmanagedType.LPWStr)] string fullName, uint reserved,
             out IntPtr packageInfo);
-
-        //[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        //static extern int GetCurrentPackageFullName(ref int packageFullNameLength, StringBuilder packageFullName);
-
-        [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        internal static extern bool PostMessage(HandleRef hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-        // currently unused. Delete if screen capture works OK without
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool PrintWindow(IntPtr hwnd, IntPtr hDc, uint nFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);

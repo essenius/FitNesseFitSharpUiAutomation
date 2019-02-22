@@ -64,6 +64,7 @@
     <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentationAttribute.cs" />
     <Compile Include="Model\AppLauncher.cs" />
     <Compile Include="Model\ApplicationFactory.cs" />
     <Compile Include="Model\ClassicApplication.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Model\NativeMethods.cs" />
     <Compile Include="Model\PropertyMapper.cs" />
     <Compile Include="Model\UwpApplication.cs" />
+    <Compile Include="Model\Window.cs" />
     <Compile Include="Patterns\TogglePattern.cs" />
     <Compile Include="Patterns\LegacyIAccessiblePattern.cs" />
     <Compile Include="Patterns\FallBackPattern.cs" />

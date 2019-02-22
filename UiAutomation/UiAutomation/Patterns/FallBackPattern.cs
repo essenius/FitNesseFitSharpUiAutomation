@@ -9,7 +9,6 @@
 //   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and limitations under the License.
 
-using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using interop.UIAutomationCore;
@@ -59,7 +58,9 @@ namespace UiAutomation.Patterns
             return SetResult.Success;
         }
 
-        private IUIAutomationElement FirstControlUnder(IUIAutomationElement element, IUIAutomationTreeWalker walker, int controlType)
+        private bool DoesApply() => _element.CurrentIsKeyboardFocusable != 0;
+
+        private static IUIAutomationElement FirstControlUnder(IUIAutomationElement element, IUIAutomationTreeWalker walker, int controlType)
         {
             var child = walker.GetFirstChildElement(element);
             while (child != null)
@@ -71,7 +72,5 @@ namespace UiAutomation.Patterns
             }
             return null;
         }
-
-        private bool DoesApply() => _element.CurrentIsKeyboardFocusable != 0;
     }
 }

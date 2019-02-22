@@ -10,7 +10,6 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System.ComponentModel;
-using System.Diagnostics;
 
 namespace UiAutomation.Model
 {
@@ -18,10 +17,8 @@ namespace UiAutomation.Model
     {
         public static IApplication AttachToProcess(int processId)
         {
-            Debug.Print("ProcessId AF:" + processId);
             var process = new ProcessHandler(processId).ProcessObject();
             if (AppLauncher.IsUwpApp(process.Handle)) return new UwpApplication(process);
-            Debug.Print("no UWP");
             return new ClassicApplication(process);
         }
 

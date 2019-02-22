@@ -10,9 +10,11 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
+// This set of tests may fail if other UWP apps (such as Edge) are active during the test
 namespace UiAutomationTest
 {
     [TestClass]
@@ -170,6 +172,8 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.PressKey(Win10AppKeys.ClearAllInput));
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
+        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
         private static class Win10AppKeys
         {
             public static string StandardMode => "%1";
@@ -194,7 +198,7 @@ namespace UiAutomationTest
             public static string Degrees => "{F3}";
             public static string Radians => "{F4}";
             public static string Grad => "{F5}";
-            public static string _10x => "^g";
+            public static string _10X => "^g";
             public static string Cosh => "^o";
             public static string Sinh => "^s";
             public static string Tanh => "^t";
@@ -210,20 +214,20 @@ namespace UiAutomationTest
             public static string Cos => "o";
             public static string Sin => "s";
             public static string Tan => "t";
-            public static string FE => "v";
+            public static string Fe => "v";
             public static string Exp => "x";
             public static string XpowY => "y";
             public static string X3 => "#";
             public static string Nfaculty => "!";
             public static string Mode => "{%}";
-            public static string DWORD => "{F2}";
-            public static string WORD => "{F3}";
-            public static string BYTE => "{F4}";
-            public static string HEX => "{F5}";
-            public static string DEC => "{F6}";
-            public static string OCT => "{F7}";
-            public static string BIN => "{F8}";
-            public static string QWORD => "{F12}";
+            public static string Dword => "{F2}";
+            public static string Word => "{F3}";
+            public static string Byte => "{F4}";
+            public static string Hex => "{F5}";
+            public static string Dec => "{F6}";
+            public static string Oct => "{F7}";
+            public static string Bin => "{F8}";
+            public static string Qword => "{F12}";
             public static string A => "a";
             public static string B => "b";
             public static string C => "c";
@@ -241,9 +245,11 @@ namespace UiAutomationTest
             public static string Toggle => " ";
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
         private static class Fields
         {
-            public static readonly string Pi = "id:piButton";
+            public const string Pi = "id:piButton";
             public static string Result => "id:CalculatorResults";
             public static string Clear => "name:Clear";
             public static string One => "name:one";

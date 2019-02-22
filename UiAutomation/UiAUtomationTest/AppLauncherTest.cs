@@ -9,7 +9,6 @@
 //   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and limitations under the License.
 
-using System;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
@@ -20,30 +19,19 @@ namespace UiAutomationTest
     [TestClass]
     public class AppLauncherTest
     {
-        private static bool SupportsApps
+        [TestMethod, TestCategory("DefaultApps")]
+        public void AppLauncherResolveTest()
         {
-            get
-            {
-                var version = Environment.OSVersion.Version;
-                return version.Major > 6 || version.Major == 6 && version.Minor >= 2;
-            }
+            var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.1.6_8wekyb3d8bbwe");
+            Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
+            var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy");
+            Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
         }
 
         [TestMethod, TestCategory("Unit")]
         public void AppLauncherTest2()
         {
             Assert.IsFalse(new AppLauncher("bogus").Exists);
-        }
-
-        [TestMethod, TestCategory("DefaultApps")]
-        public void AppLauncherResolveTest()
-        {
-            var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.1.6_8wekyb3d8bbwe");
-            Debug.Print(launcher1.FullName);
-            Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
-            var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy");
-            Debug.Print(launcher2.FullName);
-            Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
         }
 
         [TestMethod, TestCategory("DefaultApps")]
@@ -54,7 +42,6 @@ namespace UiAutomationTest
             Assert.IsTrue(
                 fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null));
             Assert.IsTrue(fixture.IsUwpApp(), "Is UWP App");
-            var pid = fixture.ApplicationProcessId;
             // Switch to parent as that contains the close button. Elements on child windows are found too.
             // UWP apps have a container called Application Frame Host.
             // So they are not direct children of the desktop, unlike "normal" applications. 
@@ -71,8 +58,7 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.ClickControl("ControlType:ListItem && name:System"));
             Assert.IsTrue(fixture.WaitForControlAndClick("Name:About"));
             Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_WindowsVersionStatus_ValueTextBlock"));
-            Debug.Print(
-                "Version from settings: " + fixture.ValueOfControl("id:SystemSettings_PCSystem_WindowsVersionStatus_ValueTextBlock"));
+            Debug.Print("Version from settings: " + fixture.ValueOfControl("id:SystemSettings_PCSystem_WindowsVersionStatus_ValueTextBlock"));
             Debug.Print("buttons:" + fixture.ListOfControls(@"controltype:button"));
             Assert.IsTrue(fixture.ClickControl("name:Close Settings"), "Press Close Settings");
         }

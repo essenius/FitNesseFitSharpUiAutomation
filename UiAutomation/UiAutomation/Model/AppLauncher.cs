@@ -11,12 +11,14 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace UiAutomation.Model
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
     internal enum ActivateOptions
     {
         None = 0x00000000, // No flags set
@@ -98,6 +100,8 @@ namespace UiAutomation.Model
             }
         }
 
+        public bool Exists => _packageInfo != IntPtr.Zero;
+
         public string FullName { get; }
 
         private static bool IsWindows7OrLower
@@ -111,8 +115,6 @@ namespace UiAutomation.Model
             }
         }
 
-        public bool Exists => _packageInfo != IntPtr.Zero;
-
         public void Dispose()
         {
             if (_packageInfo == IntPtr.Zero) return;
@@ -121,19 +123,7 @@ namespace UiAutomation.Model
             GC.SuppressFinalize(this);
         }
 
-        public static bool IsUwpApp(IntPtr processHandle)
-        {
-            const long appModelErrorNoPackage = 15700L;
-
-            if (IsWindows7OrLower) return false;
-
-            // we're not interested in the actual family name, just in whether we get an error result 
-            // if we wanted to get the name, we needed to run the function again with the right buffer size
-            uint length = 0;
-            var stringBuilder = new StringBuilder(0);
-            var result = NativeMethods.GetPackageFamilyName(processHandle, ref length, stringBuilder);
-            return result != appModelErrorNoPackage;
-        }
+        ~AppLauncher() => Dispose();
 
         private static string GetFullName(string family)
         {
@@ -158,7 +148,19 @@ namespace UiAutomation.Model
             return names[0];
         }
 
-        ~AppLauncher() => Dispose();
+        public static bool IsUwpApp(IntPtr processHandle)
+        {
+            const long appModelErrorNoPackage = 15700L;
+
+            if (IsWindows7OrLower) return false;
+
+            // we're not interested in the actual family name, just in whether we get an error result 
+            // if we wanted to get the name, we needed to run the function again with the right buffer size
+            uint length = 0;
+            var stringBuilder = new StringBuilder(0);
+            var result = NativeMethods.GetPackageFamilyName(processHandle, ref length, stringBuilder);
+            return result != appModelErrorNoPackage;
+        }
 
         public int? Launch(string arguments)
         {

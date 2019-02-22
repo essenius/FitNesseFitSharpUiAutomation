@@ -33,6 +33,16 @@ namespace UiAutomationTest
             Assert.IsFalse(fixture.SwitchToParentWindow(), "cannot switch to parent if no app launched");
             Assert.IsFalse(fixture.IsUwpApp(), "IsUwpApp returns false if no app started");
             Assert.IsFalse(fixture.SwitchToWindow("irrelevant"), @"Can't switch to nonexisting window");
+            Assert.IsFalse(fixture.SwitchToProcess("irrelevant"));
+            Assert.IsFalse(fixture.MaximizeWindow(), "Can't maximize nonexisting window");
+            Assert.IsFalse(fixture.MinimizeWindow(), "Can't minimize nonexisting window");
+            Assert.IsFalse(fixture.MoveWindow(10, 10), "Can't move nonexisting window");
+            Assert.IsFalse(fixture.NormalWindow(), "Can't restore nonexisting window");
+            Assert.IsFalse(fixture.ResizeWindow(100,100), "Can't resize nonexisting window");
+            Assert.AreEqual(0, fixture.WindowWidth, "Width of nonexisting window is 0");
+            Assert.AreEqual(0, fixture.WindowHeight, "height of nonexisting window is 0");
+            Assert.AreEqual(0, fixture.WindowX, "X of nonexisting window is 0");
+            Assert.AreEqual(0, fixture.WindowY, "Y of nonexisting window is 0");
         }
 
         [TestMethod, TestCategory("DefaultApps")]
@@ -57,11 +67,26 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.CloseApplication(), "Close UWP app");
         }
 
-        [TestMethod, TestCategory("DefaultApps")]
-        public void FixtureNotePadCheckSetValue()
+        [TestMethod, TestCategory("Unit")]
+        public void UwpAppsAreSupportedTest()
         {
-            try
-            {
+            var accessor = new PrivateType(typeof(UiAutomationFixture));
+            var savedVersion = accessor.GetStaticProperty("PlatformVersion");
+            accessor.SetStaticProperty("PlatformVersion", new Version(5, 0, 1000, 10));
+            Assert.IsFalse(UiAutomationFixture.UwpAppsAreSupported);
+            accessor.SetStaticProperty("PlatformVersion", new Version(6, 1));
+            Assert.IsFalse(UiAutomationFixture.UwpAppsAreSupported);
+            accessor.SetStaticProperty("PlatformVersion", new Version(6, 2, 9200, 0));
+            Assert.IsTrue(UiAutomationFixture.UwpAppsAreSupported);
+            accessor.SetStaticProperty("PlatformVersion", new Version(7, 0));
+            Assert.IsTrue(UiAutomationFixture.UwpAppsAreSupported);
+            accessor.SetStaticProperty("PlatformVersion", savedVersion);
+        }
+
+        [TestMethod, TestCategory("DefaultApps"), 
+         DeploymentItem("NotepadScreenshotNoCursor.txt"), DeploymentItem("NotepadScreenshotWithCursor.txt")]
+        public void FixtureNotePadCheckSetValueResizeMoveAndScreenshot()
+        {
                 _fixture.SetTimeoutSeconds(1);
                 UiAutomationFixture.SearchBy("Name");
                 Assert.IsTrue(_fixture.CloseApplication(), "Stopping an app before it started should succeed");
@@ -69,24 +94,45 @@ namespace UiAutomationTest
                 Assert.IsTrue(_fixture.StartApplication("notepad.exe"), "Notepad started");
                 var result = _fixture.ListOfControls("ControlType:Edit");
                 Assert.IsTrue(result.Contains("Automation Id=15"), "Automation Id");
-                Assert.IsTrue(
-                    _fixture.SetValueOfControlTo("classname:edit",
+                Assert.IsTrue(_fixture.SetValueOfControlTo("classname:edit",
                         "The quick brown fox jumps over the lazy dog."), "Set Text");
                 Assert.IsTrue(_fixture.PressKey("^{END}{ENTER}Hello{ENTER}there"));
                 Assert.AreEqual("The quick brown fox jumps over the lazy dog.\r\nHello\r\nthere",
                     _fixture.ValueOfControl(@"controltype:edit"));
-                Console.WriteLine();
+
+                Assert.IsTrue(_fixture.ResizeWindow(400, 140), "Resize succeeds");
+                Assert.AreEqual(400, _fixture.WindowWidth);
+                Assert.AreEqual(140, _fixture.WindowHeight);
+                Assert.IsTrue(_fixture.MaximizeWindow());
+                Assert.AreNotEqual(400, _fixture.WindowWidth);
+                Assert.AreNotEqual(140, _fixture.WindowHeight);
+                Assert.IsTrue(_fixture.MinimizeWindow());
+                Debug.Print("W" +_fixture.WindowWidth);
+                Debug.Print("H" +_fixture.WindowHeight);
+                Debug.Print("X" + _fixture.WindowX);
+                Debug.Print("Y" + _fixture.WindowY);
+                Assert.IsTrue(_fixture.NormalWindow());
+                Assert.AreEqual(400, _fixture.WindowWidth);
+                Assert.AreEqual(140, _fixture.WindowHeight);
+                Assert.IsTrue(_fixture.MoveWindow(200, 250), "Move succeeds");
+                Assert.AreEqual(200, _fixture.WindowX);
+                Assert.AreEqual(250, _fixture.WindowY);
+                var snapshot = _fixture.WindowSnapshot(8);
+                var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.txt");
+                var expected2 = File.ReadAllText("NotepadScreenshotWithCursor.txt");
+                Assert.IsTrue(snapshot.Equals(expected1) || snapshot.Equals(expected2), "Snapshot matches");
+                Debug.Print(snapshot);
                 UiAutomationFixture.WaitSeconds(1);
                 Assert.IsTrue(_fixture.ClickControl("Close"));
                 Assert.IsTrue(_fixture.WaitForControl("Save"), "Wait for Save");
                 Assert.IsTrue(_fixture.ClickControl("Don't Save"), "Push Don't Save");
                 Thread.Sleep(500);
-            }
-            finally
-            {
+
+                // TODO: At first I had a 'finally' here, but that triggers when a test fails.
+                // Need to find another way to make Notepad close when a test fails
                 Assert.IsTrue(_fixture.CloseApplication(), "Stopping Notepad a second time should succeed (already stopped)");
-            }
         }
+
 
         [TestMethod, TestCategory("Office")]
         public void FixtureRunWord()
@@ -103,7 +149,7 @@ namespace UiAutomationTest
             Debug.Print("Process ID before:" + fixture.ApplicationProcessId);
             UiAutomationFixture.WaitSeconds(3);
             // todo: this fails when Word is already active when the test runs. Make more resilient
-            Assert.IsTrue(fixture.SwitchToWindowByProcessName(@"winword"), "Switched to Word");
+            Assert.IsTrue(fixture.SwitchToProcess(@"name:winword"), "Switched to Word");
 
             Debug.Print("Process ID after:" + fixture.ApplicationProcessId);
             fixture.PressKey(@"The Quick Brown Fox Jumps Over the Lazy Dog+{HOME}");
@@ -111,9 +157,7 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.ControlExists("Name:Heading 1"), "Heading 1 found");
             Assert.IsTrue(fixture.ClickControl("Heading 1"), "Click Heading 1");
             Assert.IsTrue(fixture.ClickControl("ControlType:Button && Name:Underline"), "Click Underline");
-            Debug.Print(
-                UiAutomationFixture.ListOfControlsFromRoot("ControlType:Window && ProcessId:" +
-                                                           fixture.ApplicationProcessId));
+            Debug.Print(UiAutomationFixture.ListOfControlsFromRoot("ControlType:Window && ProcessId:" + fixture.ApplicationProcessId));
             Assert.IsFalse(fixture.CloseApplication(), "Close application doesn't work due to dialog");
 
             // This is a tricky one, as it is a control on a modal dialog.

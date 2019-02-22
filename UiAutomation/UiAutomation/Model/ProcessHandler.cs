@@ -18,8 +18,8 @@ namespace UiAutomation.Model
 {
     internal class ProcessHandler
     {
+        private readonly int? _processId;
         private readonly string _processName;
-        private int? _processId;
 
         public ProcessHandler(int processId) => _processId = processId;
 

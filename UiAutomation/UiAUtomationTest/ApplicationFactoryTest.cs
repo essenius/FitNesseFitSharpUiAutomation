@@ -39,13 +39,6 @@ namespace UiAutomationTest
             Assert.IsNull(app);
         }
 
-        // not working yet. [TestMethod, TestCategory("DefaultApps")]
-        public void ApplicationFactoryStartUrlTest()
-        {
-            var app = ApplicationFactory.Start("ms-settings:", null);
-            Assert.IsInstanceOfType(app, typeof(ClassicApplication));
-        }
-
         [TestMethod, TestCategory("DefaultApps")]
         public void ApplicationFactoryStartUwpTest()
         {
@@ -56,7 +49,6 @@ namespace UiAutomationTest
             Debug.WriteLine(app1.ProcessId);
             Assert.IsInstanceOfType(app1, typeof(UwpApplication));
             Assert.AreEqual(app.ProcessId, app1.ProcessId);
-            //var app2 = factory.AttachToProcessByName("SystemSettings");
             Assert.IsTrue(app.Exit(false));
             Assert.IsFalse(app.IsActive, "App is not active");
             Assert.IsFalse(app1.IsActive, "App1 is not active");

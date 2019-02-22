@@ -9,38 +9,20 @@
 //   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and limitations under the License.
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using interop.UIAutomationCore;
 using UiAutomation.Model;
 
 namespace UiAutomation
 {
+    [Documentation("Extract cell values from a grid control (Query table interface).")]
     public class ExtractGrid
     {
         private readonly string _locator;
 
-        /// <summary>
-        ///     Import the table search criteria to identify the table we are interested in (XPath format).
-        /// </summary>
-        /// <param name="gridLocator">The locator (method:criterion) to find the grid control.</param>
         public ExtractGrid(string gridLocator) => _locator = gridLocator;
 
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Used by FixtureExplorer")]
-        public static Dictionary<string, string> FixtureDocumentation { get; } = new Dictionary<string, string>
-        {
-            {string.Empty, "Extract cell values from a grid control (Query table interface)"},
-            {nameof(Query), "Executes the query to extract cell values from a grid control"}
-        };
-
-        /// <summary>
-        ///     Executes the query to extract cell values from a grid control
-        /// </summary>
-        /// <returns>
-        ///     the table in a collection of rows, where each row is a collection of key/value pairs,
-        ///     or null if the control was not found or does not support the grid pattern
-        /// </returns>
+        [Documentation("Executes the query to extract cell values from a grid control. Returns null if not found")]
         public Collection<object> Query()
         {
             // we are not looking for a window here, so no need for the Window parameter
@@ -67,10 +49,7 @@ namespace UiAutomation
                 var cellCollection = new Collection<object>();
                 for (var column = 0; column < gridPattern.CurrentColumnCount; column++)
                 {
-                    if (headerCollection.Count <= column)
-                    {
-                        headerCollection.Add("Column " + (column + 1));
-                    }
+                    if (headerCollection.Count <= column) headerCollection.Add("Column " + (column + 1));
 
                     var cell = gridPattern.GetItem(row, column);
                     cellCollection.Add(new Collection<object> {headerCollection[column], Control.GetValue(cell)});
@@ -78,7 +57,6 @@ namespace UiAutomation
 
                 rowCollection.Add(cellCollection);
             }
-
             return rowCollection;
         }
     }

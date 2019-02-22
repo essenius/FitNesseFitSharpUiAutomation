@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -107,6 +108,28 @@ namespace UiAutomation.Model
             }
         }
 
+        public bool Click()
+        {
+            if (AutomationElement == null) return false;
+            if (AutomationElement.GetCurrentPattern(UIA_PatternIds.UIA_InvokePatternId) is IUIAutomationInvokePattern invokePattern)
+            {
+                try
+                {
+                    invokePattern.Invoke();
+                    return true;
+                }
+                catch (COMException)
+                {
+                    // some buttons (especially min/max/close) don't behave right on Invoke. Retry via mouse click.
+                }
+            }
+
+            // if the invoke pattern didn't exist, retry via a simulation of a mouse click.
+            return Mouse.Click(AutomationElement);
+        }
+
+        public bool Collapse() => AutomationElement != null && AutomationElement.CollapseAll(Automation);
+
         private static IUIAutomationCondition CreateCondition(LocatorCollection locators)
         {
             if (!locators.Any()) return Automation.CreateTrueCondition();
@@ -132,7 +155,15 @@ namespace UiAutomation.Model
             return new Control(parent, child, SearchType.Shallow, searchParser);
         }
 
-        private static Collection<IUIAutomationElement> FindAllElements(string searchCriterion, TreeScope myTreeScope,
+        public Control[] DescendantControls(string childSearchCriterion) =>
+            FindControls(childSearchCriterion, TreeScope.TreeScope_Descendants, AutomationElement);
+
+        public bool Exists() => AutomationElement != null || FindControl();
+
+        public bool Expand() => AutomationElement != null && AutomationElement.ExpandAll(Automation, 0);
+
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "False positive")]
+        private static IEnumerable<IUIAutomationElement> FindAllElements(string searchCriterion, TreeScope myTreeScope,
             IUIAutomationElement parent)
         {
             var childSearchParser = new SearchParser(searchCriterion);
@@ -146,6 +177,9 @@ namespace UiAutomation.Model
 
             return returnValue;
         }
+
+        public IEnumerable<IUIAutomationElement> FindAllElements(string searchCriterion) =>
+            FindAllElements(searchCriterion, _treeScope, AutomationElement);
 
         // I wanted to create a WaitForInputIdle method based on the WindowPattern implementation, but got a not implemented exception ...
 
@@ -173,6 +207,13 @@ namespace UiAutomation.Model
             return control;
         }
 
+        public bool FindControl()
+        {
+            var condition = CreateCondition(_searchParser.Locators);
+            AutomationElement = _parent.FindFirst(_treeScope, condition);
+            return AutomationElement != null;
+        }
+
         private static Control[] FindControls(string childSearchCriterion, TreeScope treeScope,
             IUIAutomationElement parent)
         {
@@ -180,22 +221,7 @@ namespace UiAutomation.Model
             return elementList.Select(element => new Control(Automation.GetRootElement(), element, SearchType.Shallow, null)).ToArray();
         }
 
-        internal static string GetValue(IUIAutomationElement targetControl)
-        {
-            if (targetControl == null) return Null;
-            if (new ValuePattern(targetControl).TryGet(out var returnValue)) return returnValue;
-            if (new RangeValuePattern(targetControl).TryGet(out returnValue)) return returnValue;
-            if (new TextPattern(targetControl).TryGet(out returnValue)) return returnValue;
-            if (new TogglePattern(targetControl).TryGet(out returnValue)) return returnValue;
-            if (new SelectionPattern(Automation, targetControl).TryGet(out returnValue)) return returnValue;
-            if (new SelectionItemPattern(targetControl).TryGet(out returnValue)) return returnValue;
-            return new FallBackPattern(Automation, targetControl).TryGet(out returnValue) ? returnValue : None;
-        }
-
-        public static Control[] RootChildControls(string childSearchCriterion) =>
-            FindControls(childSearchCriterion, TreeScope.TreeScope_Children, Automation.GetRootElement());
-
-        private IUIAutomationElement FindFirstControlUnder(IUIAutomationElement element, IUIAutomationTreeWalker walker, int controlType)
+        private static IUIAutomationElement FindFirstControlUnder(IUIAutomationElement element, IUIAutomationTreeWalker walker, int controlType)
         {
             var child = walker.GetFirstChildElement(element);
             while (child != null)
@@ -216,43 +242,16 @@ namespace UiAutomation.Model
             return child?.CurrentName?.StripUnicodeCharacters();
         }
 
-        public bool Click()
+        internal static string GetValue(IUIAutomationElement targetControl)
         {
-            if (AutomationElement == null) return false;
-            if (AutomationElement.GetCurrentPattern(UIA_PatternIds.UIA_InvokePatternId) is IUIAutomationInvokePattern invokePattern)
-            {
-                try
-                {
-                    invokePattern.Invoke();
-                    return true;
-                }
-                catch (COMException)
-                {
-                    // some buttons (especially min/max/close) don't behave right on Invoke. Retry via mouse click.
-                }
-            }
-
-            // if the invoke pattern didn't exist, retry via a simulation of a mouse click.
-            return Mouse.Click(AutomationElement);
-        }
-
-        public bool Collapse() => AutomationElement != null && AutomationElement.CollapseAll(Automation);
-
-        public Control[] DescendantControls(string childSearchCriterion) =>
-            FindControls(childSearchCriterion, TreeScope.TreeScope_Descendants, AutomationElement);
-
-        public bool Exists() => AutomationElement != null || FindControl();
-
-        public bool Expand() => AutomationElement != null && AutomationElement.ExpandAll(Automation, 0);
-
-        public IEnumerable<IUIAutomationElement> FindAllElements(string searchCriterion) =>
-            FindAllElements(searchCriterion, _treeScope, AutomationElement);
-
-        public bool FindControl()
-        {
-            var condition = CreateCondition(_searchParser.Locators);
-            AutomationElement = _parent.FindFirst(_treeScope, condition);
-            return AutomationElement != null;
+            if (targetControl == null) return Null;
+            if (new ValuePattern(targetControl).TryGet(out var returnValue)) return returnValue;
+            if (new RangeValuePattern(targetControl).TryGet(out returnValue)) return returnValue;
+            if (new TextPattern(targetControl).TryGet(out returnValue)) return returnValue;
+            if (new TogglePattern(targetControl).TryGet(out returnValue)) return returnValue;
+            if (new SelectionPattern(Automation, targetControl).TryGet(out returnValue)) return returnValue;
+            if (new SelectionItemPattern(targetControl).TryGet(out returnValue)) return returnValue;
+            return new FallBackPattern(Automation, targetControl).TryGet(out returnValue) ? returnValue : None;
         }
 
         public bool IsEnabled() => AutomationElement != null && AutomationElement.CurrentIsEnabled != 0;
@@ -264,6 +263,9 @@ namespace UiAutomation.Model
             var propertyId = int.TryParse(propertyName, out var property) ? property : Properties.Map(propertyName);
             return AutomationElement.GetCurrentPropertyValue(propertyId);
         }
+
+        public static Control[] RootChildControls(string childSearchCriterion) =>
+            FindControls(childSearchCriterion, TreeScope.TreeScope_Children, Automation.GetRootElement());
 
         public string RowNumberContaining(string value)
         {
@@ -281,7 +283,6 @@ namespace UiAutomation.Model
                 {
                     return (x + 1).ToString(CultureInfo.InvariantCulture);
                 }
-
                 // row numbers are zero based, we want 1-based.                        
             }
 

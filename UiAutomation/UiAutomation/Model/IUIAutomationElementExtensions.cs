@@ -9,15 +9,24 @@
 //   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and limitations under the License.
 
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using interop.UIAutomationCore;
+using ImageHandler;
 
 namespace UiAutomation.Model
 {
-    // ReSharper disable once InconsistentNaming
-    // Justification: following Microsoft's naming of this assembly
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "following Microsoft's naming of this assembly")]
     internal static class IUIAutomationElementExtensions
     {
+        internal static Snapshot Capture(this IUIAutomationElement element, int border = 0)
+        {
+            var rect = element.CurrentBoundingRectangle;
+            var bounds = new Rectangle(rect.left + border, rect.top + border,
+                rect.right - rect.left - 2 * border, rect.bottom - rect.top - 2 * border);
+            return Snapshot.CaptureScreen(bounds);
+        }
+
         public static bool CollapseAll(this IUIAutomationElement element, IUIAutomation automation)
         {
             if (element.CurrentIsOffscreen != 0) return false;

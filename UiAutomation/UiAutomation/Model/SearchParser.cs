@@ -44,15 +44,15 @@ namespace UiAutomation.Model
 
         public LocatorCollection Locators { get; }
 
-        public bool IsWindowSearch()
-        {
-            return Locators.Any(locator => locator.IsWindowSearch);
-        }
-
         public bool IsValidProcessCondition()
         {
             var validProcessConditions = new List<int> {UIA_PropertyIds.UIA_ProcessIdPropertyId, UIA_PropertyIds.UIA_NamePropertyId};
             return Locators.Count == 1 && validProcessConditions.Contains(Locators[0].ConditionType);
+        }
+
+        public bool IsWindowSearch()
+        {
+            return Locators.Any(locator => locator.IsWindowSearch);
         }
     }
 }

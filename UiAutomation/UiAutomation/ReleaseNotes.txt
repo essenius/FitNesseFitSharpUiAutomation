@@ -5,3 +5,6 @@
 2.1.0 Introduced SwitchToProcess, WaitForProcess and WaitUntilProcessEnds; updated FallBackPattern to search for child Text controls 
       (as used a lot in UWP apps); introduced FirstTextUnder function; allowed UWP apps selection by family name as well as full name 
 	  (vs. just full name before); migrated Calculator tests to Windows UWP version of Calc.
+2.2.0 Introduced [Documentation] attributes to replace FixtureDocumentation dictionary; 
+	  introduced MaximizeWindow, MinimizeWindow, NormalWindow, MoveWindow, ResizeWindow; introduced Margin parameter for Screenshots;
+	  cleaned up some inspection findings 
