@@ -25,7 +25,9 @@ namespace UiAutomationTest
          SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global", Justification = "False positive")]
         public TestContext TestContext { get; set; }
 
-        [TestMethod, TestCategory("Unit"), DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\TestData.xml",
+        [TestMethod, TestCategory("Unit"), DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\" +
+                                                                                                          "TestData.xml" +
+                                                                                                          "",
              "SearchParser.AndCriteria", DataAccessMethod.Sequential), DeploymentItem("UiAutomationTest\\TestData.xml")]
         public void SearchParserAndCriteriaTest()
         {

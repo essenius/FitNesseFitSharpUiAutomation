@@ -8,3 +8,7 @@
 2.2.0 Introduced [Documentation] attributes to replace FixtureDocumentation dictionary; 
 	  introduced MaximizeWindow, MinimizeWindow, NormalWindow, MoveWindow, ResizeWindow; introduced Margin parameter for Screenshots;
 	  cleaned up some inspection findings 
+2.3.0 Introduced ApplicationIsActive to find out if the application under test is running;
+      updated ApplicationProcessId to return a nullable int rather than an int, and made it return null if the SUT is null;
+	  introduced tests to run command files;
+	  replaced Notepad screenshots.

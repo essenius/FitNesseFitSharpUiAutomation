@@ -26,5 +26,6 @@ namespace UiAutomationTest
             Assert.IsNotNull(app.MainWindowHandle);
             Assert.IsTrue(app.Exit(false));
         }
+
     }
 }

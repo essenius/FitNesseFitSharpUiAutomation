@@ -55,7 +55,10 @@ namespace UiAutomation
         private Control _window;
 
         [Documentation("The process Id of the currently active application under test")]
-        public int ApplicationProcessId => _sut.ProcessId;
+        public int? ApplicationProcessId => _sut?.ProcessId;
+
+        [Documentation("The appliation under test is active")]
+        public bool ApplicationIsActive => _sut?.IsActive ?? false;
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
          SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local", Justification = "Used in unit test (PrivateType)")]
@@ -318,7 +321,14 @@ namespace UiAutomation
         {
             if (app == null) return false;
             _sut = app;
-            app.WaitForInputIdle();
+            try
+            {
+                app.WaitForInputIdle();
+            }
+            catch (InvalidOperationException)
+            {
+                // ignore; can happen with processes without graphical user interface
+            }
             _window = app.WindowControl;
             if (_window == null) return false;
             var found = _window.WaitTillFound(_defaultTimeoutInDeciSeconds);
