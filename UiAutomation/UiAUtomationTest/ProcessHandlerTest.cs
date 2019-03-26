@@ -5,18 +5,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 using UiAutomationTest;
 
-
 namespace UiAUtomationTest
 {
     [TestClass]
     public class ProcessHandlerTest
     {
-        [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(ArgumentException), "Could not understand process condition id:1")]
-        public void ProcessHandlerTest1()
-        {
-            var handler = new ProcessHandler("id:1");
-        }
-
         [TestMethod, TestCategory("Experiments")]
         public void ProcessHandlerDiagsTest()
         {
@@ -26,7 +19,8 @@ namespace UiAUtomationTest
             for (var i = 0; i < elements.Length; i++)
             {
                 var element = elements.GetElement(i);
-                Debug.Print(element.CurrentClassName + ";" + element.CurrentName + ";" + element.CurrentProcessId + ";" + element.CurrentFrameworkId + ";" + element.CurrentNativeWindowHandle);
+                Debug.Print(element.CurrentClassName + ";" + element.CurrentName + ";" + element.CurrentProcessId + ";" + element.CurrentFrameworkId +
+                            ";" + element.CurrentNativeWindowHandle);
             }
             Debug.Print("---");
             var frameElements = root.FindAll(TreeScope.TreeScope_Children,
@@ -51,6 +45,12 @@ namespace UiAUtomationTest
                 }
                 Debug.Print("--");
             }
+        }
+
+        [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(ArgumentException), "Could not understand process condition id:1")]
+        public void ProcessHandlerTest1()
+        {
+            var handler = new ProcessHandler("id:1");
         }
     }
 }

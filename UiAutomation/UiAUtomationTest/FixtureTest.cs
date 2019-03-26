@@ -22,6 +22,7 @@ namespace UiAutomationTest
     [TestClass]
     public class FixtureTest
     {
+        private const string WordPath = @"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE";
         private UiAutomationFixture _fixture;
 
         [TestMethod, TestCategory("Unit")]
@@ -149,8 +150,6 @@ namespace UiAutomationTest
             }
         }
 
-        private const string WordPath = @"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE";
-
         [TestMethod, TestCategory("Office")]
         public void FixtureRunWord()
         {
@@ -186,11 +185,10 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("Office")]
         public void FixtureStartAndSwitchTestOnWord2016()
         {
-            
             UiAutomationFixture.TimeoutSeconds = 3;
             Assert.IsFalse(_fixture.SwitchToProcess(@"name:winword"), "Word not running already");
             _fixture.NoAutomaticSwitchToStartedApplication();
-            UiAutomationFixture.TimeoutSeconds =10;
+            UiAutomationFixture.TimeoutSeconds = 10;
             // command line switch /w opens Word with a blank page.
             Assert.IsTrue(_fixture.StartApplicationWithArguments(WordPath, "/w /q"), @"first start of Winword succeeds (no autoswitch)");
             var processId = _fixture.ApplicationProcessId;
@@ -284,7 +282,7 @@ namespace UiAutomationTest
         public void SetUp()
         {
             UiAutomationFixture.TimeoutSeconds = 3;
-            _fixture = new UiAutomationFixture();            
+            _fixture = new UiAutomationFixture();
         }
 
         [TestMethod, TestCategory("Unit")]

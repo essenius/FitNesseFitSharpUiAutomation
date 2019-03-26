@@ -10,7 +10,6 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace UiAutomation.Model
 {
@@ -54,10 +53,10 @@ namespace UiAutomation.Model
                 if (!IsActive) return null;
                 Control control = null;
                 process.WaitWithTimeoutTill(process1 =>
-                    {
-                        control = Control.CreateContainedWindowControl(containerCriterion, "ProcessId:" + process1.Id);
-                        return control != null;
-                    });
+                {
+                    control = Control.CreateContainedWindowControl(containerCriterion, "ProcessId:" + process1.Id);
+                    return control != null;
+                });
                 return control;
             }
         }

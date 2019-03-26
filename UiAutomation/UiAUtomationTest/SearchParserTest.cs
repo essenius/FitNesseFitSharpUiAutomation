@@ -51,10 +51,6 @@ namespace UiAutomationTest
             }
         }
 
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentNullException)),
-         SuppressMessage("ReSharper", "ObjectCreationAsStatement", Justification = "Expecting exception")]
-        public void SearchParserFindElement1NullTest() => new SearchParser(null);
-
         [TestMethod, TestCategory("Unit")]
         public void SearchParserCheckValidProcessCondition()
         {
@@ -64,5 +60,9 @@ namespace UiAutomationTest
             Assert.IsFalse(new SearchParser("id:123").IsValidProcessCondition());
             Assert.IsFalse(new SearchParser("ProcessId:123 && id:abc").IsValidProcessCondition());
         }
+
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentNullException)),
+         SuppressMessage("ReSharper", "ObjectCreationAsStatement", Justification = "Expecting exception")]
+        public void SearchParserFindElement1NullTest() => new SearchParser(null);
     }
 }

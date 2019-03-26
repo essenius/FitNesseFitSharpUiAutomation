@@ -22,11 +22,10 @@ namespace UiAutomationTest
     [TestClass]
     public class WpfDemoAppTests
     {
-        const string WpfDemoAppPath = "..\\..\\..\\WpfDemoApp\\bin\\debug\\WpfDemoApp.exe";
+        private const string WpfDemoAppPath = "..\\..\\..\\WpfDemoApp\\bin\\debug\\WpfDemoApp.exe";
+        private static UiAutomationFixture _fixture;
 
         private static int _testCounter;
-        private static UiAutomationFixture _fixture;
-        private static readonly string TempFolder = Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar);
 
         private static readonly string[,] DataGridValues =
         {
@@ -37,10 +36,19 @@ namespace UiAutomationTest
             {"104", "Resolved", "http://localhost:8080"}
         };
 
+        private static readonly string TempFolder = Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar);
+
+        [ClassCleanup]
+        public static void CleanupTestSuite()
+        {
+            Assert.IsTrue(_fixture.CloseApplication(), "WPF Demo App stopped");
+            UiAutomationFixture.TimeoutSeconds = 3;
+        }
+
         [ClassInitialize]
         public static void PrepareTestSuite(TestContext testContext)
         {
-            UiAutomationFixture.TimeoutSeconds = 10;            
+            UiAutomationFixture.TimeoutSeconds = 10;
             _fixture = new UiAutomationFixture();
             _fixture.SetAutomaticSwitchToStartedApplication();
             Assert.IsTrue(_fixture.StartApplicationWithWorkingFolder(WpfDemoAppPath, TempFolder), "WpfDemoApp started with working folder");
@@ -59,11 +67,27 @@ namespace UiAutomationTest
             UiAutomationFixture.SearchBy("Name");
         }
 
-        [ClassCleanup]
-        public static void CleanupTestSuite()
+        private static void TestTable(string searchCriterion, IReadOnlyList<string> header, string[,] expectedValues)
         {
-            Assert.IsTrue(_fixture.CloseApplication(), "WPF Demo App stopped");
-            UiAutomationFixture.TimeoutSeconds = 3;
+            var etv = new ExtractGrid(searchCriterion);
+            var table = etv.Query();
+            Assert.IsNotNull(table);
+            Assert.AreEqual(expectedValues.GetLength(0), table.Count, "Row Count for {0}", searchCriterion);
+            for (var row = 0; row < table.Count; row++)
+            {
+                var rowCollection = table[row] as Collection<object>;
+                Assert.IsNotNull(rowCollection);
+                Assert.AreEqual(expectedValues.GetLength(1), rowCollection.Count, "Column Count for {0}",
+                    searchCriterion);
+                for (var column = 0; column < rowCollection.Count; column++)
+                {
+                    var columnCollection = rowCollection[column] as Collection<object>;
+                    Assert.IsNotNull(columnCollection);
+                    Assert.AreEqual(2, columnCollection.Count, "Cell Count for {0}({1},{2})", searchCriterion, row, column);
+                    Assert.AreEqual(header[column], columnCollection[0], "Header for {0}({1},{2})", searchCriterion, row, column);
+                    Assert.AreEqual(expectedValues[row, column], columnCollection[1], "value for {0}({1},{2})", searchCriterion, row, column);
+                }
+            }
         }
 
         [TestMethod, TestCategory("DemoApp")]
@@ -368,22 +392,6 @@ namespace UiAutomationTest
         }
 
         [TestMethod, TestCategory("DemoApp")]
-        public void WpfDemoControlSearchOnHelpTextTest()
-        {
-            Assert.IsTrue(_fixture.SelectItem("caption:Usual Controls"), "Select 'Usual Controls' tab");
-            UiAutomationFixture.SearchBy("Tooltip");
-            var control1 = _fixture.GetControl("HelpText:Checkbox with two states");
-            Assert.IsNotNull(control1, "Found a control with two states");
-            Assert.AreEqual("CheckBox1", control1.AutomationElement.CurrentAutomationId, "Found right two state checkbox");
-            var control2 = _fixture.GetControl("HelpText:CheckBox with three states");
-            Assert.IsNotNull(control2, "Found a control with three states");
-            Assert.AreEqual("ThreeStateCheckBox", control2.AutomationElement.CurrentAutomationId, "Found right three state checkbox");
-            var control3 = _fixture.GetControl("HelpText:");
-            Assert.IsNotNull(control3.AutomationElement, "Found a control without helptext");
-            Assert.IsFalse(string.IsNullOrEmpty(control3.AutomationElement.CurrentClassName), "ClassName is not null or empty");
-        }
-
-        [TestMethod, TestCategory("DemoApp")]
         public void WpfDemoControlGetAllPropertiesTest()
         {
             Assert.IsTrue(_fixture.SelectItem("Caption:Data Grid"), "Select 'Data Grid' tab");
@@ -410,27 +418,20 @@ namespace UiAutomationTest
             Assert.AreEqual("PasswordBox1", control2.AutomationElement.CurrentAutomationId, "Found right (only) password control");
         }
 
-        private static void TestTable(string searchCriterion, IReadOnlyList<string> header, string[,] expectedValues)
+        [TestMethod, TestCategory("DemoApp")]
+        public void WpfDemoControlSearchOnHelpTextTest()
         {
-            var etv = new ExtractGrid(searchCriterion);
-            var table = etv.Query();
-            Assert.IsNotNull(table);
-            Assert.AreEqual(expectedValues.GetLength(0), table.Count, "Row Count for {0}", searchCriterion);
-            for (var row = 0; row < table.Count; row++)
-            {
-                var rowCollection = table[row] as Collection<object>;
-                Assert.IsNotNull(rowCollection);
-                Assert.AreEqual(expectedValues.GetLength(1), rowCollection.Count, "Column Count for {0}",
-                    searchCriterion);
-                for (var column = 0; column < rowCollection.Count; column++)
-                {
-                    var columnCollection = rowCollection[column] as Collection<object>;
-                    Assert.IsNotNull(columnCollection);
-                    Assert.AreEqual(2, columnCollection.Count, "Cell Count for {0}({1},{2})", searchCriterion, row, column);
-                    Assert.AreEqual(header[column], columnCollection[0], "Header for {0}({1},{2})", searchCriterion, row, column);
-                    Assert.AreEqual(expectedValues[row, column], columnCollection[1], "value for {0}({1},{2})", searchCriterion, row, column);
-                }
-            }
+            Assert.IsTrue(_fixture.SelectItem("caption:Usual Controls"), "Select 'Usual Controls' tab");
+            UiAutomationFixture.SearchBy("Tooltip");
+            var control1 = _fixture.GetControl("HelpText:Checkbox with two states");
+            Assert.IsNotNull(control1, "Found a control with two states");
+            Assert.AreEqual("CheckBox1", control1.AutomationElement.CurrentAutomationId, "Found right two state checkbox");
+            var control2 = _fixture.GetControl("HelpText:CheckBox with three states");
+            Assert.IsNotNull(control2, "Found a control with three states");
+            Assert.AreEqual("ThreeStateCheckBox", control2.AutomationElement.CurrentAutomationId, "Found right three state checkbox");
+            var control3 = _fixture.GetControl("HelpText:");
+            Assert.IsNotNull(control3.AutomationElement, "Found a control without helptext");
+            Assert.IsFalse(string.IsNullOrEmpty(control3.AutomationElement.CurrentClassName), "ClassName is not null or empty");
         }
 
         [TestMethod, TestCategory("DemoApp")]

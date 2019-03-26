@@ -17,13 +17,13 @@ namespace UiAUtomationTest
     [TestClass]
     public class WindowTest
     {
-        [TestMethod ,TestCategory("Unit")]
+        [TestMethod, TestCategory("Unit")]
         public void WindowTestNull()
         {
             var window = new Window(null);
             Assert.IsFalse(window.Maximize());
             Assert.IsFalse(window.Minimize());
-            Assert.IsFalse(window.Move(10,10));
+            Assert.IsFalse(window.Move(10, 10));
             Assert.IsFalse(window.Resize(100, 100));
             Assert.IsFalse(window.IsTopmost());
         }

@@ -20,11 +20,10 @@ namespace UiAUtomationTest
     [TestClass]
     public class ListOfControlsTest
     {
-
         [TestMethod, TestCategory("DefaultApps")]
         public void ListOfControlsQueryTest()
         {
-            var listOfControls = new ListOfControls(null, "ControlType:Window" );
+            var listOfControls = new ListOfControls(null, "ControlType:Window");
             var result = listOfControls.Query();
             var firstRow = result[0] as Collection<object>;
             Assert.IsNotNull(firstRow);
@@ -72,6 +71,5 @@ namespace UiAUtomationTest
             Assert.IsNull(emptyResult);
             fixture.ForcedCloseApplication();
         }
-
     }
 }

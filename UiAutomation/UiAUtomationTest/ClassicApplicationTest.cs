@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
@@ -24,6 +23,5 @@ namespace UiAutomationTest
             ExtensionFunctions.TimeoutInMilliseconds = 1000;
             Assert.IsTrue(app.Exit(false));
         }
-
     }
 }

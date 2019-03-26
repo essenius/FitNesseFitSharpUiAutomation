@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -130,9 +129,10 @@ namespace UiAutomation.Model
 
         private static IUIAutomationCondition CreateCondition(LocatorCollection locators)
         {
-            if (!locators.Any() || locators.Count == 1 && string.IsNullOrEmpty(locators[0].Method )&& string.IsNullOrEmpty(locators[0].Criterion)) return Automation.CreateTrueCondition();
+            if (!locators.Any() || locators.Count == 1 && string.IsNullOrEmpty(locators[0].Method) && string.IsNullOrEmpty(locators[0].Criterion))
+                return Automation.CreateTrueCondition();
             var propertyCondition = locators.Select(locator =>
-                Automation.CreatePropertyConditionEx(locator.ConditionType, locator.ConditionValue, 
+                Automation.CreatePropertyConditionEx(locator.ConditionType, locator.ConditionValue,
                     PropertyConditionFlags.PropertyConditionFlags_IgnoreCase)).ToList();
             var arr = propertyCondition.ToArray();
             return Automation.CreateAndConditionFromArray(arr);
@@ -182,7 +182,7 @@ namespace UiAutomation.Model
             return returnValue;
         }
 
-        public IEnumerable<IUIAutomationElement> FindAllElements(string searchCriterion) => 
+        public IEnumerable<IUIAutomationElement> FindAllElements(string searchCriterion) =>
             FindAllElements(searchCriterion, _treeScope, AutomationElement);
 
         // I wanted to create a WaitForInputIdle method based on the WindowPattern implementation, but got a not implemented exception ...

@@ -19,16 +19,8 @@ namespace UiAutomationTest
     [TestClass]
     public class CalcTest
     {
-        private static int _testCounter;
         private static UiAutomationFixture _fixture;
-
-        [TestMethod, TestCategory("Calc")]
-        public void CalcGetChildValue()
-        {
-            _fixture.PressKey("456");
-            Assert.AreEqual("456", _fixture.FirstTextUnder(Fields.Result), "The first text control under the Result box contains 456");
-            Assert.AreEqual("456", _fixture.ValueOfControl(Fields.Result));
-        }
+        private static int _testCounter;
 
         [TestMethod, TestCategory("Calc")]
         public void CalcCheckDefaultResult()
@@ -114,6 +106,22 @@ namespace UiAutomationTest
         }
 
         [TestMethod, TestCategory("Calc")]
+        public void CalcCheckWindowValue()
+        {
+            UiAutomationFixture.SearchBy("ControlType");
+            // also test legacy pattern get since we don't use the Window pattern yet.
+            Assert.AreEqual("Calculator", _fixture.ValueOfControl("Window"), "value of Window is 'Calculator'");
+        }
+
+        [TestMethod, TestCategory("Calc")]
+        public void CalcGetChildValue()
+        {
+            _fixture.PressKey("456");
+            Assert.AreEqual("456", _fixture.FirstTextUnder(Fields.Result), "The first text control under the Result box contains 456");
+            Assert.AreEqual("456", _fixture.ValueOfControl(Fields.Result));
+        }
+
+        [TestMethod, TestCategory("Calc")]
         public void CalcVolume()
         {
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click menu");
@@ -132,14 +140,6 @@ namespace UiAutomationTest
             Assert.AreEqual("37.85412", _fixture.ValueOfControl(Fields.Output), "Output OK");
         }
 
-        [TestMethod, TestCategory("Calc")]
-        public void CalcCheckWindowValue()
-        {
-            UiAutomationFixture.SearchBy("ControlType");
-            // also test legacy pattern get since we don't use the Window pattern yet.
-            Assert.AreEqual("Calculator", _fixture.ValueOfControl("Window"), "value of Window is 'Calculator'");
-        }
-
         [ClassCleanup]
         public static void TearDown()
         {
@@ -153,7 +153,7 @@ namespace UiAutomationTest
             UiAutomationFixture.TimeoutSeconds = 5;
             Assert.IsFalse(_fixture.SwitchToProcess("name:Calculator"), "Check there is no calculator running already");
             _fixture.NoAutomaticSwitchToStartedApplication();
-            _fixture.StartApplication("calc.exe"); 
+            _fixture.StartApplication("calc.exe");
             Assert.IsTrue(UiAutomationFixture.WaitForProcess("name:Calculator"), "Wait for process Calculator");
             Assert.IsTrue(_fixture.SwitchToProcess("name:Calculator"), "Switch to calc app");
         }
@@ -167,106 +167,106 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.PressKey(Win10AppKeys.ClearAllInput));
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
-        private static class Win10AppKeys
-        {
-            public static string StandardMode => "%1";
-            public static string ScientificMode => "%2";
-            public static string ProgrammerMode => "%3";
-            public static string DateCalculationMode => "%4";
-            public static string ClearAllInput => "{Esc}";
-            public static string ClearCurrentInput => "{Del}";
-            public static string CalcHistoryToggle => "^h";
-            public static string StoreInMemory => "^m";
-            public static string AddToMemory => "^p";
-            public static string SubtractFromMemory => "^q";
-            public static string RecallFromMemory => "^r";
-            public static string ClearMemory => "^l";
-            public static string ClearHistory => "^D";
-            public static string MoveUpInHistory => "{UP}";
-            public static string MoveDownInHistory => "{DOWN}";
-            public static string PlusMinus => "{F9}";
-            public static string Reciprical => "r";
-            public static string SquareRoot => "@";
-            public static string Percent => "{%}";
-            public static string Degrees => "{F3}";
-            public static string Radians => "{F4}";
-            public static string Grad => "{F5}";
-            public static string _10X => "^g";
-            public static string Cosh => "^o";
-            public static string Sinh => "^s";
-            public static string Tanh => "^t";
-            public static string ArcSin => "S";
-            public static string ArcCos => "O";
-            public static string ArcTan => "T";
-            public static string YRoot => "^y";
-            public static string Mod => "d";
-            public static string Log => "l";
-            public static string Dms => "m";
-            public static string Ln => "n";
-            public static string Ex => "^n";
-            public static string Cos => "o";
-            public static string Sin => "s";
-            public static string Tan => "t";
-            public static string Fe => "v";
-            public static string Exp => "x";
-            public static string XpowY => "y";
-            public static string X3 => "#";
-            public static string Nfaculty => "!";
-            public static string Mode => "{%}";
-            public static string Dword => "{F2}";
-            public static string Word => "{F3}";
-            public static string Byte => "{F4}";
-            public static string Hex => "{F5}";
-            public static string Dec => "{F6}";
-            public static string Oct => "{F7}";
-            public static string Bin => "{F8}";
-            public static string Qword => "{F12}";
-            public static string A => "a";
-            public static string B => "b";
-            public static string C => "c";
-            public static string D => "d";
-            public static string E => "e";
-            public static string RoL => "j";
-            public static string RoR => "k";
-            public static string Lsh => "<";
-            public static string Rsh => ">";
-            public static string Modulo => "%";
-            public static string Or => "|";
-            public static string Xor => "{^}";
-            public static string Not => "~";
-            public static string And => "&";
-            public static string Toggle => " ";
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
+        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness"),
+         SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
         private static class Fields
         {
             public const string Pi = "id:piButton";
-            public static string Result => "id:CalculatorResults";
-            public static string Clear => "name:Clear";
-            public static string One => "name:one";
-            public static string Two => "name:two";
-            public static string Three => "NamE:three";
-            public static string Negate => "id:negateButton";
-            public static string Menu => "name:Menu";
-            public static string Scientific => "name:Scientific Calculator";
-            public static string Standard => "name:Standard Calculator";
-            public static string Volume => "name:Volume Converter";
-            public static string OutputUnit => "id:Units1";
-            public static string Output => "id:Value1";
-            public static string InputUnit => "id:Units2";
-            public static string Input => "id:Value2";
-            public static string Degrees => "id:DegButton";
-            public static string Radians => "id:RadButton";
-            public static string Gradians => "id:GradButton";
-            public static string Sine => "name:Sine";
             public static string CalculatorExpression => "id:CalculatorExpression";
-            public static string MemoryClear => "id:ClearMemoryButton";
+            public static string Clear => "name:Clear";
+            public static string Degrees => "id:DegButton";
+            public static string Gradians => "id:GradButton";
+            public static string Input => "id:Value2";
+            public static string InputUnit => "id:Units2";
             public static string MemoryAdd => "name:Memory Add";
+            public static string MemoryClear => "id:ClearMemoryButton";
+            public static string Menu => "name:Menu";
+            public static string Negate => "id:negateButton";
             public static string NonExisting => "name:non-existing control";
+            public static string One => "name:one";
+            public static string Output => "id:Value1";
+            public static string OutputUnit => "id:Units1";
+            public static string Radians => "id:RadButton";
+            public static string Result => "id:CalculatorResults";
+            public static string Scientific => "name:Scientific Calculator";
+            public static string Sine => "name:Sine";
+            public static string Standard => "name:Standard Calculator";
+            public static string Three => "NamE:three";
+            public static string Two => "name:two";
+            public static string Volume => "name:Volume Converter";
+        }
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness"),
+         SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
+        private static class Win10AppKeys
+        {
+            public static string _10X => "^g";
+            public static string A => "a";
+            public static string AddToMemory => "^p";
+            public static string And => "&";
+            public static string ArcCos => "O";
+            public static string ArcSin => "S";
+            public static string ArcTan => "T";
+            public static string B => "b";
+            public static string Bin => "{F8}";
+            public static string Byte => "{F4}";
+            public static string C => "c";
+            public static string CalcHistoryToggle => "^h";
+            public static string ClearAllInput => "{Esc}";
+            public static string ClearCurrentInput => "{Del}";
+            public static string ClearHistory => "^D";
+            public static string ClearMemory => "^l";
+            public static string Cos => "o";
+            public static string Cosh => "^o";
+            public static string D => "d";
+            public static string DateCalculationMode => "%4";
+            public static string Dec => "{F6}";
+            public static string Degrees => "{F3}";
+            public static string Dms => "m";
+            public static string Dword => "{F2}";
+            public static string E => "e";
+            public static string Ex => "^n";
+            public static string Exp => "x";
+            public static string Fe => "v";
+            public static string Grad => "{F5}";
+            public static string Hex => "{F5}";
+            public static string Ln => "n";
+            public static string Log => "l";
+            public static string Lsh => "<";
+            public static string Mod => "d";
+            public static string Mode => "{%}";
+            public static string Modulo => "%";
+            public static string MoveDownInHistory => "{DOWN}";
+            public static string MoveUpInHistory => "{UP}";
+            public static string Nfaculty => "!";
+            public static string Not => "~";
+            public static string Oct => "{F7}";
+            public static string Or => "|";
+            public static string Percent => "{%}";
+            public static string PlusMinus => "{F9}";
+            public static string ProgrammerMode => "%3";
+            public static string Qword => "{F12}";
+            public static string Radians => "{F4}";
+            public static string RecallFromMemory => "^r";
+            public static string Reciprical => "r";
+            public static string RoL => "j";
+            public static string RoR => "k";
+            public static string Rsh => ">";
+            public static string ScientificMode => "%2";
+            public static string Sin => "s";
+            public static string Sinh => "^s";
+            public static string SquareRoot => "@";
+            public static string StandardMode => "%1";
+            public static string StoreInMemory => "^m";
+            public static string SubtractFromMemory => "^q";
+            public static string Tan => "t";
+            public static string Tanh => "^t";
+            public static string Toggle => " ";
+            public static string Word => "{F3}";
+            public static string X3 => "#";
+            public static string Xor => "{^}";
+            public static string XpowY => "y";
+            public static string YRoot => "^y";
         }
     }
 }

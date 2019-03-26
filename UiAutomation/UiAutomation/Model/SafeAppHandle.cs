@@ -16,8 +16,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace UiAutomation.Model
 {
-    [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
-    [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
+    [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true), SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
     internal class SafeAppHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         private const long Success = 0;
@@ -26,13 +25,13 @@ namespace UiAutomation.Model
         {
         }
 
+        public bool AppExists => handle != IntPtr.Zero;
+
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
             if (handle == IntPtr.Zero) return true;
             return NativeMethods.ClosePackageInfo(handle) == Success;
         }
-
-        public bool AppExists => handle != IntPtr.Zero;
     }
 }

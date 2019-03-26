@@ -61,7 +61,8 @@ namespace UiAutomation.Model
 
         // we'll deal with it by catching exceptions. See AppLauncher
         [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
-        public static extern int OpenPackageInfoByFullName([MarshalAs(UnmanagedType.LPWStr)] string fullName, uint reserved, out SafeAppHandle packageInfo);
+        public static extern int OpenPackageInfoByFullName([MarshalAs(UnmanagedType.LPWStr)] string fullName, uint reserved,
+            out SafeAppHandle packageInfo);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);

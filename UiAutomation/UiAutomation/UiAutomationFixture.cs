@@ -12,8 +12,6 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using ImageHandler;
@@ -51,15 +49,28 @@ namespace UiAutomation
         private BaseApplication _sut;
         private Control _window;
 
-        [Documentation("The process Id of the currently active application under test")]
-        public int? ApplicationProcessId => _sut?.ProcessId;
-
         [Documentation("The appliation under test is active")]
         public bool ApplicationIsActive => _sut?.IsActive ?? false;
+
+        [Documentation("The process Id of the currently active application under test")]
+        public int? ApplicationProcessId => _sut?.ProcessId;
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
          SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local", Justification = "Used in unit test (PrivateType)")]
         private static Version PlatformVersion { get; set; } = Environment.OSVersion.Version;
+
+        [Documentation("Set/get the default timeout for all wait commands. Default value is 3 seconds. Max is 3600 * 24 * 24 (i.e. 24 days)")]
+        public static double TimeoutSeconds
+        {
+            get => ExtensionFunctions.TimeoutInMilliseconds / 1000.0;
+            set
+            {
+                // We take this max because 24 full days of milliseconds just fits in an Int32, and Process.WaitForExit uses Int32.
+                // Also, the minimal wait time is 100 milliseconds. We do this to ensure each wait function executes at least once.
+                const int maxTimeoutSeconds = 3600 * 24 * 24;
+                ExtensionFunctions.TimeoutInMilliseconds = value > 0 ? Convert.ToInt32(Math.Min(value, maxTimeoutSeconds) * 1000) : 100;
+            }
+        }
 
         [Documentation("Returns whether the platform supports UWP apps")]
         public static bool UwpAppsAreSupported => PlatformVersion.Major > 6 || PlatformVersion.Major == 6 && PlatformVersion.Minor >= 2;
@@ -243,19 +254,6 @@ namespace UiAutomation
                 return true;
             }, searchCriterion);
         }
-
-        [Documentation("Set/get the default timeout for all wait commands. Default value is 3 seconds. Max is 3600 * 24 * 24 (i.e. 24 days)")]
-        public static double TimeoutSeconds
-        {
-            get => ExtensionFunctions.TimeoutInMilliseconds / 1000.0;
-            set
-            {
-                // We take this max because 24 full days of milliseconds just fits in an Int32, and Process.WaitForExit uses Int32.
-                // Also, the minimal wait time is 100 milliseconds. We do this to ensure each wait function executes at least once.
-                const int maxTimeoutSeconds = 3600 * 24 * 24;
-                ExtensionFunctions.TimeoutInMilliseconds = value > 0 ? Convert.ToInt32(Math.Min(value, maxTimeoutSeconds) * 1000) : 100;
-            }
-        } 
 
         [Documentation("Set the value of a control. Tries to use an appropriate method based on the control type")]
         public bool SetValueOfControlTo(string searchCriterion, string newValue) => ApplyMethodToControl(x => x.SetValue(newValue), searchCriterion);

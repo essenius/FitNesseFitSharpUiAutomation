@@ -21,7 +21,6 @@ namespace UiAutomation.Model
         private readonly int? _processId;
         private readonly string _processName;
 
-
         public ProcessHandler(int processId) => _processId = processId;
 
         public ProcessHandler(string searchCriterion)
