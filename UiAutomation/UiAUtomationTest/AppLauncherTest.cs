@@ -38,7 +38,7 @@ namespace UiAutomationTest
         public void AppLauncherUwpAppTest()
         {
             var fixture = new UiAutomationFixture();
-            fixture.SetTimeoutSeconds(2);
+            UiAutomationFixture.TimeoutSeconds = 2;
             Assert.IsTrue(
                 fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null));
             Assert.IsTrue(fixture.IsUwpApp(), "Is UWP App");
@@ -59,7 +59,6 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.WaitForControlAndClick("Name:About"));
             Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_WindowsVersionStatus_ValueTextBlock"));
             Debug.Print("Version from settings: " + fixture.ValueOfControl("id:SystemSettings_PCSystem_WindowsVersionStatus_ValueTextBlock"));
-            Debug.Print("buttons:" + fixture.ListOfControls(@"controltype:button"));
             Assert.IsTrue(fixture.ClickControl("name:Close Settings"), "Press Close Settings");
         }
     }

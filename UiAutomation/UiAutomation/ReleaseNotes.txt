@@ -12,3 +12,10 @@
       updated ApplicationProcessId to return a nullable int rather than an int, and made it return null if the SUT is null;
 	  introduced tests to run command files;
 	  replaced Notepad screenshots.
+2.4.0 Introduced ListOfControls fixture to inspect controls in a window or running windows, and removed functions ListOfControls and ListOfControlsFromRoot from UiAutomationFixture
+	  Made the locator ":" return all controls 
+	  Made TimeoutSeconds a static property and refactored it into ExtensionFunctions to eliminate proliferation of timeout values
+	  Made ProcessObject return null if HasExited is true
+	  Refactored UWPApplication and ClassicApplication to use common base class, and made UWP process detection more stable.
+	  Fixed flakiness in detection of UWP application activation
+	  Introduced SafeAppHandle in AppLauncher

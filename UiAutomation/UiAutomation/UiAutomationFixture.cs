@@ -20,8 +20,6 @@ using ImageHandler;
 using UiAutomation.Model;
 using Control = UiAutomation.Model.Control;
 
-[assembly: CLSCompliant(true)]
-
 namespace UiAutomation
 {
     internal enum SearchType
@@ -50,8 +48,7 @@ namespace UiAutomation
     public class UiAutomationFixture
     {
         private bool _automaticSwitchToStartedApplication = true;
-        private int _defaultTimeoutInDeciSeconds = 100;
-        private IApplication _sut;
+        private BaseApplication _sut;
         private Control _window;
 
         [Documentation("The process Id of the currently active application under test")]
@@ -152,7 +149,7 @@ namespace UiAutomation
         public bool ForcedCloseApplication()
         {
             const bool force = true;
-            return _sut == null || _sut.Exit(force, _defaultTimeoutInDeciSeconds * 100);
+            return _sut == null || _sut.Exit(force);
         }
 
         internal Control GetControl(string locator)
@@ -164,39 +161,6 @@ namespace UiAutomation
 
         [Documentation("Returns whether the current application is an UWP app")]
         public bool IsUwpApp() => _sut != null && _sut.ApplicationType == "UWP";
-
-        [Documentation("Support exploration of window contents")]
-        public string ListOfControls(string searchCriterion)
-        {
-            if (_window == null || _sut == null) return string.Empty;
-            var controlList = _window.DescendantControls(searchCriterion);
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture, "Found {0} items\n", controlList.Length);
-            foreach (var control in controlList)
-            {
-                sb.AppendFormat(CultureInfo.CurrentCulture, "Automation Id={0}; Name={1}; Value={2}", control.AutomationId,
-                    control.Name, control.Value);
-                var p = Mouse.AbsolutePosition(control.AutomationElement);
-                sb.AppendFormat(CultureInfo.CurrentCulture, " (x:{0},y:{1})\n", p.X, p.Y);
-            }
-            return sb.ToString();
-        }
-
-        // todo: convert this into a query fixture or table fixture.
-        public static string ListOfControlsFromRoot(string searchCriterion)
-        {
-            var controlList = Control.RootChildControls(searchCriterion);
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture, "Found {0} items\n", controlList.Length);
-            foreach (var control in controlList)
-            {
-                sb.AppendFormat(CultureInfo.CurrentCulture, "Automation Id={0} Name={1} Value={2}", control.AutomationId, control.Name,
-                    control.Value);
-                var p = Mouse.AbsolutePosition(control.AutomationElement);
-                sb.AppendFormat(CultureInfo.CurrentCulture, " (x:{0},y:{1})\n", p.X, p.Y);
-            }
-            return sb.ToString();
-        }
 
         [Documentation("Maximize the window of the system under test")]
         public bool MaximizeWindow() => new Window(_window?.AutomationElement).Maximize();
@@ -280,13 +244,18 @@ namespace UiAutomation
             }, searchCriterion);
         }
 
-        [Documentation("Set the default timeout for all wait commands. Default value is 3 seconds. Max is 3600 * 24 * 31 (i.e. a month)")]
-        public int SetTimeoutSeconds(double timeout)
+        [Documentation("Set/get the default timeout for all wait commands. Default value is 3 seconds. Max is 3600 * 24 * 24 (i.e. 24 days)")]
+        public static double TimeoutSeconds
         {
-            const int maxTimeoutSeconds = 3600 * 24 * 31;
-            _defaultTimeoutInDeciSeconds = timeout > 0 ? Convert.ToInt32(Math.Min(timeout, maxTimeoutSeconds) * 10) : 1;
-            return _defaultTimeoutInDeciSeconds;
-        }
+            get => ExtensionFunctions.TimeoutInMilliseconds / 1000.0;
+            set
+            {
+                // We take this max because 24 full days of milliseconds just fits in an Int32, and Process.WaitForExit uses Int32.
+                // Also, the minimal wait time is 100 milliseconds. We do this to ensure each wait function executes at least once.
+                const int maxTimeoutSeconds = 3600 * 24 * 24;
+                ExtensionFunctions.TimeoutInMilliseconds = value > 0 ? Convert.ToInt32(Math.Min(value, maxTimeoutSeconds) * 1000) : 100;
+            }
+        } 
 
         [Documentation("Set the value of a control. Tries to use an appropriate method based on the control type")]
         public bool SetValueOfControlTo(string searchCriterion, string newValue) => ApplyMethodToControl(x => x.SetValue(newValue), searchCriterion);
@@ -317,22 +286,17 @@ namespace UiAutomation
         public bool StartApplicationWithWorkingFolder(string path, string workingFolder) =>
             StartApplicationWithArgumentsAndWorkingFolder(path, string.Empty, workingFolder);
 
-        private bool SwitchTo(IApplication app)
+        private bool SwitchTo(BaseApplication app)
         {
             if (app == null) return false;
             _sut = app;
-            try
-            {
-                app.WaitForInputIdle();
-            }
-            catch (InvalidOperationException)
-            {
-                // ignore; can happen with processes without graphical user interface
-            }
+            //The app level wait should already cover exceptions, so no need to check them here
+            app.WaitForInputIdle();
+
             _window = app.WindowControl;
             if (_window == null) return false;
-            var found = _window.WaitTillFound(_defaultTimeoutInDeciSeconds);
-            return found;
+            // This is needed to populate the control's AutomationElement
+            return _window.WaitTillFound();
         }
 
         internal bool SwitchToAppWindow() => SwitchTo(_sut);
@@ -372,32 +336,32 @@ namespace UiAutomation
 
         [Documentation("Waits for a control to appear")]
         public bool WaitForControl(string searchCriterion) =>
-            ApplyMethodToControl(x => x.WaitTillFound(_defaultTimeoutInDeciSeconds), searchCriterion);
+            ApplyMethodToControl(x => x.WaitTillFound(), searchCriterion);
 
         [Documentation("Waits for a control to appear, and then click it")]
         public bool WaitForControlAndClick(string searchCriterion) => WaitForControl(searchCriterion) && ClickControl(searchCriterion);
 
-        private bool WaitForProcess(string searchCriterion, bool shouldbeAlive)
+        private static bool WaitForProcess(string searchCriterion, bool shouldbeAlive)
         {
             return searchCriterion.WaitWithTimeoutTill(criterion =>
             {
                 var processId = new ProcessHandler(searchCriterion).Id();
                 return shouldbeAlive ? processId != null : processId == null;
-            }, _defaultTimeoutInDeciSeconds);
+            });
         }
 
         [Documentation("Waits for a process to become active (typically via Name, can also use ProcessId")]
-        public bool WaitForProcess(string searchCriterion) => WaitForProcess(searchCriterion, true);
+        public static bool WaitForProcess(string searchCriterion) => WaitForProcess(searchCriterion, true);
 
         [Documentation("Wait the specified number of seconds (can be fractions)")]
         public static void WaitSeconds(double seconds) => Thread.Sleep(TimeSpan.FromSeconds(seconds));
 
         [Documentation("Wait for a control to disappear")]
         public bool WaitUntilControlDisappears(string searchCriterion) =>
-            ApplyMethodToControl(x => x.WaitTillNotFound(_defaultTimeoutInDeciSeconds), searchCriterion);
+            ApplyMethodToControl(x => x.WaitTillNotFound(), searchCriterion);
 
         [Documentation("Waits for a process to end (via ProcessId or Name)")]
-        public bool WaitUntilProcessEnds(string searchCriterion) => WaitForProcess(searchCriterion, false);
+        public static bool WaitUntilProcessEnds(string searchCriterion) => WaitForProcess(searchCriterion, false);
 
         [Documentation("Take a snapshot of the current window and render it as an HTML base 64 image")]
         public string WindowSnapshot() => WindowSnapshot(0);

@@ -63,8 +63,7 @@ namespace UiAutomation.Model
             get
             {
                 if (AutomationElement == null) return 0;
-                var gridPattern =
-                    AutomationElement.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) as IUIAutomationGridPattern;
+                var gridPattern = AutomationElement.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) as IUIAutomationGridPattern;
                 return gridPattern?.CurrentColumnCount ?? 0;
             }
         }
@@ -85,8 +84,7 @@ namespace UiAutomation.Model
             get
             {
                 if (AutomationElement == null) return 0;
-                var gridPattern =
-                    AutomationElement.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) as IUIAutomationGridPattern;
+                var gridPattern = AutomationElement.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) as IUIAutomationGridPattern;
                 return gridPattern?.CurrentRowCount ?? 0;
             }
         }
@@ -132,27 +130,33 @@ namespace UiAutomation.Model
 
         private static IUIAutomationCondition CreateCondition(LocatorCollection locators)
         {
-            if (!locators.Any()) return Automation.CreateTrueCondition();
+            if (!locators.Any() || locators.Count == 1 && string.IsNullOrEmpty(locators[0].Method )&& string.IsNullOrEmpty(locators[0].Criterion)) return Automation.CreateTrueCondition();
             var propertyCondition = locators.Select(locator =>
-                Automation.CreatePropertyConditionEx(locator.ConditionType, locator.ConditionValue,
+                Automation.CreatePropertyConditionEx(locator.ConditionType, locator.ConditionValue, 
                     PropertyConditionFlags.PropertyConditionFlags_IgnoreCase)).ToList();
             var arr = propertyCondition.ToArray();
             return Automation.CreateAndConditionFromArray(arr);
         }
 
-        public static Control CreateControlWithParent(string searchCriterion)
+        internal static Control CreateContainedWindowControl(string containerCriterion, string elementCriterion)
         {
-            // for UWP apps, which have a container between the root element and itself
+            // Search through all containers satisfying the container criterion for an element satisfying the element criterion.
+            // Return null if not found
             var rootElement = Automation.GetRootElement();
-            var searchParser = new SearchParser(searchCriterion);
-            var condition = CreateCondition(searchParser.Locators);
-            // This can be very slow especially if it does not exist. So be careful using it
-            var child = rootElement.FindFirst(TreeScope.TreeScope_Descendants, condition);
-            var walker = Automation.ControlViewWalker;
-            Debug.Assert(walker != null, "walker != null");
-            var parent = child != null ? walker.GetParentElement(child) : Automation.GetRootElement();
+            var containerCondition = CreateCondition(new SearchParser(containerCriterion).Locators);
 
-            return new Control(parent, child, SearchType.Shallow, searchParser);
+            var containerElements = rootElement.FindAll(TreeScope.TreeScope_Children, containerCondition);
+            for (var i = 0; i < containerElements.Length; i++)
+            {
+                var container = containerElements.GetElement(i);
+                var searchParser = new SearchParser(elementCriterion);
+                var elementCondition = CreateCondition(searchParser.Locators);
+                var element = container.FindFirst(TreeScope.TreeScope_Children, elementCondition);
+                // If no such element, try the next container, if any.
+                if (element == null) continue;
+                return new Control(container, element, SearchType.Shallow, searchParser);
+            }
+            return null;
         }
 
         public Control[] DescendantControls(string childSearchCriterion) =>
@@ -178,7 +182,7 @@ namespace UiAutomation.Model
             return returnValue;
         }
 
-        public IEnumerable<IUIAutomationElement> FindAllElements(string searchCriterion) =>
+        public IEnumerable<IUIAutomationElement> FindAllElements(string searchCriterion) => 
             FindAllElements(searchCriterion, _treeScope, AutomationElement);
 
         // I wanted to create a WaitForInputIdle method based on the WindowPattern implementation, but got a not implemented exception ...
@@ -214,8 +218,7 @@ namespace UiAutomation.Model
             return AutomationElement != null;
         }
 
-        private static Control[] FindControls(string childSearchCriterion, TreeScope treeScope,
-            IUIAutomationElement parent)
+        private static Control[] FindControls(string childSearchCriterion, TreeScope treeScope, IUIAutomationElement parent)
         {
             var elementList = FindAllElements(childSearchCriterion, treeScope, parent);
             return elementList.Select(element => new Control(Automation.GetRootElement(), element, SearchType.Shallow, null)).ToArray();
@@ -333,8 +336,8 @@ namespace UiAutomation.Model
             return true;
         }
 
-        public bool WaitTillFound(int timeoutInDeciSeconds) => this.WaitWithTimeoutTill(x => x.FindControl(), timeoutInDeciSeconds);
+        public bool WaitTillFound() => this.WaitWithTimeoutTill(x => x.FindControl());
 
-        public bool WaitTillNotFound(int timeoutInDeciSeconds) => this.WaitWithTimeoutTill(x => !x.FindControl(), timeoutInDeciSeconds);
+        public bool WaitTillNotFound() => this.WaitWithTimeoutTill(x => !x.FindControl());
     }
 }

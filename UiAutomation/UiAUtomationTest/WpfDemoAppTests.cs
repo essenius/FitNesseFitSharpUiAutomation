@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
@@ -21,8 +22,11 @@ namespace UiAutomationTest
     [TestClass]
     public class WpfDemoAppTests
     {
+        const string WpfDemoAppPath = "..\\..\\..\\WpfDemoApp\\bin\\debug\\WpfDemoApp.exe";
+
         private static int _testCounter;
         private static UiAutomationFixture _fixture;
+        private static readonly string TempFolder = Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar);
 
         private static readonly string[,] DataGridValues =
         {
@@ -36,9 +40,16 @@ namespace UiAutomationTest
         [ClassInitialize]
         public static void PrepareTestSuite(TestContext testContext)
         {
+            UiAutomationFixture.TimeoutSeconds = 10;            
             _fixture = new UiAutomationFixture();
-            Assert.IsTrue(_fixture.StartApplication("..\\..\\..\\WpfDemoApp\\bin\\debug\\WpfDemoApp.exe"),
-                "WPF Demo App started");
+            _fixture.SetAutomaticSwitchToStartedApplication();
+            Assert.IsTrue(_fixture.StartApplicationWithWorkingFolder(WpfDemoAppPath, TempFolder), "WpfDemoApp started with working folder");
+            _fixture.WaitForControl("id:workingFolder");
+            var actualWorkFolder = _fixture.ValueOfControl("id:WorkingFolder");
+            Assert.AreEqual(TempFolder, actualWorkFolder, "Working folder is OK");
+            Assert.IsTrue(_fixture.CloseApplication(), "WPF Demo App stopped");
+            Assert.IsTrue(_fixture.StartApplicationWithWorkingFolder(WpfDemoAppPath, ""), "WpfDemoApp started with empty working folder");
+            Assert.AreNotEqual(TempFolder, _fixture.ValueOfControl("id:WorkingFolder"), "Working folder is OK 2");
         }
 
         [TestInitialize]
@@ -52,6 +63,7 @@ namespace UiAutomationTest
         public static void CleanupTestSuite()
         {
             Assert.IsTrue(_fixture.CloseApplication(), "WPF Demo App stopped");
+            UiAutomationFixture.TimeoutSeconds = 3;
         }
 
         [TestMethod, TestCategory("DemoApp")]
@@ -140,23 +152,18 @@ namespace UiAutomationTest
         public void WpfDemoCheckDragDrop()
         {
             Assert.IsTrue(_fixture.SelectItem("Caption:Usual Controls"), "Select 'Usual Controls' tab");
-            Debug.Print($"{DateTime.UtcNow:hh:mm:ss.ffff}: Start");
             Assert.IsTrue(_fixture.SelectItem("Caption:Drag Drop"), "Select 'Drag Drop' tab");
-            Debug.Print($"{DateTime.UtcNow:hh:mm:ss.ffff}: Selected tab");
             Assert.IsTrue(_fixture.DragControlAndDropOnControl("id:DragFrom", "id:DropTo"), "DragFrom DropTo");
             Assert.AreEqual("...", _fixture.ValueOfControl("id:DragFrom"), "Source value changed");
             Assert.AreEqual("Drag from here", _fixture.ValueOfControl("id:DropTo"), "Target value changed");
 
             // test used LightSeaGreen first, but that is not visible and therefore fails in Win 2012
             Assert.IsTrue(_fixture.DragControl("id:PapayaWhipItem"), "Drag PapayaWhip");
-            Debug.Print($"{DateTime.UtcNow:hh:mm:ss.ffff}: In Between");
             Assert.IsTrue(_fixture.DropOnControl("id:ColorDropTextBlock"), "Drop on ColorDropTextBlock");
-            Assert.AreEqual("Color is PapayaWhip", _fixture.ValueOfControl("id:ColorDropTextBlock"),
-                "Color has been dropped");
+            Assert.AreEqual("Color is PapayaWhip", _fixture.ValueOfControl("id:ColorDropTextBlock"), "Color has been dropped");
 
             Assert.IsTrue(_fixture.DragControlAndDropOnControl("id:DragFrom", "id:ColorDropTextBlock"));
-            Assert.AreEqual("Could not convert '...' into a color", _fixture.ValueOfControl("id:ColorDropTextBlock"),
-                "Color has been dropped");
+            Assert.AreEqual("Could not convert '...' into a color", _fixture.ValueOfControl("id:ColorDropTextBlock"), "Color has been dropped");
 
             Assert.IsTrue(_fixture.DragControlAndDropOnControl("name:PapayaWhip", "id:DragFrom"),
                 "drag from color and drop on label - but does nothing");
@@ -229,42 +236,21 @@ namespace UiAutomationTest
         }
 
         [TestMethod, TestCategory("DemoApp")]
-        public void WpfDemoCheckListControls()
-        {
-            Assert.IsTrue(UiAutomationFixture.SearchBy("ControlType"));
-            Assert.IsTrue(_fixture.SelectItem("Caption:More Controls"), "Select 'More Controls' tab");
-            var result = _fixture.ListOfControls("ProgressBar");
-            Assert.IsTrue(result.Contains("Found 2 items"), "Found 2 items");
-            Assert.IsTrue(result.Contains("Automation Id=StatusBarProgressBar"), "StatusBarProgressBar found");
-            Assert.IsTrue(result.Contains("Automation Id=ProgressBar1"), "ProgressBar1 found");
-            result = _fixture.ListOfControls("Name:");
-            Debug.WriteLine(result);
-            Assert.IsTrue(result.Contains("Found 24 items"));
-            Assert.IsTrue(result.Contains("Automation Id=Calendar1"), "Calendar1 found");
-            Assert.IsTrue(result.Contains("Value=More Controls"), "More Controls tab found");
-            Assert.IsTrue(result.Contains("Value=Status Bar for WPF Demo App"), "Status Bar found");
-        }
-
-        [TestMethod, TestCategory("DemoApp")]
         public void WpfDemoCheckMultiSelect()
         {
             Assert.IsTrue(_fixture.SelectItem("Caption:Usual Controls"), "Select 'Usual Controls' tab");
             Assert.AreEqual("MultiValueListBoxItem3;MultiValueListBoxItem5",
                 _fixture.ValueOfControl("id:MultiValueListBox"), "Default value of MultiValueListBox");
             Assert.IsTrue(_fixture.SetValueOfControlTo("id:MultiValueListBox", ""), "Clearing value");
-            Assert.IsTrue(_fixture.SetValueOfControlTo("id:MultiValueListBox", "MultiValueListBoxItem1"),
-                "Setting value 1");
-            Assert.IsTrue(_fixture.SetValueOfControlTo("id:MultiValueListBox", "MultiValueListBoxItem2"),
-                "Setting value 2");
+            Assert.IsTrue(_fixture.SetValueOfControlTo("id:MultiValueListBox", "MultiValueListBoxItem1"), "Setting value 1");
+            Assert.IsTrue(_fixture.SetValueOfControlTo("id:MultiValueListBox", "MultiValueListBoxItem2"), "Setting value 2");
             Assert.AreEqual("MultiValueListBoxItem1;MultiValueListBoxItem2",
                 _fixture.ValueOfControl("id:MultiValueListBox"), "New value of MultiValueListBox");
             Assert.IsTrue(_fixture.SetValueOfControlTo("Caption:MultiValueListBoxItem2", ""), "Clearing value 2");
             Assert.AreEqual("MultiValueListBoxItem1",
                 _fixture.ValueOfControl("id:MultiValueListBox"), "Value of MultiValueListBox after clearing value 2");
-            Assert.IsFalse(_fixture.SetValueOfControlTo("Caption:MultiValueListBoxItem3", "wrong value"),
-                "Setting invalid selection item value");
-            Assert.AreEqual("MultiValueListBoxItem1",
-                _fixture.ValueOfControl("id:MultiValueListBox"),
+            Assert.IsFalse(_fixture.SetValueOfControlTo("Caption:MultiValueListBoxItem3", "wrong value"), "Setting invalid selection item value");
+            Assert.AreEqual("MultiValueListBoxItem1", _fixture.ValueOfControl("id:MultiValueListBox"),
                 "Value of MultiValueListBox did not change after wring value for 2");
         }
 
@@ -417,7 +403,6 @@ namespace UiAutomationTest
             Assert.IsNotNull(control1.AutomationElement, "Found a disabled checkbox");
             Assert.AreEqual("Disabled CheckBox", _fixture.NameOfControl("ControlType:CheckBox && IsEnabled:false"),
                 "Found right (only) disabled control");
-            Debug.Print(control1.AutomationElement.CurrentClassName);
             Assert.AreEqual("DisabledCheckBox", control1.AutomationElement.CurrentAutomationId, "Found right (only) disabled control");
             Assert.IsTrue(_fixture.SelectItem("Caption:More Controls"), "Select 'More Controls' tab");
             var control2 = _fixture.GetControl("IsPassword:true");
@@ -441,12 +426,9 @@ namespace UiAutomationTest
                 {
                     var columnCollection = rowCollection[column] as Collection<object>;
                     Assert.IsNotNull(columnCollection);
-                    Assert.AreEqual(2, columnCollection.Count, "Cell Count for {0}({1},{2})", searchCriterion, row,
-                        column);
-                    Assert.AreEqual(header[column], columnCollection[0], "Header for {0}({1},{2})", searchCriterion, row,
-                        column);
-                    Assert.AreEqual(expectedValues[row, column], columnCollection[1], "value for {0}({1},{2})",
-                        searchCriterion, row, column);
+                    Assert.AreEqual(2, columnCollection.Count, "Cell Count for {0}({1},{2})", searchCriterion, row, column);
+                    Assert.AreEqual(header[column], columnCollection[0], "Header for {0}({1},{2})", searchCriterion, row, column);
+                    Assert.AreEqual(expectedValues[row, column], columnCollection[1], "value for {0}({1},{2})", searchCriterion, row, column);
                 }
             }
         }

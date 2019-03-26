@@ -9,6 +9,7 @@
 //   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and limitations under the License.
 
+using System;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
@@ -24,6 +25,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("9e80f7bc-d816-4fa5-b937-dc1fd38cab73")]
-[assembly: AssemblyVersion("2.3.0")]
+[assembly: AssemblyVersion("2.4.0")]
 [assembly: InternalsVisibleTo("UiAutomationTest")]
 [assembly: NeutralResourcesLanguage("en-US")]
+[assembly: CLSCompliant(true)]

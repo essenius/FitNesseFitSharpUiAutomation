@@ -21,6 +21,7 @@ namespace UiAutomation.Model
         private readonly int? _processId;
         private readonly string _processName;
 
+
         public ProcessHandler(int processId) => _processId = processId;
 
         public ProcessHandler(string searchCriterion)
@@ -38,27 +39,21 @@ namespace UiAutomation.Model
             }
         }
 
-        /// <summary>
-        ///     Find the ID of a running process
-        /// </summary>
-        /// <returns>ID of running process, or null if not running</returns>
         public int? Id() => ProcessObject()?.Id;
 
-        /// <summary>
-        ///     Find a process object
-        /// </summary>
-        /// <returns>the Process object if the process runs, null otherwise</returns>
         public Process ProcessObject()
         {
             if (_processId == null)
             {
                 var processes = Process.GetProcessesByName(_processName);
-                return processes.Length == 0 ? null : processes[0];
+                if (processes.Length == 0 || processes[0].HasExited) return null;
+                return processes[0];
             }
 
             try
             {
-                return Process.GetProcessById(_processId.Value);
+                var process = Process.GetProcessById(_processId.Value);
+                return process.HasExited ? null : process;
             }
             catch (ArgumentException)
             {

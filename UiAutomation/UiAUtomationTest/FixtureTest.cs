@@ -49,12 +49,13 @@ namespace UiAutomationTest
         public void FixtureDelayedClosingCmdTest()
         {
             _fixture.NoAutomaticSwitchToStartedApplication();
+            UiAutomationFixture.TimeoutSeconds = 2;
             // Another way of starting via cmd /c should work as well. Also letting it wait a second.
             Assert.IsTrue(_fixture.StartApplicationWithArguments(@"cmd.exe", "/c \"test.cmd wait 1\""), @"delayed closing Cmd");
             var processId = _fixture.ApplicationProcessId;
             Assert.IsNotNull(processId);
             Assert.IsTrue(_fixture.ApplicationIsActive);
-            Assert.IsTrue(_fixture.WaitUntilProcessEnds("ProcessId:" + processId.Value));
+            Assert.IsTrue(UiAutomationFixture.WaitUntilProcessEnds("ProcessId:" + processId.Value));
         }
 
         [TestMethod, TestCategory("Cmd"), DeploymentItem(@"UiAutomationTest\test.cmd")]
@@ -66,7 +67,7 @@ namespace UiAutomationTest
             var processId = _fixture.ApplicationProcessId;
             Assert.IsNotNull(processId);
             Assert.IsTrue(_fixture.ApplicationIsActive);
-            Assert.IsTrue(_fixture.WaitUntilProcessEnds("ProcessId:" + processId.Value));
+            Assert.IsTrue(UiAutomationFixture.WaitUntilProcessEnds("ProcessId:" + processId.Value));
         }
 
         [TestMethod, TestCategory("DefaultApps")]
@@ -105,52 +106,50 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("DefaultApps"), DeploymentItem("NotepadScreenshotNoCursor.txt"), DeploymentItem("NotepadScreenshotWithCursor.txt")]
         public void FixtureNotePadCheckSetValueResizeMoveAndScreenshot()
         {
-            _fixture.SetTimeoutSeconds(1);
-            UiAutomationFixture.SearchBy("Name");
-            Assert.IsTrue(_fixture.CloseApplication(), "Stopping an app before it started should succeed");
-            Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced stopping an app before it started should succeed");
-            Assert.IsTrue(_fixture.StartApplication("notepad.exe"), "Notepad started");
-            var result = _fixture.ListOfControls("ControlType:Edit");
-            Assert.IsTrue(result.Contains("Automation Id=15"), "Automation Id");
-            Assert.IsTrue(_fixture.SetValueOfControlTo("classname:edit",
-                "The quick brown fox jumps over the lazy dog."), "Set Text");
-            Assert.IsTrue(_fixture.PressKey("^{END}{ENTER}Hello{ENTER}there"));
-            Assert.AreEqual("The quick brown fox jumps over the lazy dog.\r\nHello\r\nthere",
-                _fixture.ValueOfControl(@"controltype:edit"));
+            try
+            {
+                UiAutomationFixture.TimeoutSeconds = 1;
+                UiAutomationFixture.SearchBy("Name");
+                Assert.IsTrue(_fixture.CloseApplication(), "Stopping an app before it started should succeed");
+                Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced stopping an app before it started should succeed");
+                Assert.IsTrue(_fixture.StartApplication("notepad.exe"), "Notepad started");
+                Assert.IsTrue(_fixture.SetValueOfControlTo("classname:edit",
+                    "The quick brown fox jumps over the lazy dog."), "Set Text");
+                Assert.IsTrue(_fixture.PressKey("^{END}{ENTER}Hello{ENTER}there"));
+                Assert.AreEqual("The quick brown fox jumps over the lazy dog.\r\nHello\r\nthere",
+                    _fixture.ValueOfControl(@"controltype:edit"));
 
-            Assert.IsTrue(_fixture.ResizeWindow(400, 140), "Resize succeeds");
-            Assert.AreEqual(400, _fixture.WindowWidth);
-            Assert.AreEqual(140, _fixture.WindowHeight);
-            Assert.IsTrue(_fixture.MaximizeWindow());
-            Assert.AreNotEqual(400, _fixture.WindowWidth);
-            Assert.AreNotEqual(140, _fixture.WindowHeight);
-            Assert.IsTrue(_fixture.MinimizeWindow());
-            Debug.Print("W" + _fixture.WindowWidth);
-            Debug.Print("H" + _fixture.WindowHeight);
-            Debug.Print("X" + _fixture.WindowX);
-            Debug.Print("Y" + _fixture.WindowY);
-            Assert.IsTrue(_fixture.NormalWindow());
-            Assert.AreEqual(400, _fixture.WindowWidth);
-            Assert.AreEqual(140, _fixture.WindowHeight);
-            Assert.IsTrue(_fixture.MoveWindow(200, 250), "Move succeeds");
-            Assert.AreEqual(200, _fixture.WindowX);
-            Assert.AreEqual(250, _fixture.WindowY);
-            var snapshot = _fixture.WindowSnapshot(8);
-            var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.txt");
-            var expected2 = File.ReadAllText("NotepadScreenshotWithCursor.txt");
-            Console.WriteLine(snapshot);
-            Assert.IsTrue(snapshot.Equals(expected1) || snapshot.Equals(expected2), "Snapshot matches");
-            Debug.Print(snapshot);
-            UiAutomationFixture.WaitSeconds(1);
-            Assert.IsTrue(_fixture.ClickControl("Close"));
-            Assert.IsTrue(_fixture.WaitForControl("Save"), "Wait for Save");
-            Assert.IsTrue(_fixture.ClickControl("Don't Save"), "Push Don't Save");
-            Thread.Sleep(500);
-
-            // TODO: At first I had a 'finally' here, but that triggers when a test fails.
-            // Need to find another way to make Notepad close when a test fails
-            Assert.IsTrue(_fixture.CloseApplication(), "Stopping Notepad a second time should succeed (already stopped)");
+                Assert.IsTrue(_fixture.ResizeWindow(400, 140), "Resize succeeds");
+                Assert.AreEqual(400, _fixture.WindowWidth);
+                Assert.AreEqual(140, _fixture.WindowHeight);
+                Assert.IsTrue(_fixture.MaximizeWindow());
+                Assert.AreNotEqual(400, _fixture.WindowWidth);
+                Assert.AreNotEqual(140, _fixture.WindowHeight);
+                Assert.IsTrue(_fixture.MinimizeWindow());
+                Assert.IsTrue(_fixture.NormalWindow());
+                Assert.AreEqual(400, _fixture.WindowWidth);
+                Assert.AreEqual(140, _fixture.WindowHeight);
+                Assert.IsTrue(_fixture.MoveWindow(200, 250), "Move succeeds");
+                Assert.AreEqual(200, _fixture.WindowX);
+                Assert.AreEqual(250, _fixture.WindowY);
+                var snapshot = _fixture.WindowSnapshot(8);
+                var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.txt");
+                var expected2 = File.ReadAllText("NotepadScreenshotWithCursor.txt");
+                Console.WriteLine(snapshot);
+                Assert.IsTrue(snapshot.Equals(expected1) || snapshot.Equals(expected2), "Snapshot matches");
+                UiAutomationFixture.WaitSeconds(1);
+                Assert.IsTrue(_fixture.ClickControl("Close"));
+                Assert.IsTrue(_fixture.WaitForControl("Save"), "Wait for Save");
+                Assert.IsTrue(_fixture.ClickControl("Don't Save"), "Push Don't Save");
+                Thread.Sleep(500);
+            }
+            finally
+            {
+                Assert.IsTrue(_fixture.ForcedCloseApplication(), "Stopping Notepad a second time should succeed (already stopped)");
+            }
         }
+
+        private const string WordPath = @"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE";
 
         [TestMethod, TestCategory("Office")]
         public void FixtureRunWord()
@@ -160,59 +159,56 @@ namespace UiAutomationTest
             var fixture = new UiAutomationFixture();
             UiAutomationFixture.SearchBy("Name");
             fixture.NoAutomaticSwitchToStartedApplication();
-            fixture.SetTimeoutSeconds(10);
-            Assert.IsTrue(
-                fixture.StartApplicationWithArguments(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE", "/w /q"),
-                "Started Word");
-            Debug.Print("Process ID before:" + fixture.ApplicationProcessId);
+            UiAutomationFixture.TimeoutSeconds = 10;
+            Assert.IsTrue(fixture.StartApplicationWithArguments(WordPath, "/w /q"), "Started Word");
             UiAutomationFixture.WaitSeconds(3);
             // todo: this fails when Word is already active when the test runs. Make more resilient
             Assert.IsTrue(fixture.SwitchToProcess(@"name:winword"), "Switched to Word");
 
-            Debug.Print("Process ID after:" + fixture.ApplicationProcessId);
             fixture.PressKey(@"The Quick Brown Fox Jumps Over the Lazy Dog+{HOME}");
             Assert.IsTrue(fixture.ClickControl("ControlType:Button && Name:Bold"), "Click Bold");
             Assert.IsTrue(fixture.ControlExists("Name:Heading 1"), "Heading 1 found");
             Assert.IsTrue(fixture.ClickControl("Heading 1"), "Click Heading 1");
             Assert.IsTrue(fixture.ClickControl("ControlType:Button && Name:Underline"), "Click Underline");
-            Debug.Print(UiAutomationFixture.ListOfControlsFromRoot("ControlType:Window && ProcessId:" + fixture.ApplicationProcessId));
             Assert.IsFalse(fixture.CloseApplication(), "Close application doesn't work due to dialog");
 
             // This is a tricky one, as it is a control on a modal dialog.
             // It works because click has a fallback to simulate a mouseclick in the center of the control's bounding rectangle
 
             Assert.IsTrue(fixture.ClickControl("Name:Don't Save"), "click Don't Save");
-            UiAutomationFixture.WaitSeconds(10);
-            Assert.IsTrue(fixture.WaitUntilProcessEnds(@"winword"));
+            // Normally exiting Word can take a very long time. 10 seconds is typically not enough
+            UiAutomationFixture.TimeoutSeconds = 30;
+            Assert.IsTrue(UiAutomationFixture.WaitUntilProcessEnds(@"winword"));
+            UiAutomationFixture.TimeoutSeconds = 3;
             fixture.SetAutomaticSwitchToStartedApplication();
         }
 
         [TestMethod, TestCategory("Office")]
         public void FixtureStartAndSwitchTestOnWord2016()
         {
-            const string pathToWord = @"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE";
-            _fixture.SetTimeoutSeconds(3);
+            
+            UiAutomationFixture.TimeoutSeconds = 3;
             Assert.IsFalse(_fixture.SwitchToProcess(@"name:winword"), "Word not running already");
             _fixture.NoAutomaticSwitchToStartedApplication();
-            _fixture.SetTimeoutSeconds(10);
+            UiAutomationFixture.TimeoutSeconds =10;
             // command line switch /w opens Word with a blank page.
-            Assert.IsTrue(_fixture.StartApplicationWithArguments(pathToWord, "/w /q"), @"first start of Winword succeeds (no autoswitch)");
+            Assert.IsTrue(_fixture.StartApplicationWithArguments(WordPath, "/w /q"), @"first start of Winword succeeds (no autoswitch)");
             var processId = _fixture.ApplicationProcessId;
-            Assert.IsTrue(_fixture.WaitForProcess("ProcessId:" + processId), "Wait for Word process");
+            Assert.IsTrue(UiAutomationFixture.WaitForProcess("ProcessId:" + processId), "Wait for Word process");
             Assert.IsTrue(_fixture.SwitchToProcess("ProcessId:" + processId), "Now Word is running");
             _fixture.SetAutomaticSwitchToStartedApplication();
-            Assert.IsTrue(_fixture.StartApplicationWithArguments(pathToWord, "/w /q"), @"second start of Winword succeeds too (autoswitch)");
+            Assert.IsTrue(_fixture.StartApplicationWithArguments(WordPath, "/w /q"), @"second start of Winword succeeds too (autoswitch)");
             Assert.AreNotEqual(processId, _fixture.ApplicationProcessId, "Process IDs are not equal");
             Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced close of 2nd instance succeeds");
             Assert.IsTrue(_fixture.SwitchToProcess("ProcessId:" + processId), "Can switch to first Word instance");
             Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced close 1st instance succeeds");
-            Assert.IsTrue(_fixture.WaitUntilProcessEnds(@"name:winword"));
+            Assert.IsTrue(UiAutomationFixture.WaitUntilProcessEnds(@"name:winword"));
         }
 
         [TestMethod, TestCategory("Unit")]
         public void FixtureSwitchToInvalidWindowFails()
         {
-            _fixture.SetTimeoutSeconds(0.7);
+            UiAutomationFixture.TimeoutSeconds = 0.7;
             Assert.IsFalse(_fixture.SwitchToProcess(@"name:nonexistingwindow"));
         }
 
@@ -248,11 +244,6 @@ namespace UiAutomationTest
         }
 
         [TestMethod, TestCategory("Unit")]
-        public void FixtureTestControlListBeforeOpeningApplication() =>
-            Assert.AreEqual(string.Empty, _fixture.ListOfControls("ControlType:text"),
-                "Getting list of controls before opening application gives empty string");
-
-        [TestMethod, TestCategory("Unit")]
         public void FixtureTestInvalidSearchBy()
         {
             Assert.IsFalse(UiAutomationFixture.SearchBy(""), "Search by empty value fails");
@@ -262,8 +253,10 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("Unit")]
         public void FixtureTestMaxAndMinTimeout()
         {
-            Assert.AreEqual(31 * 24 * 3600 * 10, _fixture.SetTimeoutSeconds(10.0 * int.MaxValue));
-            Assert.AreEqual(1, _fixture.SetTimeoutSeconds(10.0 * int.MinValue));
+            UiAutomationFixture.TimeoutSeconds = 10.0 * int.MaxValue;
+            Assert.AreEqual(24 * 24 * 3600, UiAutomationFixture.TimeoutSeconds);
+            UiAutomationFixture.TimeoutSeconds = 10.0 * int.MinValue;
+            Assert.AreEqual(0.1, UiAutomationFixture.TimeoutSeconds);
         }
 
         [TestMethod, TestCategory("Unit")]
@@ -287,35 +280,12 @@ namespace UiAutomationTest
         public void FixtureTestUnrecognizedConditionType() =>
             Assert.IsFalse(_fixture.ToggleControl("NonExistingConditionType:RandomValue"));
 
-        [TestMethod, TestCategory("DemoApp")]
-        public void FixtureWorkingFolderTest()
-        {
-            try
-            {
-                UiAutomationFixture.SearchBy("Name");
-                _fixture.SetTimeoutSeconds(10);
-                var tempFolder = Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar);
-                Assert.IsTrue(_fixture.WaitUntilProcessEnds("WpfDemoApp"), "WpfDemoApp is not running");
-                Assert.IsTrue(
-                    _fixture.StartApplicationWithWorkingFolder("..\\..\\..\\WpfDemoApp\\bin\\debug\\WpfDemoApp.exe",
-                        tempFolder), "WpfDemoApp started with working folder");
-                _fixture.WaitForControl("id:workingFolder");
-                var actualWorkFolder = _fixture.ValueOfControl("id:WorkingFolder");
-                Assert.AreEqual(tempFolder, actualWorkFolder, "Working folder is OK 1");
-                _fixture.CloseApplication();
-                Assert.IsTrue(
-                    _fixture.StartApplicationWithWorkingFolder("..\\..\\..\\WpfDemoApp\\bin\\debug\\WpfDemoApp.exe", ""),
-                    "WpfDemoApp started");
-                Assert.AreNotEqual(tempFolder, _fixture.ValueOfControl("id:WorkingFolder"), "Working folder is OK 2");
-            }
-            finally
-            {
-                _fixture.ForcedCloseApplication();
-            }
-        }
-
         [TestInitialize]
-        public void SetUp() => _fixture = new UiAutomationFixture();
+        public void SetUp()
+        {
+            UiAutomationFixture.TimeoutSeconds = 3;
+            _fixture = new UiAutomationFixture();            
+        }
 
         [TestMethod, TestCategory("Unit")]
         public void UwpAppsAreSupportedTest()

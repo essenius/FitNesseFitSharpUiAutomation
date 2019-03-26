@@ -41,9 +41,7 @@ namespace UiAutomation.Model
             {
                 var clickPoint = AbsolutePosition(element);
 
-                if (
-                    !MouseEvent(NativeMethods.MouseEventFlags.Move | NativeMethods.MouseEventFlags.Absolute,
-                        clickPoint.X, clickPoint.Y))
+                if (!MouseEvent(NativeMethods.MouseEventFlags.Move | NativeMethods.MouseEventFlags.Absolute, clickPoint.X, clickPoint.Y))
                 {
                     return false;
                 }

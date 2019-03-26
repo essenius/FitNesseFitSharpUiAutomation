@@ -27,6 +27,7 @@ namespace UiAutomationTest
             var app1 = ApplicationFactory.AttachToProcess(app.ProcessId);
             Assert.IsInstanceOfType(app1, typeof(ClassicApplication));
             Assert.AreEqual(app.ProcessId, app1.ProcessId);
+            ExtensionFunctions.TimeoutInMilliseconds = 1000;
             Assert.IsTrue(app.Exit(false));
             Assert.IsFalse(app.IsActive, "App is not active");
             Assert.IsFalse(app1.IsActive, "App1 is not active");
@@ -49,10 +50,12 @@ namespace UiAutomationTest
             Debug.WriteLine(app1.ProcessId);
             Assert.IsInstanceOfType(app1, typeof(UwpApplication));
             Assert.AreEqual(app.ProcessId, app1.ProcessId);
+            ExtensionFunctions.TimeoutInMilliseconds = 3000;
             Assert.IsTrue(app.Exit(false));
             Assert.IsFalse(app.IsActive, "App is not active");
             Assert.IsFalse(app1.IsActive, "App1 is not active");
             Assert.IsNull(app1.WindowControl, "WindowControl for exited app is null");
+            ExtensionFunctions.TimeoutInMilliseconds = 1000;
             Assert.IsTrue(app1.Exit(false), "Exiting a second time should work");
         }
 
@@ -62,6 +65,7 @@ namespace UiAutomationTest
             var app = new UwpApplication("nonexisting", string.Empty);
             Assert.IsFalse(app.IsActive, "Non-started app is not active");
             app.WaitForInputIdle(); // should succeed
+            ExtensionFunctions.TimeoutInMilliseconds = 1000;
             Assert.IsTrue(app.Exit(false), "Exiting a non-started app succeeds");
             Assert.IsNull(app.WindowControl, "WindowControl for non started app is null");
         }

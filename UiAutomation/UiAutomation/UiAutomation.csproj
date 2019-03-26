@@ -65,7 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentationAttribute.cs" />
+    <Compile Include="ListOfControls.cs" />
     <Compile Include="Model\AppLauncher.cs" />
+    <Compile Include="Model\BaseApplication.cs" />
     <Compile Include="Model\ApplicationFactory.cs" />
     <Compile Include="Model\ClassicApplication.cs" />
     <Compile Include="Model\ConditionTypeMapper.cs" />
@@ -74,13 +76,13 @@
     <Compile Include="ExtractGrid.cs" />
     <Compile Include="Model\ExtensionFunctions.cs" />
     <Compile Include="Model\FileSystem.cs" />
-    <Compile Include="Model\IApplication.cs" />
     <Compile Include="Model\IUIAutomationElementExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Model\Mapping.cs" />
     <Compile Include="Model\Mouse.cs" />
     <Compile Include="Model\NativeMethods.cs" />
     <Compile Include="Model\PropertyMapper.cs" />
+    <Compile Include="Model\SafeAppHandle.cs" />
     <Compile Include="Model\UwpApplication.cs" />
     <Compile Include="Model\Window.cs" />
     <Compile Include="Patterns\TogglePattern.cs" />

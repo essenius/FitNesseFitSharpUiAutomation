@@ -13,9 +13,6 @@ namespace UiAutomationTest
         public void ClassicApplicationConstructorNonexistingFileRaisesException()
         {
             var app = new ClassicApplication("nonexisting.exe", null, null);
-            app.WaitForInputIdle();
-            Assert.AreEqual(IntPtr.Zero, app.MainWindowHandle);
-            Assert.IsTrue(app.Exit(false));
         }
 
         [TestMethod, TestCategory("DefaultApps")]
@@ -24,6 +21,7 @@ namespace UiAutomationTest
             var app = new ClassicApplication("notepad.exe", null, null);
             app.WaitForInputIdle();
             Assert.IsNotNull(app.MainWindowHandle);
+            ExtensionFunctions.TimeoutInMilliseconds = 1000;
             Assert.IsTrue(app.Exit(false));
         }
 

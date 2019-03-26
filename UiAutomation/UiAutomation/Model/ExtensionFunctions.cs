@@ -19,6 +19,8 @@ namespace UiAutomation.Model
 {
     internal static class ExtensionFunctions
     {
+        internal static int TimeoutInMilliseconds { get; set; } = 3000;
+
         internal static bool Exit(this Process process, bool force)
         {
             if (process == null) return true;
@@ -62,20 +64,20 @@ namespace UiAutomation.Model
             return result;
         }
 
-        internal static bool WaitForExit(this Process process, bool force, int timeoutInMilliseconds)
+        internal static bool WaitForExit(this Process process, bool force)
         {
-            if (process.WaitForExit(timeoutInMilliseconds)) return true;
+            if (process.WaitForExit(TimeoutInMilliseconds)) return true;
             if (!force) return false;
             process.Kill();
             return true;
         }
 
-        internal static bool WaitWithTimeoutTill<T>(this T target, Func<T, bool> conditionFunction, int timeoutInDeciSeconds)
+        internal static bool WaitWithTimeoutTill<T>(this T target, Func<T, bool> conditionFunction)
         {
             // use stopwatch to make resilient to slow functions such as FindControl. Use Sleep to make resilient to fast ones.
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            while (stopwatch.ElapsedMilliseconds < timeoutInDeciSeconds * 100)
+            while (stopwatch.ElapsedMilliseconds < TimeoutInMilliseconds)
             {
                 if (conditionFunction(target)) return true;
                 Thread.Sleep(100);

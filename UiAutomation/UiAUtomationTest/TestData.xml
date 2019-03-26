@@ -14,28 +14,23 @@
 
   <SearchParser.AndCriteria input="abc:def &amp;&amp; ghi:jkl" expectedCount="2" expectedMethod1="abc"
                             expectedLocator1="def" expectedMethod2="ghi" expectedLocator2="jkl" />
-  <SearchParser.AndCriteria input="  ab   &amp;&amp;  cd   " expectedCount="2" expectedMethod1="Name"
-                            expectedLocator1="ab"
+  <SearchParser.AndCriteria input="  ab   &amp;&amp;  cd   " expectedCount="2" expectedMethod1="Name" expectedLocator1="ab"
                             expectedMethod2="Name" expectedLocator2="cd" />
-  <SearchParser.AndCriteria input="ab&amp;&amp;cd" expectedCount="1" expectedMethod1="Name"
-                            expectedLocator1="ab&amp;&amp;cd" />
-  <SearchParser.AndCriteria input="ab &amp;&amp; cd:ef &amp;&amp; gh:ij" expectedCount="3" expectedMethod1="Name"
-                            expectedLocator1="ab" expectedMethod2="cd" expectedLocator2="ef" expectedMethod3="gh"
-                            expectedLocator3="ij" />
+  <SearchParser.AndCriteria input="ab&amp;&amp;cd" expectedCount="1" expectedMethod1="Name" expectedLocator1="ab&amp;&amp;cd" />
+  <SearchParser.AndCriteria input="ab &amp;&amp; cd:ef &amp;&amp; gh:ij" expectedCount="3" expectedMethod1="Name" expectedLocator1="ab" 
+                            expectedMethod2="cd" expectedLocator2="ef" expectedMethod3="gh" expectedLocator3="ij" />
   <SearchParser.AndCriteria input="&amp;&amp;" expectedCount="1" expectedMethod1="Name" expectedLocator1="&amp;&amp;" />
   <SearchParser.AndCriteria input=" &amp;&amp; " expectedCount="2" expectedMethod1="Name" expectedLocator1=""
                             expectedMethod2="Name" expectedLocator2="" />
   <SearchParser.AndCriteria input="A &amp; B" expectedCount="1" expectedMethod1="Name" expectedLocator1="A &amp; B" />
-  <SearchParser.AndCriteria input="A &amp; B &amp;&amp; C &amp; D" expectedCount="2" expectedMethod1="Name"
-                            expectedLocator1="A &amp; B"
+  <SearchParser.AndCriteria input="A &amp; B &amp;&amp; C &amp; D" expectedCount="2" expectedMethod1="Name" expectedLocator1="A &amp; B"
                             expectedMethod2="Name" expectedLocator2="C &amp; D" />
   <SearchParser.AndCriteria input="  abc  " expectedCount="1" expectedMethod1="Name" expectedLocator1="abc" />
   <SearchParser.AndCriteria input="abc:def" expectedCount="1" expectedMethod1="abc" expectedLocator1="def" />
   <SearchParser.AndCriteria input="abc : def" expectedCount="1" expectedMethod1="abc" expectedLocator1="def" />
   <SearchParser.AndCriteria input="abc:def:ghi" expectedCount="1" expectedMethod1="abc" expectedLocator1="def:ghi" />
   <SearchParser.AndCriteria input="abc : def:ghi" expectedCount="1" expectedMethod1="abc" expectedLocator1="def:ghi" />
-  <SearchParser.AndCriteria input="abc : def : ghi" expectedCount="1" expectedMethod1="abc"
-                            expectedLocator1="def : ghi" />
+  <SearchParser.AndCriteria input="abc : def : ghi" expectedCount="1" expectedMethod1="abc" expectedLocator1="def : ghi" />
   <SearchParser.AndCriteria input=":abc" expectedCount="1" expectedMethod1="" expectedLocator1="abc" />
   <SearchParser.AndCriteria input="abc:" expectedCount="1" expectedMethod1="abc" expectedLocator1="" />
   <SearchParser.AndCriteria input=":" expectedCount="1" expectedMethod1="" expectedLocator1="" />

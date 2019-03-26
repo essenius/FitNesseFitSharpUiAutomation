@@ -15,14 +15,14 @@ namespace UiAutomation.Model
 {
     internal static class ApplicationFactory
     {
-        public static IApplication AttachToProcess(int processId)
+        public static BaseApplication AttachToProcess(int processId)
         {
             var process = new ProcessHandler(processId).ProcessObject();
             if (AppLauncher.IsUwpApp(process.Handle)) return new UwpApplication(process);
             return new ClassicApplication(process);
         }
 
-        public static IApplication Start(string identifier, string arguments)
+        public static BaseApplication Start(string identifier, string arguments)
         {
             const int fileNotFound = 0x02;
             try
@@ -36,7 +36,7 @@ namespace UiAutomation.Model
             }
         }
 
-        public static IApplication Start(string identifier, string arguments, string workFolder) =>
+        public static BaseApplication Start(string identifier, string arguments, string workFolder) =>
             string.IsNullOrEmpty(workFolder)
                 ? Start(identifier, arguments)
                 : new ClassicApplication(identifier, arguments, workFolder);

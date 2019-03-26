@@ -31,8 +31,6 @@ namespace UiAutomation.Model
             Add("CanSelectMultiple", UIA_PropertyIds.UIA_SelectionCanSelectMultiplePropertyId);
             Add("ClassName", UIA_PropertyIds.UIA_ClassNamePropertyId);
             Add("ClickablePoint", UIA_PropertyIds.UIA_ClickablePointPropertyId);
-            // Add("ColumnHeaders", UIA_PropertyIds.UIA_TableColumnHeadersPropertyId); -- disabled since these are 
-            // Add("ControllerFor", UIA_PropertyIds.UIA_ControllerForPropertyId);
             Add("ControlType", UIA_PropertyIds.UIA_ControlTypePropertyId);
             Add("Culture", UIA_PropertyIds.UIA_CulturePropertyId);
             Add("DockPosition", UIA_PropertyIds.UIA_DockDockPositionPropertyId);
@@ -71,7 +69,6 @@ namespace UiAutomation.Model
             Add("Orientation", UIA_PropertyIds.UIA_OrientationPropertyId);
             Add("ProcessId", UIA_PropertyIds.UIA_ProcessIdPropertyId);
             Add("ProviderDescription", UIA_PropertyIds.UIA_ProviderDescriptionPropertyId);
-            // Add("RowHeaders", UIA_PropertyIds.UIA_TableRowHeadersPropertyId);
             Add("ToggleState", UIA_PropertyIds.UIA_ToggleToggleStatePropertyId);
             Add("Value", UIA_PropertyIds.UIA_ValueValuePropertyId);
             Add("VerticallyScrollable", UIA_PropertyIds.UIA_ScrollVerticallyScrollablePropertyId);

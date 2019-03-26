@@ -83,6 +83,7 @@
     <Compile Include="ClassicApplicationTest.cs" />
     <Compile Include="DocumentationAttributeTest.cs" />
     <Compile Include="ExpectedExceptionWithMessage.cs" />
+    <Compile Include="ListOfControlsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FixtureTest.cs" />
     <Compile Include="MappingTest.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="AppLauncherTest.cs" />
     <Compile Include="FileSystemTest.cs" />
     <Compile Include="ApplicationFactoryTest.cs" />
+    <Compile Include="ProcessHandlerTest.cs" />
     <Compile Include="WindowTest.cs" />
     <Compile Include="WpfDemoAppTests.cs" />
   </ItemGroup>

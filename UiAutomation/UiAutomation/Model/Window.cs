@@ -16,7 +16,6 @@ namespace UiAutomation.Model
 {
     internal class Window
     {
-        private const int TimeOutInDeciSeconds = 10;
         private readonly IUIAutomationTransformPattern _transformPattern;
         private readonly IUIAutomationElement _window;
         private IUIAutomationWindowPattern _windowPattern;
@@ -49,9 +48,6 @@ namespace UiAutomation.Model
 
         public bool Move(int xCoordinate, int yCoordinate)
         {
-            //if (_window == null) return false;
-            //_window.CurrentNativeWindowHandle.MoveWindow(xCoordinate, yCoordinate);
-            //return true;
             if (_transformPattern == null) return false;
             _transformPattern.Move(xCoordinate, yCoordinate);
             return true;
@@ -61,9 +57,6 @@ namespace UiAutomation.Model
 
         public bool Resize(int width, int height)
         {
-            //if (_window == null) return false;
-            //_window.CurrentNativeWindowHandle.ResizeWindow(width, height);
-            //return true;
             if (_transformPattern == null) return false;
             _transformPattern.Resize(width, height);
             return true;
@@ -74,14 +67,13 @@ namespace UiAutomation.Model
             _windowPattern = _window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
             if (_windowPattern == null) return false;
             _windowPattern.SetWindowVisualState(state);
-            _windowPattern.WaitWithTimeoutTill(x => x.CurrentWindowVisualState == state, TimeOutInDeciSeconds);
-            Debug.Print("Interaction State: " + _windowPattern.CurrentWindowInteractionState);
+            _windowPattern.WaitWithTimeoutTill(x => x.CurrentWindowVisualState == state);
             return _windowPattern.CurrentWindowVisualState == state;
         }
 
         public bool WaitTillOnScreen()
         {
-            return this.WaitWithTimeoutTill(x => x.IsTopmost(), TimeOutInDeciSeconds);
+            return this.WaitWithTimeoutTill(x => x.IsTopmost());
         }
     }
 }

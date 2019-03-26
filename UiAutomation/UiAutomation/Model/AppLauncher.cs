@@ -51,16 +51,14 @@ namespace UiAutomation.Model
     }
 
     [ComImport, Guid("45BA127D-10A8-46EA-8AB7-56EA9078943C")]
-    //Application Activation Manager
     internal class ApplicationActivationManager : IApplicationActivationManager
     {
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        public extern IntPtr ActivateApplication([In] string appUserModelId, [In] string arguments,
-            [In] ActivateOptions options, [Out] out int processId);
+        public extern IntPtr ActivateApplication([In] string appUserModelId, [In] string arguments, [In] ActivateOptions options, 
+            [Out] out int processId);
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        public extern IntPtr ActivateForFile([In] string appUserModelId, [In] IntPtr itemArray, [In] string verb,
-            [Out] out int processId);
+        public extern IntPtr ActivateForFile([In] string appUserModelId, [In] IntPtr itemArray, [In] string verb, [Out] out int processId);
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         public extern IntPtr ActivateForProtocol([In] string appUserModelId, [In] IntPtr itemArray, [Out] out int processId);
@@ -72,8 +70,7 @@ namespace UiAutomation.Model
         private const int ErrorNotFound = 87;
         private const int NoError = 0;
 
-        // TODO: check whether SafeHandle makes sense here
-        private readonly IntPtr _packageInfo;
+        private readonly SafeAppHandle _packageInfo;
 
         /// <summary>
         ///     Launch an UWB application. You can use the family name as well as the full name.
@@ -85,7 +82,7 @@ namespace UiAutomation.Model
         {
             try
             {
-                _packageInfo = IntPtr.Zero;
+                _packageInfo = null;
                 var error = NativeMethods.OpenPackageInfoByFullName(packageName, 0, out _packageInfo);
                 if (error != NoError)
                 {
@@ -100,7 +97,7 @@ namespace UiAutomation.Model
             }
         }
 
-        public bool Exists => _packageInfo != IntPtr.Zero;
+        public bool Exists => _packageInfo != null && _packageInfo.AppExists;
 
         public string FullName { get; }
 
@@ -115,15 +112,9 @@ namespace UiAutomation.Model
             }
         }
 
-        public void Dispose()
-        {
-            if (_packageInfo == IntPtr.Zero) return;
-            var error = NativeMethods.ClosePackageInfo(_packageInfo);
-            Debug.Assert(error == 0, "error4 == " + error);
-            GC.SuppressFinalize(this);
-        }
+        public void Dispose() => _packageInfo.Dispose();
 
-        ~AppLauncher() => Dispose();
+//        ~AppLauncher() => Dispose();
 
         private static string GetFullName(string family)
         {
@@ -164,12 +155,11 @@ namespace UiAutomation.Model
 
         public int? Launch(string arguments)
         {
-            if (_packageInfo == IntPtr.Zero) return null;
+            if (!Exists) return null;
             var packageApplicationId = PackageApplicationId();
             var activation = (IApplicationActivationManager) new ApplicationActivationManager();
             var hResult = activation.ActivateApplication(packageApplicationId, arguments ?? string.Empty,
-                ActivateOptions.NoErrorUi,
-                out var processId);
+                ActivateOptions.NoErrorUi, out var processId);
             if (hResult != IntPtr.Zero)
             {
                 Marshal.ThrowExceptionForHR(hResult.ToInt32());
@@ -179,7 +169,7 @@ namespace UiAutomation.Model
 
         private string PackageApplicationId()
         {
-            if (_packageInfo == IntPtr.Zero) return null;
+            if (!Exists) return null;
             var bufferLength = 0;
             var error = NativeMethods.GetPackageApplicationIds(_packageInfo, ref bufferLength, null, out var appIdCount);
             Debug.Assert(error == ErrorInsufficientBuffer, "error2 == " + error);

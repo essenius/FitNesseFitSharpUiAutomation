@@ -44,7 +44,7 @@ namespace UiAutomation.Model
         public static extern IntPtr GetForegroundWindow();
 
         [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
-        public static extern int GetPackageApplicationIds(IntPtr pir, ref int bufferLength, byte[] buffer, out int count);
+        public static extern int GetPackageApplicationIds(SafeAppHandle pir, ref int bufferLength, byte[] buffer, out int count);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         public static extern uint GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, StringBuilder packageFamilyName);
@@ -61,8 +61,7 @@ namespace UiAutomation.Model
 
         // we'll deal with it by catching exceptions. See AppLauncher
         [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
-        public static extern int OpenPackageInfoByFullName([MarshalAs(UnmanagedType.LPWStr)] string fullName, uint reserved,
-            out IntPtr packageInfo);
+        public static extern int OpenPackageInfoByFullName([MarshalAs(UnmanagedType.LPWStr)] string fullName, uint reserved, out SafeAppHandle packageInfo);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);

@@ -17,7 +17,7 @@ namespace UiAUtomationTest
     [TestClass]
     public class WindowTest
     {
-        [TestMethod]
+        [TestMethod ,TestCategory("Unit")]
         public void WindowTestNull()
         {
             var window = new Window(null);

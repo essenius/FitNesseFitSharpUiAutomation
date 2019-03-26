@@ -6,7 +6,7 @@ namespace UiAutomationTest
     [TestClass]
     public class DocumentationAttributeTest
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Unit")]
         public void DocumentationAttributeTest1()
         {
             Assert.AreEqual("test", new DocumentationAttribute("test").Message);

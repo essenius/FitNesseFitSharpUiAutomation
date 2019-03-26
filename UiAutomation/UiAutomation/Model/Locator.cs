@@ -64,9 +64,7 @@ namespace UiAutomation.Model
             }
         }
 
-        public bool IsWindowSearch =>
-            ConditionTypeMapper.IsControlType(Method) &&
-            ControlTypeMapper.IsWindow(UnescapedCriterion);
+        public bool IsWindowSearch => ConditionTypeMapper.IsControlType(Method) && ControlTypeMapper.IsWindow(UnescapedCriterion);
 
         public string Method { get; }
 

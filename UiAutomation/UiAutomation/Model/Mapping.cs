@@ -23,8 +23,7 @@ namespace UiAutomation.Model
     {
         private readonly string _name;
 
-        public Mapping(string newName)
-            : base(StringComparer.OrdinalIgnoreCase) => _name = newName;
+        public Mapping(string newName) : base(StringComparer.OrdinalIgnoreCase) => _name = newName;
 
         protected Mapping(SerializationInfo info, StreamingContext context) : base(info, context)
         {

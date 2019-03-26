@@ -14,7 +14,6 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
-// This set of tests may fail if other UWP apps (such as Edge) are active during the test
 namespace UiAutomationTest
 {
     [TestClass]
@@ -58,7 +57,7 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("Calc")]
         public void CalcCheckGracefulHandlingOfNonexistingControl()
         {
-            _fixture.SetTimeoutSeconds(1);
+            UiAutomationFixture.TimeoutSeconds = 1;
             Assert.IsFalse(_fixture.ClickControl(Fields.NonExisting), "Click non-existing Control");
             Assert.IsFalse(_fixture.SelectItem(Fields.NonExisting), "Select non-existing Item");
             Assert.AreEqual("null", _fixture.ValueOfControl(Fields.NonExisting), "Get value of non-existing Control");
@@ -79,7 +78,7 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("Calc")]
         public void CalcCheckKeyPresses()
         {
-            _fixture.SetTimeoutSeconds(1);
+            UiAutomationFixture.TimeoutSeconds = 1;
             Assert.IsTrue(_fixture.PressKey(Win10AppKeys.ScientificMode), "Press " + Win10AppKeys.ScientificMode);
             Assert.IsTrue(_fixture.WaitForControl(Fields.Pi), "Wait for Pi");
             Assert.IsTrue(_fixture.PressKey(Win10AppKeys.StandardMode), "Press " + Win10AppKeys.StandardMode);
@@ -118,11 +117,7 @@ namespace UiAutomationTest
         public void CalcVolume()
         {
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click menu");
-
-            var result = _fixture.ListOfControls(@"controltype:list");
-            Assert.IsTrue(result.Contains("Found 1 items"));
-            Assert.IsTrue(result.Contains("Id=FlyoutNav"));
-            Assert.IsTrue(_fixture.ControlIsVisible(Fields.Scientific));
+            Assert.IsTrue(_fixture.WaitForControl(Fields.Scientific));
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.Volume), "Click Volume");
             Assert.IsTrue(_fixture.WaitForControl(Fields.OutputUnit), "Wait for Output Unit");
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Liters"), "Set Output to Liters");
@@ -155,11 +150,11 @@ namespace UiAutomationTest
         public static void Win10SetupCalc(TestContext testContext)
         {
             _fixture = new UiAutomationFixture();
+            UiAutomationFixture.TimeoutSeconds = 5;
             Assert.IsFalse(_fixture.SwitchToProcess("name:Calculator"), "Check there is no calculator running already");
             _fixture.NoAutomaticSwitchToStartedApplication();
-            _fixture.SetTimeoutSeconds(5);
             _fixture.StartApplication("calc.exe"); 
-            Assert.IsTrue(_fixture.WaitForProcess("name:Calculator"), "Wait for process Calculator");
+            Assert.IsTrue(UiAutomationFixture.WaitForProcess("name:Calculator"), "Wait for process Calculator");
             Assert.IsTrue(_fixture.SwitchToProcess("name:Calculator"), "Switch to calc app");
         }
 

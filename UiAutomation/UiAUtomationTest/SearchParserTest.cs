@@ -62,6 +62,7 @@ namespace UiAutomationTest
             Assert.IsTrue(new SearchParser("Name:Calculator").IsValidProcessCondition());
             Assert.IsFalse(new SearchParser("ControlType:abc").IsValidProcessCondition());
             Assert.IsFalse(new SearchParser("id:123").IsValidProcessCondition());
+            Assert.IsFalse(new SearchParser("ProcessId:123 && id:abc").IsValidProcessCondition());
         }
     }
 }

@@ -9,16 +9,15 @@
 //   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and limitations under the License.
 
-using System;
 using System.Diagnostics;
 
 namespace UiAutomation.Model
 {
-    internal class ClassicApplication : IApplication
+    internal class ClassicApplication : BaseApplication
     {
-        private readonly Process _process;
-
-        public ClassicApplication(Process process) => _process = process;
+        public ClassicApplication(Process process) : base(process)
+        {
+        }
 
         public ClassicApplication(string path, string arguments, string workFolder)
         {
@@ -29,25 +28,15 @@ namespace UiAutomation.Model
                 FileName = path,
                 UseShellExecute = false
             };
-            _process = Process.Start(startInfo);
+
+            process = Process.Start(startInfo);
         }
 
-        public IntPtr MainWindowHandle => _process.MainWindowHandle;
+        public override string ApplicationType => "Classic";
 
-        public string ApplicationType => "Classic";
+        public override Control WindowControl =>
+            !IsActive ? null : new Control(null, SearchType.Shallow, "ProcessId:" + process.Id);
 
-        public bool Exit(bool force) => Exit(force, 1000);
-
-        public bool Exit(bool force, int timeoutInMilliseconds) =>
-            _process.Exit(force) && _process.WaitForExit(force, timeoutInMilliseconds);
-
-        public bool IsActive => _process != null && !_process.HasExited;
-
-        public int ProcessId => _process.Id;
-
-        public void WaitForInputIdle() => _process?.WaitForInputIdle();
-
-        public Control WindowControl =>
-            !IsActive ? null : new Control(null, SearchType.Shallow, "ProcessId:" + _process.Id);
+        public override bool Exit(bool force) => process.Exit(force) && process.WaitForExit(force);
     }
 }

@@ -55,8 +55,7 @@ namespace UiAutomation.Model
         {
             if (element.CurrentIsOffscreen != 0) return false;
             var returnValue = false;
-            if (element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is IUIAutomationExpandCollapsePattern
-                    expandCollapsePattern &&
+            if (element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is IUIAutomationExpandCollapsePattern expandCollapsePattern &&
                 expandCollapsePattern.CurrentExpandCollapseState != ExpandCollapseState.ExpandCollapseState_LeafNode)
             {
                 returnValue = true;
