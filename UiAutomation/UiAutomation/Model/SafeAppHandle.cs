@@ -29,7 +29,6 @@ namespace UiAutomation.Model
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
-            // Here, we must obey all rules for constrained execution regions.
             if (handle == IntPtr.Zero) return true;
             return NativeMethods.ClosePackageInfo(handle) == Success;
         }
