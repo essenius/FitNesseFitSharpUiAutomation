@@ -1,8 +1,8 @@
 For this to work, make sure that the date formats match the Long date format of the system you run the test on
 
-!define Today {!today (EEEE, MMMM dd, yyyy)}
-!define Yesterday {!today (EEEE, MMMM dd, yyyy) -1}
-!define Tomorrow {!today (EEEE, MMMM dd, yyyy) +1}
+!define Today {!today (EEEE, MMMM d, yyyy)}
+!define Yesterday {!today (EEEE, MMMM d, yyyy) -1}
+!define Tomorrow {!today (EEEE, MMMM d, yyyy) +1}
 
 !| import    |
 |UiAutomation|
