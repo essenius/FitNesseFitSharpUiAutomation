@@ -198,6 +198,7 @@ namespace UiAutomationTest
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness"),
          SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
+        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "names cannot start with numbers")]
         private static class Win10AppKeys
         {
             public static string _10X => "^g";

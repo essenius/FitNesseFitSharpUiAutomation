@@ -25,20 +25,21 @@ namespace UiAutomationTest
          SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global", Justification = "False positive")]
         public TestContext TestContext { get; set; }
 
-        [TestMethod, TestCategory("Unit"), DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\" +
-                                                                                                          "TestData.xml" +
-                                                                                                          "",
+        [TestMethod, TestCategory("Unit"), 
+         DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\TestData.xml",
              "SearchParser.AndCriteria", DataAccessMethod.Sequential), DeploymentItem("UiAutomationTest\\TestData.xml")]
         public void SearchParserAndCriteriaTest()
         {
             Locator.DefaultConditionType = "Name";
             var input = TestContext.DataRow["input"].ToString();
             var expectedCriterionCount = Convert.ToInt32(TestContext.DataRow["expectedCount"]);
-            var resultList = new List<Tuple<string, string>>();
+            var resultList = new List<Tuple<string, string, string>>();
             for (var i = 1; i <= expectedCriterionCount; i++)
             {
-                resultList.Add(new Tuple<string, string>(TestContext.DataRow["expectedMethod" + i].ToString(),
-                    TestContext.DataRow["expectedLocator" + i].ToString()));
+                resultList.Add(new Tuple<string, string, string>(
+                    TestContext.DataRow["expectedMethod" + i].ToString(),
+                    TestContext.DataRow["expectedLocator" + i].ToString(),
+                    TestContext.DataRow["expectedGridItem" +i]?.ToString()));
             }
 
             var searchParser = new SearchParser(input);
@@ -48,6 +49,7 @@ namespace UiAutomationTest
             {
                 Assert.AreEqual(resultList[i].Item1, searchParser.Locators[i].Method, "Methods OK");
                 Assert.AreEqual(resultList[i].Item2, searchParser.Locators[i].Criterion, "Locator OK");
+                Assert.AreEqual(resultList[i].Item3, searchParser.Locators[i].GridItem, "GridItem OK");
             }
         }
 
@@ -61,8 +63,10 @@ namespace UiAutomationTest
             Assert.IsFalse(new SearchParser("ProcessId:123 && id:abc").IsValidProcessCondition());
         }
 
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentNullException)),
-         SuppressMessage("ReSharper", "ObjectCreationAsStatement", Justification = "Expecting exception")]
-        public void SearchParserFindElement1NullTest() => new SearchParser(null);
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentNullException))]
+        public void SearchParserFindElement1NullTest()
+        {
+            var _ = new SearchParser(null);
+        }
     }
 }

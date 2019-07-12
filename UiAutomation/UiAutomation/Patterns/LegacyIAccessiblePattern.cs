@@ -21,7 +21,16 @@ namespace UiAutomation.Patterns
         public LegacyIAccessiblePattern(IUIAutomationElement element) => _legacyIAccessiblePattern = element.GetCurrentPattern(
             UIA_PatternIds.UIA_LegacyIAccessiblePatternId) as IUIAutomationLegacyIAccessiblePattern;
 
-        public bool TryGet(out string returnValue) => throw new NotImplementedException();
+        public bool TryGet(out string returnValue)
+        {
+            if (!DoesApply())
+            {
+                returnValue = null;
+                return false;
+            }
+            returnValue = _legacyIAccessiblePattern.CurrentValue;
+            return true;
+        } 
 
         public SetResult TrySet(string value)
         {

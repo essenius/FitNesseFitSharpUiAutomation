@@ -33,7 +33,9 @@ namespace UiAutomationTest
             Assert.IsFalse(fixture.SwitchToAppWindow(), "Cannot switch to app window if not started");
             Assert.IsFalse(fixture.SwitchToParentWindow(), "cannot switch to parent if no app launched");
             Assert.IsFalse(fixture.IsUwpApp(), "IsUwpApp returns false if no app started");
+#pragma warning disable 618
             Assert.IsFalse(fixture.SwitchToWindow("irrelevant"), @"Can't switch to nonexisting window");
+#pragma warning restore 618
             Assert.IsFalse(fixture.SwitchToProcess("irrelevant"));
             Assert.IsFalse(fixture.MaximizeWindow(), "Can't maximize nonexisting window");
             Assert.IsFalse(fixture.MinimizeWindow(), "Can't minimize nonexisting window");
@@ -42,8 +44,8 @@ namespace UiAutomationTest
             Assert.IsFalse(fixture.ResizeWindow(100, 100), "Can't resize nonexisting window");
             Assert.AreEqual(0, fixture.WindowWidth, "Width of nonexisting window is 0");
             Assert.AreEqual(0, fixture.WindowHeight, "height of nonexisting window is 0");
-            Assert.AreEqual(0, fixture.WindowX, "X of nonexisting window is 0");
-            Assert.AreEqual(0, fixture.WindowY, "Y of nonexisting window is 0");
+            Assert.AreEqual(0, fixture.WindowX, "Row of nonexisting window is 0");
+            Assert.AreEqual(0, fixture.WindowY, "Column of nonexisting window is 0");
         }
 
         [TestMethod, TestCategory("Cmd"), DeploymentItem(@"UiAutomationTest\test.cmd")]
@@ -265,7 +267,7 @@ namespace UiAutomationTest
         public void FixtureTestRowCountOnNonGridApplication()
         {
             Assert.IsTrue(_fixture.StartApplication("notepad.exe"), "Notepad started");
-            Assert.AreEqual("none", _fixture.RowNumberOfControlContaining("Name:File", "nothing"),
+            Assert.IsNull(_fixture.CellInControlContaining("Name:File", "nothing"),
                 "asking row number on non-grid returns none");
             Assert.IsTrue(_fixture.CloseApplication(), "Close application");
         }

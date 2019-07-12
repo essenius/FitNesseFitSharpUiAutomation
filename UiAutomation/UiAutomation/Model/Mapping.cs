@@ -17,8 +17,8 @@ using System.Runtime.Serialization;
 
 namespace UiAutomation.Model
 {
-    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
-         Justification = "Hide implementation details"), Serializable]
+    [Serializable,
+     SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Hide implementation details")]
     internal class Mapping<T> : Dictionary<string, T>
     {
         private readonly string _name;

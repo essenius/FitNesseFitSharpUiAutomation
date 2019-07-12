@@ -222,25 +222,44 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("DemoApp")]
         public void WpfDemoCheckGrid()
         {
+            const string dataGrid = "DataGrid1";
             Assert.IsTrue(UiAutomationFixture.SearchBy("id"), "Default search is by ID");
             Assert.IsTrue(_fixture.SelectItem("Caption:Data Grid"), "Select 'Data Grid' tab");
-            Assert.AreEqual(5, _fixture.RowCountOfControl("DataGrid1"), "Get Row Count");
-            Assert.AreEqual(3, _fixture.ColumnCountOfControl("DataGrid1"), "Get Column Count");
-            Assert.AreEqual("1", _fixture.RowNumberOfControlContaining("DataGrid1", "100"), "Get row with cell '100'");
-            Assert.AreEqual("2",
-                _fixture.RowNumberOfControlContaining("DataGrid1", "Create demo UI Automation application"),
-                "Get row with cell 'Demo UI...'");
-            Assert.AreEqual("3", _fixture.RowNumberOfControlContaining("DataGrid1", "Approved"),
-                "Get row with cell 'Approved'");
-            Assert.AreEqual("none", _fixture.RowNumberOfControlContaining("DataGrid1", "Non-existing value"),
-                "Get row with non-existent cell");
-            Assert.AreEqual("none", _fixture.RowNumberOfControlContaining("NoGrid", "Non-existing value"),
-                "Get row from non-existing grid");
+            Assert.AreEqual(5, _fixture.RowCountOfControl(dataGrid), "Get Row Count");
+            Assert.AreEqual(3, _fixture.ColumnCountOfControl(dataGrid), "Get Column Count");
+#pragma warning disable 618
+            Assert.AreEqual("1", _fixture.RowNumberOfControlContaining(dataGrid, "100"), "Get row with cell '100'");
+#pragma warning restore 618
+            Assert.AreEqual("row 2, column 3",
+                _fixture.CellInControlContaining(dataGrid, "Create demo UI Automation application").ToString(), "Get row with cell 'Demo UI...'");
+            Assert.AreEqual("row 3, column 2", _fixture.CellInControlContaining("DataGrid1", "Approved").ToString(), "Get row with cell 'Approved'");
+            Assert.IsNull(_fixture.CellInControlContaining(dataGrid, "Non-existing value"), "Search non-existent cell");
+            Assert.IsNull(_fixture.CellInControlContaining("NoGrid", "Non-existing value"), "Search non-existing grid");
+
+            var item = _fixture.CellInControlContaining(dataGrid, "101");
+            Assert.AreEqual(2, item.Row, "Row OK");
+            Assert.AreEqual(1, item.Column, "Column OK");
+            var locator = $"{dataGrid}[{item}]";
+            Assert.AreEqual("101", _fixture.ValueOfControl(locator), "Contains 101");
+            Assert.AreNotEqual("101", _fixture.ValueOfControl("GridTextbox"), "Initial value of GridBox != 101");
+            Assert.IsTrue(_fixture.DoubleClickControl(locator), "DoubleClick 101");
+            Assert.AreEqual("101", _fixture.ValueOfControl("GridTextbox"), "GridBox contains 101");
+            Assert.IsTrue(_fixture.DoubleClickControl($"{dataGrid}[row 3, col 2]"), "DoubleClick row 3 column 2");
+            Assert.IsTrue(_fixture.ClickControl($"{dataGrid} [4,3]"), "Click row 4 column 3");
+            Assert.AreEqual("row 4, column 3", _fixture.SelectedCellInControl(dataGrid).ToString(), "selected cell is 4,3");
+            Assert.AreEqual("Approved", _fixture.ValueOfControl("GridTextbox"), "GridBTextBox contains Approved");
+            Assert.IsTrue(_fixture.ClickControl($"{dataGrid}[row 2]"), "Click Row 2");
+            Assert.AreEqual("row 2, column 1", _fixture.SelectedCellInControl("DataGrid1").ToString(), "Selected cell returns value of first column");
+            Assert.IsTrue(_fixture.ClickControl($"{dataGrid}[col 2]"), "Click Header 2");
+            Assert.AreEqual("Active", _fixture.ValueOfControl($"{dataGrid}[1,2]"), "Clicking header sorts column");
+
+            Assert.IsTrue(_fixture.ClickControl($"{dataGrid}[column 1]"));
+            Assert.AreEqual("100", _fixture.ValueOfControl($"{dataGrid}[row 1, column 1]"));
+
             Assert.IsTrue(_fixture.SelectItem("Caption:Usual Controls"), "Select 'Usual Controls' tab");
             Assert.AreEqual(0, _fixture.RowCountOfControl("Button1"), "Buttons don't have rows");
             Assert.AreEqual(0, _fixture.ColumnCountOfControl("MultiValueListBox"), "ListBoxes don't have rows");
-            Assert.AreEqual("none", _fixture.RowNumberOfControlContaining("TreeView1", "Core Product 1"),
-                "TreeViews don't have cells");
+            Assert.IsNull(_fixture.CellInControlContaining("TreeView1", "Core Product 1"), "TreeViews don't have cells");
         }
 
         [TestMethod, TestCategory("DemoApp")]

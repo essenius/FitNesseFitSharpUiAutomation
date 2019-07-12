@@ -28,7 +28,7 @@ namespace UiAutomation
                 var app = ApplicationFactory.AttachToProcess(_processId.Value);
                 app.WaitForInputIdle();
                 var control = app.WindowControl;
-                // This is not only necessary to potentially wait, but also to populate the parent property in the econtrol.
+                // This is not only necessary to potentially wait, but also to populate the parent property in the control.
                 control.WaitTillFound();
                 list = control.DescendantControls(_searchCriterion).ToList();
             }

@@ -50,9 +50,6 @@ namespace UiAutomation.Model
             return Locators.Count == 1 && validProcessConditions.Contains(Locators[0].ConditionType);
         }
 
-        public bool IsWindowSearch()
-        {
-            return Locators.Any(locator => locator.IsWindowSearch);
-        }
+        public bool IsWindowSearch() => Locators.Any(locator => locator.IsWindowSearch);
     }
 }

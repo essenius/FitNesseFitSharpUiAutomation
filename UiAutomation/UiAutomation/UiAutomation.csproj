@@ -74,6 +74,7 @@
     <Compile Include="Model\Control.cs" />
     <Compile Include="Model\ControlTypeMapper.cs" />
     <Compile Include="ExtractGrid.cs" />
+    <Compile Include="GridItem.cs" />
     <Compile Include="Model\ExtensionFunctions.cs" />
     <Compile Include="Model\FileSystem.cs" />
     <Compile Include="Model\IUIAutomationElementExtensions.cs" />
