@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using interop.UIAutomationCore;
@@ -25,33 +24,18 @@ namespace UiAutomation.Model
 {
     internal class Control
     {
-        private const string None = "none";
         private const string Null = "null";
         private static readonly IUIAutomation Automation = new CUIAutomation();
 
         internal static readonly PropertyMapper Properties = new PropertyMapper();
 
-        private readonly IUIAutomationElement _parent;
-        private readonly SearchParser _searchParser;
-        private readonly TreeScope _treeScope;
+        private IUIAutomationElement _parent;
 
-        public Control(Control parent, SearchType searchType, string searchCriterion) :
-            this(parent, null, searchType, new SearchParser(searchCriterion))
-        {
-        }
+        private string _searchCriterion;
+        private SearchParser _searchParser;
+        private TreeScope _treeScope = TreeScope.TreeScope_Descendants;
 
-        private Control(IUIAutomationElement parent, IUIAutomationElement child, SearchType searchType, SearchParser searchParser)
-        {
-            _parent = parent;
-            AutomationElement = child;
-            _treeScope = searchType == SearchType.Deep ? TreeScope.TreeScope_Descendants : TreeScope.TreeScope_Children;
-            _searchParser = searchParser;
-        }
-
-        private Control(Control parent, IUIAutomationElement child, SearchType searchType, SearchParser searchParser) :
-            this(parent == null ? Automation.GetRootElement() : parent.AutomationElement, child, searchType, searchParser)
-        {
-        }
+        public Control(string searchCriterion) => SearchCriterion = searchCriterion;
 
         public IUIAutomationElement AutomationElement { get; private set; }
 
@@ -67,15 +51,20 @@ namespace UiAutomation.Model
             }
         }
 
-        public string Name => AutomationElement == null ? string.Empty : AutomationElement.CurrentName;
-
-        public IUIAutomationElement Parent
+        public IUIAutomationElement FindParentElement
         {
             get
             {
                 var walker = Automation.ControlViewWalker;
-                return walker?.GetParentElement(AutomationElement);
+                return walker.GetParentElement(AutomationElement);
             }
+        }
+
+        public string Name => AutomationElement == null ? string.Empty : AutomationElement.CurrentName;
+
+        public Control Parent
+        {
+            set => _parent = value == null ? Automation.GetRootElement() : value.AutomationElement;
         }
 
         public int RowCount
@@ -86,6 +75,22 @@ namespace UiAutomation.Model
                 var gridPattern = AutomationElement.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) as IUIAutomationGridPattern;
                 return gridPattern?.CurrentRowCount ?? 0;
             }
+        }
+
+        public string SearchCriterion
+        {
+            get => _searchCriterion;
+            private set
+            {
+                _searchCriterion = value;
+                _searchParser = _searchCriterion == null ? null : new SearchParser(value);
+            }
+        }
+
+        public SearchType SearchType
+        {
+            get => _treeScope == TreeScope.TreeScope_Descendants ? SearchType.Deep : SearchType.Shallow;
+            set => _treeScope = value == SearchType.Deep ? TreeScope.TreeScope_Descendants : TreeScope.TreeScope_Children;
         }
 
         public string Value => GetValue(AutomationElement);
@@ -103,6 +108,26 @@ namespace UiAutomation.Model
 
                 return currentElement?.CurrentNativeWindowHandle ?? IntPtr.Zero;
             }
+        }
+
+        public GridItem CellContaining(string value)
+        {
+            if (!(AutomationElement?.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) is IUIAutomationGridPattern gridPattern))
+            {
+                return null;
+            }
+
+            for (var row = 0; row < gridPattern.CurrentRowCount; row++)
+            for (var column = 0; column < gridPattern.CurrentColumnCount; column++)
+            {
+                var cell = gridPattern.GetItem(row, column);
+                if (GetValue(cell) == value)
+                {
+                    return new GridItem(row + 1, column + 1);
+                }
+                // row numbers are zero based, we want 1-based.  
+            }
+            return null;
         }
 
         public bool Click()
@@ -130,7 +155,9 @@ namespace UiAutomation.Model
         private static IUIAutomationCondition CreateCondition(LocatorCollection locators)
         {
             if (!locators.Any() || locators.Count == 1 && string.IsNullOrEmpty(locators[0].Method) && string.IsNullOrEmpty(locators[0].Criterion))
+            {
                 return Automation.CreateTrueCondition();
+            }
             var propertyCondition = locators.Select(locator =>
                 Automation.CreatePropertyConditionEx(locator.ConditionType, locator.ConditionValue,
                     PropertyConditionFlags.PropertyConditionFlags_IgnoreCase)).ToList();
@@ -154,13 +181,20 @@ namespace UiAutomation.Model
                 var element = container.FindFirst(TreeScope.TreeScope_Children, elementCondition);
                 // If no such element, try the next container, if any.
                 if (element == null) continue;
-                return new Control(container, element, SearchType.Shallow, searchParser);
+                return new Control(elementCriterion)
+                {
+                    SearchType = SearchType.Shallow,
+                    AutomationElement = element,
+                    _parent = container
+                };
             }
             return null;
         }
 
         public Control[] DescendantControls(string childSearchCriterion) =>
             FindControls(childSearchCriterion, TreeScope.TreeScope_Descendants, AutomationElement);
+
+        public bool DoubleClick() => AutomationElement != null && Mouse.DoubleClick(AutomationElement);
 
         public bool Exists() => AutomationElement != null || FindControl();
 
@@ -204,7 +238,11 @@ namespace UiAutomation.Model
             else
             {
                 var parent = window == null ? Automation.GetRootElement() : window.AutomationElement;
-                control = new Control(parent, null, SearchType.Deep, searcher);
+                control = new Control(searchCriterion)
+                {
+                    SearchType = SearchType.Deep,
+                    _parent = parent
+                };
                 control.FindControl();
             }
 
@@ -215,13 +253,24 @@ namespace UiAutomation.Model
         {
             var condition = CreateCondition(_searchParser.Locators);
             AutomationElement = _parent.FindFirst(_treeScope, condition);
-            return AutomationElement != null;
+            if (AutomationElement == null) return false;
+
+            // If we have a grid item locator, find the corresponding item (i.e. replace the parent by AutomationElement,
+            // and replace AutomationElement by that of the grid item
+            var gridItemLocator = GridItemLocator(_searchParser.Locators);
+            return string.IsNullOrEmpty(gridItemLocator) || FindGridItem(new GridItem(gridItemLocator));
         }
 
         private static Control[] FindControls(string childSearchCriterion, TreeScope treeScope, IUIAutomationElement parent)
         {
             var elementList = FindAllElements(childSearchCriterion, treeScope, parent);
-            return elementList.Select(element => new Control(Automation.GetRootElement(), element, SearchType.Shallow, null)).ToArray();
+            return elementList.Select(element => new Control(null)
+            {
+                AutomationElement = element,
+                Parent = null,
+                SearchType = SearchType.Shallow
+            }).ToArray();
+            //return elementList.Select(element => new Control(Automation.GetRootElement(), element, SearchType.Shallow, null)).ToArray();
         }
 
         private static IUIAutomationElement FindFirstControlUnder(IUIAutomationElement element, IUIAutomationTreeWalker walker, int controlType)
@@ -235,6 +284,26 @@ namespace UiAutomation.Model
                 child = walker.GetNextSiblingElement(child);
             }
             return null;
+        }
+
+        public bool FindGridItem(GridItem gridItem)
+        {
+            if (!(AutomationElement?.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) is IUIAutomationGridPattern gridPattern)) return false;
+            if (gridItem.GridItemType == GridItemType.Cell)
+            {
+                _parent = AutomationElement;
+                AutomationElement = gridPattern.GetItem(gridItem.Row - 1, gridItem.Column - 1);
+                return AutomationElement != null;
+            }
+            // we have GridItemTypes Row and Column left. Get the respective row or column header.
+            if (!(AutomationElement.GetCurrentPattern(UIA_PatternIds.UIA_TablePatternId) is IUIAutomationTablePattern tablePattern)) return false;
+            var isRow = gridItem.GridItemType == GridItemType.Row;
+            var headers = isRow ? tablePattern.GetCurrentRowHeaders() : tablePattern.GetCurrentColumnHeaders();
+            var index = isRow ? gridItem.Row : gridItem.Column;
+            var header = headers.GetElement(index - 1);
+            _parent = AutomationElement;
+            AutomationElement = header;
+            return true;
         }
 
         public string FirstTextUnder()
@@ -254,12 +323,27 @@ namespace UiAutomation.Model
             if (new TogglePattern(targetControl).TryGet(out returnValue)) return returnValue;
             if (new SelectionPattern(Automation, targetControl).TryGet(out returnValue)) return returnValue;
             if (new SelectionItemPattern(targetControl).TryGet(out returnValue)) return returnValue;
-            return new FallBackPattern(Automation, targetControl).TryGet(out returnValue) ? returnValue : None;
+            return new FallBackPattern(Automation, targetControl).TryGet(out returnValue) ? returnValue : null;
+        }
+
+        private static string GridItemLocator(LocatorCollection locators)
+        {
+            foreach (var locator in locators)
+            {
+                if (!string.IsNullOrEmpty(locator.GridItem)) return locator.GridItem;
+            }
+            return string.Empty;
         }
 
         public bool IsEnabled() => AutomationElement != null && AutomationElement.CurrentIsEnabled != 0;
 
         public bool IsVisible() => AutomationElement != null && AutomationElement.CurrentIsOffscreen == 0;
+
+        public static Control Parse(string searchCriterion) =>
+            new Control(searchCriterion)
+            {
+                Parent = null
+            };
 
         public object Property(string propertyName)
         {
@@ -269,28 +353,6 @@ namespace UiAutomation.Model
 
         public static Control[] RootChildControls(string childSearchCriterion) =>
             FindControls(childSearchCriterion, TreeScope.TreeScope_Children, Automation.GetRootElement());
-
-        public string RowNumberContaining(string value)
-        {
-            if (!(AutomationElement?.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) is IUIAutomationGridPattern
-                gridPattern))
-            {
-                return None;
-            }
-
-            for (var x = 0; x < gridPattern.CurrentRowCount; x++)
-            for (var y = 0; y < gridPattern.CurrentColumnCount; y++)
-            {
-                var cell = gridPattern.GetItem(x, y);
-                if (GetValue(cell) == value)
-                {
-                    return (x + 1).ToString(CultureInfo.InvariantCulture);
-                }
-                // row numbers are zero based, we want 1-based.                        
-            }
-
-            return None;
-        }
 
         public bool Select()
         {
@@ -302,6 +364,25 @@ namespace UiAutomation.Model
 
             selectControl.Select();
             return true;
+        }
+
+        public GridItem SelectedCell()
+        {
+            if (!(AutomationElement?.GetCurrentPattern(UIA_PatternIds.UIA_SelectionPatternId) is IUIAutomationSelectionPattern pattern)) return null;
+
+            var items = pattern.GetCurrentSelection();
+            if (items.Length == 0) return null;
+            // If multiple items are selected, we just return the first one.
+            var element = items.GetElement(0);
+            // If we don't get a DataGridCell but a DataGridRow, get the first item in the row
+            if (element.CurrentClassName == "DataGridRow")
+            {
+                var locators = new SearchParser("ClassName:DataGridCell").Locators;
+                element = element.FindFirst(TreeScope.TreeScope_Children, CreateCondition(locators));
+            }
+            return !(element.GetCurrentPattern(UIA_PatternIds.UIA_GridItemPatternId) is IUIAutomationGridItemPattern cellPattern)
+                ? null
+                : new GridItem(cellPattern.CurrentRow + 1, cellPattern.CurrentColumn + 1);
         }
 
         public bool SetValue(string value)

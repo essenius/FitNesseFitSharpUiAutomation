@@ -16,7 +16,7 @@ using System.Text;
 
 namespace UiAutomation.Model
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Want to be reasonably complete"),
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness"),
      SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Legacy Windows naming followed")]
     internal static class NativeMethods
     {
@@ -32,8 +32,8 @@ namespace UiAutomation.Model
             WH_MOUSE_LL = 14
         }
 
-        // these are App related APIs which do not exist in Win7 and before
-        [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
+        [DllImport("kernel32"), SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist",
+             Justification = "App related APIs which do not exist in Win7 and before")]
         public static extern int ClosePackageInfo(IntPtr pir);
 
         [DllImport("user32.dll")]

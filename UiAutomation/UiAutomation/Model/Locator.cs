@@ -18,7 +18,6 @@ namespace UiAutomation.Model
     internal class Locator
     {
         private const string TypeDelimiter = ":";
-
         private static string _defaultMethod = "Name";
 
         private static readonly ConditionTypeMapper ConditionTypes = new ConditionTypeMapper();
@@ -26,16 +25,27 @@ namespace UiAutomation.Model
 
         public Locator(string locatorString)
         {
+            string criterion;
             if (locatorString.Contains(TypeDelimiter))
             {
                 Method = locatorString.Substring(0, locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal)).Trim();
-                Criterion = locatorString.Substring(locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal) + 1).Trim();
+                criterion = locatorString.Substring(locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal) + 1).Trim();
             }
             else
             {
                 Method = DefaultConditionType;
-                Criterion = locatorString.Trim();
+                criterion = locatorString.Trim();
             }
+            // Find non-whitespace, then optional whitespace, and then text between brackets. If it matches, we have a grid item specification
+            var match = Regex.Match(criterion, @"([^\s]*)\s*\[(.*)\]", RegexOptions.IgnoreCase);
+            if (!match.Success)
+            {
+                Criterion = criterion;
+                GridItem = string.Empty;
+                return;
+            }
+            Criterion = match.Groups[1].Value;
+            GridItem = match.Groups[2].Value;
         }
 
         public int ConditionType => ConditionTypes.Map(Method);
@@ -52,7 +62,6 @@ namespace UiAutomation.Model
         }
 
         private int ControlType => ControlTypes.Map(Criterion);
-
         public string Criterion { get; }
 
         public static string DefaultConditionType
@@ -63,6 +72,8 @@ namespace UiAutomation.Model
                 if (ConditionTypes.ContainsKey(value)) _defaultMethod = value;
             }
         }
+
+        public string GridItem { get; }
 
         public bool IsWindowSearch => ConditionTypeMapper.IsControlType(Method) && ControlTypeMapper.IsWindow(UnescapedCriterion);
 

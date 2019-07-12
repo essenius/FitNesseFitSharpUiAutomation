@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -277,5 +279,18 @@ namespace WpfDemoApp
         {
             DataGrid1.HeadersVisibility = DataGridHeadersVisibility.None;
         }
+
+        private string CurrentCellFor(DataGrid grid)
+        {
+            if (grid.SelectedCells.Count == 0) return null;
+            var cellInfo = DataGrid1.SelectedCells[0];
+            return (cellInfo.Column.GetCellContent(cellInfo.Item) as TextBox)?.Text;
+        }
+
+        private void DataGrid1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            GridTextbox.Text = CurrentCellFor(DataGrid1) ?? "Nothing selected.";
+        }
+
     }
 }

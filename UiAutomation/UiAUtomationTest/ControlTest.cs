@@ -22,14 +22,19 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("Unit")]
         public void ControlCommandsWithoutApplicationHandledOk()
         {
-            var control = new Control(null, SearchType.Deep, "id:non-existing element");
+            var control = Control.Parse("id:non-existing element");
+            Assert.AreEqual(SearchType.Deep, control.SearchType, "SearchType is deep");
             Assert.IsFalse(control.Collapse(), "Collapse fails");
             Assert.IsFalse(control.Expand(), "Expand fails");
+            Assert.IsFalse(control.DoubleClick(), "DoubleClick fails");
+            Assert.IsFalse(control.FindGridItem(new GridItem("1,2")), "FindGridItem fails");
+            Assert.IsNull(control.FirstTextUnder(), "FirstTextUnder fails");
+
             Assert.IsTrue(string.IsNullOrEmpty(control.AutomationId), "Automation ID is empty");
             Assert.IsTrue(string.IsNullOrEmpty(control.Name), "Name is empty");
             Assert.AreEqual(0, control.ColumnCount, "Column Count = 0");
             Assert.AreEqual(0, control.RowCount, "RowCount = 0");
-            Assert.AreEqual("none", control.RowNumberContaining("nothing"), "row number containing is none");
+            Assert.IsNull(control.SelectedCell());
 
             Assert.IsFalse(control.IsEnabled(), "control is not enabled");
             Assert.IsFalse(control.IsVisible(), "control is not visible");

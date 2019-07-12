@@ -69,6 +69,8 @@ namespace UiAutomation.Model
             return true;
         }
 
+        public static bool DoubleClick(IUIAutomationElement element) => Click(element) && Click(element);
+
         private static bool MouseEvent(NativeMethods.MouseEventFlags eventFlags, int x, int y)
         {
             var mouseInput = new[]

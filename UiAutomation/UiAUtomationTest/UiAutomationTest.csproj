@@ -56,9 +56,6 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\UiAutomation\bin\interop.UIAutomationCore.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.CodeCoverage.Shim, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeCoverage.15.9.0\lib\net45\Microsoft.VisualStudio.CodeCoverage.Shim.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.4.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
     </Reference>
@@ -96,6 +93,8 @@
     <Compile Include="FileSystemTest.cs" />
     <Compile Include="ApplicationFactoryTest.cs" />
     <Compile Include="ProcessHandlerTest.cs" />
+    <Compile Include="PatternTest.cs" />
+    <Compile Include="GridITemTest.cs" />
     <Compile Include="WindowTest.cs" />
     <Compile Include="WpfDemoAppTests.cs" />
   </ItemGroup>
@@ -114,6 +113,7 @@
     </Content>
     <Content Include="TestData.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +122,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

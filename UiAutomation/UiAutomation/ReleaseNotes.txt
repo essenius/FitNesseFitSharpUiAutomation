@@ -19,3 +19,5 @@
 	  Refactored UWPApplication and ClassicApplication to use common base class, and made UWP process detection more stable.
 	  Fixed flakiness in detection of UWP application activation
 	  Introduced SafeAppHandle in AppLauncher
+2.5.0 Improved support for Grid controls: created CellInControlContaining, DoubleClickControl, SelectedCellInControl, and introduced a mechanism
+      to select grid items via their coordinates. Simplified constructors for Control. Updated WpfDemoApp to demonstrate new capabilities

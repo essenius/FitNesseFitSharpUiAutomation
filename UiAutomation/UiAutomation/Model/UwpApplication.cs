@@ -35,7 +35,7 @@ namespace UiAutomation.Model
         {
             get
             {
-                var parent = WindowControl.Parent;
+                var parent = WindowControl.FindParentElement;
                 var parentProcessId = parent.CurrentProcessId;
                 return Process.GetProcessById(parentProcessId);
             }

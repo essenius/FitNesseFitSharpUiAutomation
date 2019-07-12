@@ -27,14 +27,17 @@ namespace UiAutomation
         {
             // we are not looking for a window here, so no need for the Window parameter
             var control = Control.FindControl(_locator, null);
-            if (!(control?.AutomationElement?.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId)
-                is IUIAutomationGridPattern gridPattern))
+            if (!(control?.AutomationElement?.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) is IUIAutomationGridPattern gridPattern))
             {
                 return null;
             }
 
             var headerCollection = new Collection<string>();
-            var headerContainer = new Control(control, SearchType.Deep, "ControlType:Header");
+            var headerContainer = new Control("ControlType:Header")
+            {
+                SearchType = SearchType.Deep,
+                Parent = control
+            };
             headerContainer.FindControl();
             var headers = headerContainer.FindAllElements("ControlType:HeaderItem");
             foreach (var columnHeader in headers)

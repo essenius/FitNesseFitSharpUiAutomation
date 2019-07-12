@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 using ImageHandler;
@@ -49,7 +50,7 @@ namespace UiAutomation
         private BaseApplication _sut;
         private Control _window;
 
-        [Documentation("The appliation under test is active")]
+        [Documentation("Is the appliation under test active?")]
         public bool ApplicationIsActive => _sut?.IsActive ?? false;
 
         [Documentation("The process Id of the currently active application under test")]
@@ -95,6 +96,10 @@ namespace UiAutomation
             return methodToApply(control);
         }
 
+        [Documentation("Get the row and column of the first cell in a grid that contains the value")]
+        public GridItem CellInControlContaining(string searchCriterion, string value) =>
+            ApplyMethodToControl(x => x.CellContaining(value), searchCriterion);
+
         [Documentation("Click a clickable control (e.g. Button)")]
         public bool ClickControl(string searchCriterion) => ApplyMethodToControl(x => x.Click(), searchCriterion);
 
@@ -117,6 +122,9 @@ namespace UiAutomation
 
         [Documentation("Returns whether a certain control is visible")]
         public bool ControlIsVisible(string searchCriterion) => ApplyMethodToControl(x => x.IsVisible(), searchCriterion);
+
+        [Documentation("Double click a control")]
+        public bool DoubleClickControl(string searchCriterion) => ApplyMethodToControl(x => x.DoubleClick(), searchCriterion);
 
         [Documentation("Drag the mouse from a control. Use together with Drop On Control")]
         public bool DragControl(string searchCriterion)
@@ -165,7 +173,11 @@ namespace UiAutomation
 
         internal Control GetControl(string locator)
         {
-            var control = new Control(_window, SearchType.Deep, locator);
+            var control = new Control(locator)
+            {
+                SearchType = SearchType.Deep,
+                Parent = _window
+            };
             control.FindControl();
             return control;
         }
@@ -179,9 +191,7 @@ namespace UiAutomation
         [Documentation("Minimize the window of the system under test")]
         public bool MinimizeWindow() => new Window(_window?.AutomationElement).Minimize();
 
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x"),
-         SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y"),
-         Documentation("Move a window to a certain x and y position")]
+        [Documentation("Move a window to a certain x and y position")]
         public bool MoveWindow(int x, int y)
         {
             if (_window == null || _sut == null) return false;
@@ -226,9 +236,12 @@ namespace UiAutomation
         [Documentation("Returns the number of rows in a grid control")]
         public int RowCountOfControl(string searchCriterion) => ApplyMethodToControl(x => x.RowCount, searchCriterion);
 
-        [Documentation("Returns the row number of a control that contains a specific value of rows in a grid control")]
-        public string RowNumberOfControlContaining(string searchCriterion, string value) =>
-            ApplyMethodToControl(x => x.RowNumberContaining(value), searchCriterion);
+        [Obsolete("Use CellInControlContaining")]
+        public string RowNumberOfControlContaining(string searchCriterion, string value)
+        {
+            var cell = ApplyMethodToControl(x => x.CellContaining(value), searchCriterion);
+            return cell?.Row.ToString(CultureInfo.InvariantCulture);
+        }
 
         [Documentation("Sets the default search method. If this command is not called, Name will be assumed")]
         public static bool SearchBy(string conditionType)
@@ -237,6 +250,9 @@ namespace UiAutomation
             // will only be set to a valid value
             return Locator.DefaultConditionType.Equals(conditionType, StringComparison.OrdinalIgnoreCase);
         }
+
+        [Documentation("Get the row and column of the selected cell in a control. If multiple are selected, it returns the first only")]
+        public GridItem SelectedCellInControl(string searchCriterion) => ApplyMethodToControl(x => x.SelectedCell(), searchCriterion);
 
         [Documentation("Select a selectable item (e.g. RadioButton, Tab)")]
         public bool SelectItem(string searchCriterion) => ApplyMethodToControl(x => x.Select(), searchCriterion);
@@ -302,7 +318,7 @@ namespace UiAutomation
         [Documentation("Switch to the parent window of the current app (useful for UWP apps)")]
         public bool SwitchToParentWindow()
         {
-            var parent = _window?.Parent;
+            var parent = _window?.FindParentElement;
             return parent != null && SwitchToProcess("ProcessId:" + parent.CurrentProcessId);
         }
 
@@ -319,7 +335,11 @@ namespace UiAutomation
         [Obsolete("Only works for classical applications. Use SwitchToProcess instead")]
         public bool SwitchToWindow(string locator)
         {
-            var window = new Control(null, SearchType.Shallow, locator);
+            var window = new Control(locator)
+            {
+                SearchType = SearchType.Shallow,
+                Parent = null
+            };
             return window.FindControl() && SwitchToProcessById(window.AutomationElement.CurrentProcessId);
         }
 

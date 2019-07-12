@@ -35,8 +35,11 @@ namespace UiAutomation.Model
         public override string ApplicationType => "Classic";
 
         public override Control WindowControl =>
-            !IsActive ? null : new Control(null, SearchType.Shallow, "ProcessId:" + process.Id);
-
+            !IsActive ? null : new Control("ProcessId:" + process.Id)
+            {
+                SearchType = SearchType.Shallow,
+                Parent = null
+            };
         public override bool Exit(bool force) => process.Exit(force) && process.WaitForExit(force);
     }
 }
