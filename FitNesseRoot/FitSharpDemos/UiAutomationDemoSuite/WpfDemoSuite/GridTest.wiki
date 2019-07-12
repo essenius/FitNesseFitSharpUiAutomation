@@ -1,18 +1,29 @@
-!|script                                                                                            |
-|search by  |id                                                                                     |
-|select item|Caption:Data Grid                                                                      |
-|check      |row count of control   |DataGrid1|5                                                    |
-|check      |column count of control|DataGrid1|3                                                    |
-|check      |row number of control  |DataGrid1|containing|100                                  |1   |
-|check      |row number of control  |DataGrid1|containing|Create demo UI Automation application|2   |
-|check      |row number of control  |DataGrid1|containing|Approved                             |3   |
-|check      |row number of control  |DataGrid1|containing|Non-existing value                   |none|
+!define Grid {DataGrid1}
+
+!|script                                                                                                                         |
+|search by          |id                                                                                                          |
+|select item        |Caption:Data Grid                                                                                           |
+|check              |row count of control    |${Grid}           |5                                                               |
+|check              |column count of control |${Grid}           |3                                                               |
+|check              |selected cell in control|${Grid}           |null                                                            |
+|$location=         |cell in control         |${Grid}           |containing|100                                                  |
+|check              |value of control        |${Grid}[$location]|100                                                             |
+|check              |cell in control         |${Grid}           |containing|Create demo UI Automation application|row 2, column 3|
+|check              |cell in control         |${Grid}           |containing|Approved                             |row 3, column 2|
+|check              |row number of control   |${Grid}           |containing|Non-existing value                   |null           |
+|Doubleclick Control|${Grid} [row 2, column 1]                                                                                   |
+|check              |value of control        |GridTextBox       |101                                                             |
+|Click Control      |${Grid}[4,3]                                                                                                |
+|check              |selected cell in control|${Grid}           |row 4, column 3                                                 |
+|Click Control      |${Grid} [column 2]                                                                                          |
+|check              |Value Of Control        |${Grid}[1,2]      |Active                                                          |
+|Click Control      |${Grid} [column 1]                                                                                          |
 
 Some negative cases. Non-existing controls and buttons don't have rows, list boxes don't have columns, and !-TreeViews-! don't have cells
 
 !|script                                                                                 |
 |select item|Caption:Usual Controls                                                      |
-|check      |row number of control  |NonexistingGrid  |containing|Non-existing value|none|
+|check      |cell in control        |NonexistingGrid  |containing|Non-existing value|null|
 |check      |row count of control   |Button1          |0                                 |
 |check      |column count of control|MultiValueListBox|0                                 |
-|check      |row number of control  |TreeView1        |containing|Core Product 1    |none|
+|check      |cell in control        |TreeView1        |containing|TFS               |null|
