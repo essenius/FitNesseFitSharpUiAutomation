@@ -27,13 +27,8 @@ namespace UiAutomation.Model
 
         private tagRECT BoundingRectangle => _window.CurrentBoundingRectangle;
 
-        public double Height => BoundingRectangle.bottom - BoundingRectangle.top;
-
-        public double Left => BoundingRectangle.left;
-
-        public double Top => BoundingRectangle.top;
-
-        public double Width => BoundingRectangle.right - BoundingRectangle.left;
+        public Coordinate Size => new Coordinate(BoundingRectangle.right - BoundingRectangle.left, BoundingRectangle.bottom - BoundingRectangle.top);
+        public Coordinate TopLeft => new Coordinate(BoundingRectangle.left, BoundingRectangle.top);
 
         public bool IsTopmost()
         {

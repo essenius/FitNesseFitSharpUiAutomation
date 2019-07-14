@@ -95,6 +95,7 @@
     <Compile Include="ProcessHandlerTest.cs" />
     <Compile Include="PatternTest.cs" />
     <Compile Include="GridITemTest.cs" />
+    <Compile Include="CoordinateTest.cs" />
     <Compile Include="WindowTest.cs" />
     <Compile Include="WpfDemoAppTests.cs" />
   </ItemGroup>

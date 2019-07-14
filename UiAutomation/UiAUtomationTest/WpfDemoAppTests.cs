@@ -457,8 +457,8 @@ namespace UiAutomationTest
         public void WpfDemoExtractGridWithHeadersTest()
         {
             Assert.IsTrue(_fixture.SelectItem("Caption:Data Grid"), "Select data grid tab");
-            Assert.AreEqual(3, _fixture.PropertyOf("Column Count", "id:DataGrid1"), "Column count is 3");
-            Assert.AreEqual(5, _fixture.PropertyOf("Row Count", "id:DataGrid1"), "Row count is 4");
+            Assert.AreEqual(3, _fixture.PropertyOfControl("Column Count", "id:DataGrid1"), "Column count is 3");
+            Assert.AreEqual(5, _fixture.PropertyOfControl("Row Count", "id:DataGrid1"), "Row count is 4");
             TestTable("id:DataGrid1", new[] {"Id", "Status", "Title"}, DataGridValues);
         }
 
@@ -466,12 +466,12 @@ namespace UiAutomationTest
         public void WpfDemoExtractGridWithoutHeadersTest()
         {
             Assert.IsTrue(_fixture.SelectItem("Caption:Data Grid"), "Select data grid tab");
-            Assert.AreEqual(1, _fixture.PropertyOf("ToggleState", "id:DataGridHeaderCheckbox"), "ToggleState is on before");
+            Assert.AreEqual(1, _fixture.PropertyOfControl("ToggleState", "id:DataGridHeaderCheckbox"), "ToggleState is on before");
             Assert.IsTrue(_fixture.ToggleControl("id:DataGridHeaderCheckbox"), "Toggle checkbox 1");
-            Assert.AreEqual(0, _fixture.PropertyOf("Toggle State", "id:DataGridHeaderCheckbox"), "ToggleState is off after");
+            Assert.AreEqual(0, _fixture.PropertyOfControl("Toggle State", "id:DataGridHeaderCheckbox"), "ToggleState is off after");
             TestTable("id:DataGrid1", new[] {"Column 1", "Column 2", "Column 3"}, DataGridValues);
             Assert.IsTrue(_fixture.ToggleControl("id:DataGridHeaderCheckbox"), "Toggle checkbox 2");
-            Assert.AreEqual(1, _fixture.PropertyOf("ToggleState", "id:DataGridHeaderCheckbox"), "ToggleState is on after");
+            Assert.AreEqual(1, _fixture.PropertyOfControl("ToggleState", "id:DataGridHeaderCheckbox"), "ToggleState is on after");
         }
     }
 }

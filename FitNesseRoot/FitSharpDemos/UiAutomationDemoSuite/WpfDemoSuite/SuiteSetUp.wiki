@@ -4,4 +4,3 @@
 !|Script          |UI Automation Fixture                             |
 |Search By        |Name                                              |
 |Start Application|UiAutomation\WpfDemoApp\bin\release\WpfDemoApp.exe|
-#|Start Application|C:\Data\FitNesse\Fixtures\UiAutomation.Sample\WpfDemoApp.exe|

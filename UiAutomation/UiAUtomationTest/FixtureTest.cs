@@ -39,13 +39,15 @@ namespace UiAutomationTest
             Assert.IsFalse(fixture.SwitchToProcess("irrelevant"));
             Assert.IsFalse(fixture.MaximizeWindow(), "Can't maximize nonexisting window");
             Assert.IsFalse(fixture.MinimizeWindow(), "Can't minimize nonexisting window");
-            Assert.IsFalse(fixture.MoveWindow(10, 10), "Can't move nonexisting window");
+            Assert.IsFalse(fixture.MoveWindow(new Coordinate(10, 10)), "Can't move nonexisting window");
             Assert.IsFalse(fixture.NormalWindow(), "Can't restore nonexisting window");
-            Assert.IsFalse(fixture.ResizeWindow(100, 100), "Can't resize nonexisting window");
-            Assert.AreEqual(0, fixture.WindowWidth, "Width of nonexisting window is 0");
-            Assert.AreEqual(0, fixture.WindowHeight, "height of nonexisting window is 0");
-            Assert.AreEqual(0, fixture.WindowX, "Row of nonexisting window is 0");
-            Assert.AreEqual(0, fixture.WindowY, "Column of nonexisting window is 0");
+            Assert.IsFalse(fixture.ResizeWindow(new Coordinate(100, 100)), "Can't resize nonexisting window");
+            var topleft = fixture.WindowTopLeft;
+            var size = fixture.WindowSize;
+            Assert.AreEqual(0, size.X, "Width of nonexisting window is 0");
+            Assert.AreEqual(0, size.Y, "height of nonexisting window is 0");
+            Assert.AreEqual(0, topleft.X, "Row of nonexisting window is 0");
+            Assert.AreEqual(0, topleft.Y, "Column of nonexisting window is 0");
         }
 
         [TestMethod, TestCategory("Cmd"), DeploymentItem(@"UiAutomationTest\test.cmd")]
@@ -122,19 +124,17 @@ namespace UiAutomationTest
                 Assert.AreEqual("The quick brown fox jumps over the lazy dog.\r\nHello\r\nthere",
                     _fixture.ValueOfControl(@"controltype:edit"));
 
-                Assert.IsTrue(_fixture.ResizeWindow(400, 140), "Resize succeeds");
-                Assert.AreEqual(400, _fixture.WindowWidth);
-                Assert.AreEqual(140, _fixture.WindowHeight);
+                var desiredSize = new Coordinate(400, 140);
+                Assert.IsTrue(_fixture.ResizeWindow(desiredSize), "Resize succeeds");
+                Assert.AreEqual(desiredSize, _fixture.WindowSize);
                 Assert.IsTrue(_fixture.MaximizeWindow());
-                Assert.AreNotEqual(400, _fixture.WindowWidth);
-                Assert.AreNotEqual(140, _fixture.WindowHeight);
+                Assert.AreNotEqual(desiredSize, _fixture.WindowSize);
                 Assert.IsTrue(_fixture.MinimizeWindow());
                 Assert.IsTrue(_fixture.NormalWindow());
-                Assert.AreEqual(400, _fixture.WindowWidth);
-                Assert.AreEqual(140, _fixture.WindowHeight);
-                Assert.IsTrue(_fixture.MoveWindow(200, 250), "Move succeeds");
-                Assert.AreEqual(200, _fixture.WindowX);
-                Assert.AreEqual(250, _fixture.WindowY);
+                Assert.AreEqual(desiredSize, _fixture.WindowSize);
+                var desiredLocation = new Coordinate(200, 250);
+                Assert.IsTrue(_fixture.MoveWindow(desiredLocation), "Move succeeds");
+                Assert.AreEqual(desiredLocation, _fixture.WindowTopLeft);
                 var snapshot = _fixture.WindowSnapshot(8);
                 var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.txt");
                 var expected2 = File.ReadAllText("NotepadScreenshotWithCursor.txt");
@@ -179,7 +179,7 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.ClickControl("Name:Don't Save"), "click Don't Save");
             // Normally exiting Word can take a very long time. 10 seconds is typically not enough
             UiAutomationFixture.TimeoutSeconds = 30;
-            Assert.IsTrue(UiAutomationFixture.WaitUntilProcessEnds(@"winword"));
+            Assert.IsTrue(UiAutomationFixture.WaitUntilProcessEnds(@"winword"), "WinWord process ends");
             UiAutomationFixture.TimeoutSeconds = 3;
             fixture.SetAutomaticSwitchToStartedApplication();
         }
@@ -202,14 +202,14 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced close of 2nd instance succeeds");
             Assert.IsTrue(_fixture.SwitchToProcess("ProcessId:" + processId), "Can switch to first Word instance");
             Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced close 1st instance succeeds");
-            Assert.IsTrue(UiAutomationFixture.WaitUntilProcessEnds(@"name:winword"));
+            Assert.IsTrue(UiAutomationFixture.WaitUntilProcessEnds(@"name:winword"), "WinWord process ends");
         }
 
         [TestMethod, TestCategory("Unit")]
         public void FixtureSwitchToInvalidWindowFails()
         {
             UiAutomationFixture.TimeoutSeconds = 0.7;
-            Assert.IsFalse(_fixture.SwitchToProcess(@"name:nonexistingwindow"));
+            Assert.IsFalse(_fixture.SwitchToProcess(@"name:nonexistingwindow"), "Switch to nonexisting process fails");
         }
 
         [TestMethod, TestCategory("DefaultApps")]
@@ -226,8 +226,7 @@ namespace UiAutomationTest
         {
             Assert.IsTrue(_fixture.StartApplication("notepad.exe"), "Notepad started");
             Assert.IsTrue(_fixture.SetValueOfControlTo("ControlType:edit", "text"), "Set Text");
-            Assert.IsTrue(_fixture.ForcedCloseApplication(),
-                "Forced closing an application showing a dialog should succeed");
+            Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced closing an application showing a dialog should succeed");
         }
 
         [TestMethod, TestCategory("DefaultApps")]
@@ -239,8 +238,7 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.WaitForControlAndClick("Page Setup..."), "Click Page Setup menu");
             Assert.IsTrue(_fixture.WaitForControl("Page Setup"), "Wait for Page Setup dialog");
             Assert.IsFalse(_fixture.CloseApplication(), "Closing application with a modal dialog open should fail");
-            Assert.IsTrue(_fixture.ForcedCloseApplication(),
-                "Forced closing application with a modal dialog open should succeed");
+            Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced closing application with a modal dialog open should succeed");
         }
 
         [TestMethod, TestCategory("Unit")]

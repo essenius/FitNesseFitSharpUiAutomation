@@ -21,3 +21,9 @@
 	  Introduced SafeAppHandle in AppLauncher
 2.5.0 Improved support for Grid controls: created CellInControlContaining, DoubleClickControl, SelectedCellInControl, and introduced a mechanism
       to select grid items via their coordinates. Simplified constructors for Control. Updated WpfDemoApp to demonstrate new capabilities
+2.6.0 Introduced Coordinate to simplify specification of sizes and locations Deprecated WindowHeight, WindowWidth, WindowTop and WindowLeft,
+      and replaced by WindowSize and WindowTopLeft. Made MoveWindow and ResizeWindow use Coordinate instead of separate ints.
+	  Renamed PropertyOf to PropertyOfControl for consistency with other functions.
+	  Renamed WindowSnapshot with border parameter to WindowSnapshotMinusOuterPixels to make the purpose of the parameter clearer.
+	  Same for WindowSnapshotObject
+

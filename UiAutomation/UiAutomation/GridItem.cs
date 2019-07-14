@@ -12,7 +12,7 @@ namespace UiAutomation
         Column,
         Row
     }
-
+    [Documentation("Element in a grid: cell, row, or column")]
     public class GridItem
     {
         public GridItem(int row, int column)

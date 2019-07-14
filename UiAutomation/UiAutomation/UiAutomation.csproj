@@ -64,6 +64,7 @@
     <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Coordinate.cs" />
     <Compile Include="DocumentationAttribute.cs" />
     <Compile Include="ListOfControls.cs" />
     <Compile Include="Model\AppLauncher.cs" />

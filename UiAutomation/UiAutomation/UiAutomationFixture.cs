@@ -76,17 +76,22 @@ namespace UiAutomation
         [Documentation("Returns whether the platform supports UWP apps")]
         public static bool UwpAppsAreSupported => PlatformVersion.Major > 6 || PlatformVersion.Major == 6 && PlatformVersion.Minor >= 2;
 
-        [Documentation("Height of the window of the system under test. 0 if nothing open")]
-        public double WindowHeight => _window == null ? 0 : new Window(_window.AutomationElement).Height;
+        [Documentation("Coordinate (X,Y) of the top left corner of the system under test's window, in pixels. 0,0 if nothing open")]
+        public Coordinate WindowTopLeft => _window == null ? new Coordinate(0,0) : new Window(_window.AutomationElement).TopLeft;
+        [Documentation("Window size (width, height) of the system under test, in pixels. 0,0 if nothing open")]
+        public Coordinate WindowSize => _window == null ? new Coordinate(0, 0) : new Window(_window.AutomationElement).Size;
 
-        [Documentation("Width of the window of the system under test. 0 if nothing open")]
-        public double WindowWidth => _window == null ? 0 : new Window(_window.AutomationElement).Width;
+        [Obsolete("Use WindowSize")]
+        public double WindowHeight => WindowSize.X;
 
-        [Documentation("X position of the upper left corner of the window of the system under test. 0 if nothing open")]
-        public double WindowX => _window == null ? 0 : new Window(_window.AutomationElement).Left;
+        [Obsolete("Use WindowSize")]
+        public double WindowWidth => WindowSize.Y;
 
-        [Documentation("Y position of the upper left corner of the window of the system under test. 0 if nothing open")]
-        public double WindowY => _window == null ? 0 : new Window(_window.AutomationElement).Top;
+        [Obsolete("Use WindowTopLeft")]
+        public double WindowX => WindowTopLeft.X;
+
+        [Obsolete("Use WindowTopLeft")]
+        public double WindowY => WindowTopLeft.Y;
 
         private T ApplyMethodToControl<T>(Func<Control, T> methodToApply, string searchCriterion)
         {
@@ -191,12 +196,13 @@ namespace UiAutomation
         [Documentation("Minimize the window of the system under test")]
         public bool MinimizeWindow() => new Window(_window?.AutomationElement).Minimize();
 
+        // TODO: use a Coordinate object instead
         [Documentation("Move a window to a certain x and y position")]
-        public bool MoveWindow(int x, int y)
+        public bool MoveWindow(Coordinate coordinate)
         {
             if (_window == null || _sut == null) return false;
             _sut.WaitForInputIdle();
-            return new Window(_window.AutomationElement).Move(x, y);
+            return new Window(_window.AutomationElement).Move(coordinate.X, coordinate.Y);
         }
 
         [Documentation("Return the name of a control")]
@@ -206,7 +212,7 @@ namespace UiAutomation
                        "This will then need to be done manually with a Switch To Window command.")]
         public void NoAutomaticSwitchToStartedApplication() => _automaticSwitchToStartedApplication = false;
 
-        [Documentation("'Restore' the window od the system under test")]
+        [Documentation("'Restore' the window of the system under test")]
         public bool NormalWindow() => new Window(_window?.AutomationElement).Normal();
 
         [Documentation("Use the SendKeys.SendWait method to simulate keypresses. " +
@@ -222,15 +228,18 @@ namespace UiAutomation
             return true;
         }
 
+        [Obsolete("Use PropertyOfControl")]
+        public object PropertyOf(string property, string searchCriterion) => PropertyOfControl(property, searchCriterion);
+
         [Documentation("Returns a property of a control")]
-        public object PropertyOf(string property, string searchCriterion) => ApplyMethodToControl(x => x.Property(property), searchCriterion);
+        public object PropertyOfControl(string property, string searchCriterion) => ApplyMethodToControl(x => x.Property(property), searchCriterion);
 
         [Documentation("Resize a window to a certain width and height")]
-        public bool ResizeWindow(int width, int height)
+        public bool ResizeWindow(Coordinate size)
         {
             if (_window == null || _sut == null) return false;
             _sut.WaitForInputIdle();
-            return new Window(_window.AutomationElement).Resize(width, height);
+            return new Window(_window.AutomationElement).Resize(size.X, size.Y);
         }
 
         [Documentation("Returns the number of rows in a grid control")]
@@ -381,17 +390,17 @@ namespace UiAutomation
         [Documentation("Waits for a process to end (via ProcessId or Name)")]
         public static bool WaitUntilProcessEnds(string searchCriterion) => WaitForProcess(searchCriterion, false);
 
-        [Documentation("Take a snapshot of the current window and render it as an HTML base 64 image")]
-        public string WindowSnapshot() => WindowSnapshot(0);
-
         [Documentation("Take a snapshot of the current window removing a border width and render it as an HTML base 64 image")]
-        public string WindowSnapshot(int border) => WindowSnapshotObject(border).Rendering;
+        public string WindowSnapshot(int border) => WindowSnapshotObjectMinusOuterPixels(border).Rendering;
+
+        [Documentation("Take a snapshot of the current window and render it as an HTML base 64 image")]
+        public string WindowSnapshotMinusOuterPixels() => WindowSnapshot(0);
 
         [Documentation("Take a snapshot of the current window and return it as a Snapshot object")]
-        public Snapshot WindowSnapshotObject() => WindowSnapshotObject(0);
+        public Snapshot WindowSnapshotObject() => WindowSnapshotObjectMinusOuterPixels(0);
 
         [Documentation("Take a snapshot of the current window removing a border width and return it as a Snapshot object")]
-        public Snapshot WindowSnapshotObject(int border)
+        public Snapshot WindowSnapshotObjectMinusOuterPixels(int border)
         {
             NativeMethods.SetForegroundWindow(_window.WindowHandle);
             new Window(_window.AutomationElement).WaitTillOnScreen();
