@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using static System.FormattableString;
 
 namespace UiAutomation
 {
@@ -23,13 +25,13 @@ namespace UiAutomation
                 }
                 var list = input.Split(',');
                 if (list.Length != 2) throw new ArgumentException("Could not parse a coordinate as 'int,int'");
-                X = Convert.ToInt32(list[0]);
-                Y = Convert.ToInt32(list[1]);
+                X = Convert.ToInt32(list[0], CultureInfo.InvariantCulture);
+                Y = Convert.ToInt32(list[1], CultureInfo.InvariantCulture);
             }
 
             public int X { get; }
             public int Y { get; }
-            public override string ToString() => $"{X}, {Y}";
+            public override string ToString() => Invariant($"{X}, {Y}");
 
             public override bool Equals(object obj)
             {

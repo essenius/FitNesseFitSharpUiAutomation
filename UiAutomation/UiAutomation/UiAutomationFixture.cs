@@ -202,7 +202,7 @@ namespace UiAutomation
         [Documentation("Move a window to a certain x and y position")]
         public bool MoveWindowTo(Coordinate coordinate)
         {
-            if (_window == null || _sut == null) return false;
+            if (_window == null || _sut == null || coordinate == null) return false;
             _sut.WaitForInputIdle();
             return new Window(_window.AutomationElement).Move(coordinate.X, coordinate.Y);
         }
@@ -242,7 +242,7 @@ namespace UiAutomation
         [Documentation("Resize a window to a certain width and height. Format: width, height")]
         public bool ResizeWindowTo(Coordinate size)
         {
-            if (_window == null || _sut == null) return false;
+            if (_window == null || _sut == null || size == null) return false;
             _sut.WaitForInputIdle();
             return new Window(_window.AutomationElement).Resize(size.X, size.Y);
         }
@@ -322,9 +322,8 @@ namespace UiAutomation
             app.WaitForInputIdle();
 
             _window = app.WindowControl;
-            if (_window == null) return false;
-            // This is needed to populate the control's AutomationElement
-            return _window.WaitTillFound();
+            // WaitTillFound is needed to populate the control's AutomationElement
+            return _window != null && _window.WaitTillFound();
         }
 
         internal bool SwitchToAppWindow() => SwitchTo(_sut);

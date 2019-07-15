@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,7 +26,7 @@ namespace WpfDemoApp
             WorkingFolder.Text = Directory.GetCurrentDirectory();
         }
 
-        private static string AllTreeListItems(ItemCollection itemCollection) => TreeListItems(itemCollection, 0);
+        private static string AllTreeListItems(IEnumerable itemCollection) => TreeListItems(itemCollection, 0);
 
         private static string GetDataFromListBox(ItemsControl source, Point point)
         {

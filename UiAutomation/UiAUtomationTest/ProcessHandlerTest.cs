@@ -50,7 +50,7 @@ namespace UiAUtomationTest
         [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(ArgumentException), "Could not understand process condition id:1")]
         public void ProcessHandlerTest1()
         {
-            var handler = new ProcessHandler("id:1");
+            var _ = new ProcessHandler("id:1");
         }
     }
 }

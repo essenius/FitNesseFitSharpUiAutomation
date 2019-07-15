@@ -11,7 +11,7 @@ namespace UiAutomationTest
          ExpectedExceptionWithMessage(typeof(Win32Exception), "The system cannot find the file specified")]
         public void ClassicApplicationConstructorNonexistingFileRaisesException()
         {
-            var app = new ClassicApplication("nonexisting.exe", null, null);
+            var _ = new ClassicApplication("nonexisting.exe", null, null);
         }
 
         [TestMethod, TestCategory("DefaultApps")]
