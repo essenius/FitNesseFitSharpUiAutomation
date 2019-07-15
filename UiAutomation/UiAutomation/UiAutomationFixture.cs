@@ -196,9 +196,11 @@ namespace UiAutomation
         [Documentation("Minimize the window of the system under test")]
         public bool MinimizeWindow() => new Window(_window?.AutomationElement).Minimize();
 
-        // TODO: use a Coordinate object instead
+        [Obsolete("Use MoveWindowTo instead")]
+        public bool MoveWindow(Coordinate coordinate) => MoveWindowTo(coordinate);
+
         [Documentation("Move a window to a certain x and y position")]
-        public bool MoveWindow(Coordinate coordinate)
+        public bool MoveWindowTo(Coordinate coordinate)
         {
             if (_window == null || _sut == null) return false;
             _sut.WaitForInputIdle();
@@ -234,8 +236,11 @@ namespace UiAutomation
         [Documentation("Returns a property of a control")]
         public object PropertyOfControl(string property, string searchCriterion) => ApplyMethodToControl(x => x.Property(property), searchCriterion);
 
-        [Documentation("Resize a window to a certain width and height")]
-        public bool ResizeWindow(Coordinate size)
+        [Obsolete("Use ResizeWindowTo")]
+        public bool ResizeWindow(Coordinate size) => ResizeWindowTo(size);
+
+        [Documentation("Resize a window to a certain width and height. Format: width, height")]
+        public bool ResizeWindowTo(Coordinate size)
         {
             if (_window == null || _sut == null) return false;
             _sut.WaitForInputIdle();

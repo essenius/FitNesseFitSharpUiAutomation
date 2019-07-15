@@ -39,9 +39,9 @@ namespace UiAutomationTest
             Assert.IsFalse(fixture.SwitchToProcess("irrelevant"));
             Assert.IsFalse(fixture.MaximizeWindow(), "Can't maximize nonexisting window");
             Assert.IsFalse(fixture.MinimizeWindow(), "Can't minimize nonexisting window");
-            Assert.IsFalse(fixture.MoveWindow(new Coordinate(10, 10)), "Can't move nonexisting window");
+            Assert.IsFalse(fixture.MoveWindowTo(new Coordinate(10, 10)), "Can't move nonexisting window");
             Assert.IsFalse(fixture.NormalWindow(), "Can't restore nonexisting window");
-            Assert.IsFalse(fixture.ResizeWindow(new Coordinate(100, 100)), "Can't resize nonexisting window");
+            Assert.IsFalse(fixture.ResizeWindowTo(new Coordinate(100, 100)), "Can't resize nonexisting window");
             var topleft = fixture.WindowTopLeft;
             var size = fixture.WindowSize;
             Assert.AreEqual(0, size.X, "Width of nonexisting window is 0");
@@ -125,7 +125,9 @@ namespace UiAutomationTest
                     _fixture.ValueOfControl(@"controltype:edit"));
 
                 var desiredSize = new Coordinate(400, 140);
+#pragma warning disable 618
                 Assert.IsTrue(_fixture.ResizeWindow(desiredSize), "Resize succeeds");
+#pragma warning restore 618
                 Assert.AreEqual(desiredSize, _fixture.WindowSize);
                 Assert.IsTrue(_fixture.MaximizeWindow());
                 Assert.AreNotEqual(desiredSize, _fixture.WindowSize);
@@ -133,7 +135,9 @@ namespace UiAutomationTest
                 Assert.IsTrue(_fixture.NormalWindow());
                 Assert.AreEqual(desiredSize, _fixture.WindowSize);
                 var desiredLocation = new Coordinate(200, 250);
+#pragma warning disable 618
                 Assert.IsTrue(_fixture.MoveWindow(desiredLocation), "Move succeeds");
+#pragma warning restore 618
                 Assert.AreEqual(desiredLocation, _fixture.WindowTopLeft);
                 var snapshot = _fixture.WindowSnapshot(8);
                 var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.txt");

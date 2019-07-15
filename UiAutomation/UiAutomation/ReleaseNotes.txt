@@ -26,4 +26,4 @@
 	  Renamed PropertyOf to PropertyOfControl for consistency with other functions.
 	  Renamed WindowSnapshot with border parameter to WindowSnapshotMinusOuterPixels to make the purpose of the parameter clearer.
 	  Same for WindowSnapshotObject
-
+2.6.1 Renamed MoveWindow to MoveWindowTo and ResizeWindow to ResizeWindowTo for consistency with other fixture functions
