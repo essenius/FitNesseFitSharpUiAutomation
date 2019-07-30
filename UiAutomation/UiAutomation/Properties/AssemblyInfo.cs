@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("9e80f7bc-d816-4fa5-b937-dc1fd38cab73")]
-[assembly: AssemblyVersion("2.6.2")]
+[assembly: AssemblyVersion("2.6.3")]
 [assembly: InternalsVisibleTo("UiAutomationTest")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: CLSCompliant(true)]

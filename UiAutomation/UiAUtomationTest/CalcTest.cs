@@ -128,6 +128,7 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.WaitForControl(Fields.Scientific));
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.Volume), "Click Volume");
             Assert.IsTrue(_fixture.WaitForControl(Fields.OutputUnit), "Wait for Output Unit");
+            Assert.AreEqual("Milliliters", _fixture.ValueOfControl(Fields.OutputUnit));
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Liters"), "Set Output to Liters");
             Assert.IsTrue(_fixture.WaitForControl(Fields.InputUnit), "Wait for Input Unit");
             Assert.IsTrue(_fixture.ClickControl(Fields.InputUnit), "Click InputUnit");
@@ -180,7 +181,7 @@ namespace UiAutomationTest
             public static string InputUnit => "id:Units2";
             public static string MemoryAdd => "name:Memory Add";
             public static string MemoryClear => "id:ClearMemoryButton";
-            public static string Menu => "name:Menu";
+            public static string Menu => "name:Open Navigation";
             public static string Negate => "id:negateButton";
             public static string NonExisting => "name:non-existing control";
             public static string One => "name:one";

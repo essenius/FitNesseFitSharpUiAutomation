@@ -11,6 +11,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Threading;
 using interop.UIAutomationCore;
 using ImageHandler;
 
@@ -59,6 +60,8 @@ namespace UiAutomation.Model
                 expandCollapsePattern.CurrentExpandCollapseState != ExpandCollapseState.ExpandCollapseState_LeafNode)
             {
                 returnValue = true;
+                // TODO: find timing issue and resolve structurally. This issue shows with CalcVolume
+                Thread.Sleep(100);
                 expandCollapsePattern.Expand();
             }
 

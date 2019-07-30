@@ -38,7 +38,7 @@ namespace UiAutomation.Patterns
             {
                 returnValue = _element.CurrentName;
             }
-            returnValue = returnValue.StripUnicodeCharacters();
+            returnValue = returnValue?.StripUnicodeCharacters();
             return !string.IsNullOrEmpty(returnValue);
         }
 
