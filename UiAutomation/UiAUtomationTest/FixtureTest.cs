@@ -108,7 +108,11 @@ namespace UiAutomationTest
         }
 
         // This test is a bit flaky because the behavior of Notepad isn't entirely predictable. Sometimes e.g. it shows a horizontal scrollbar.
-        [TestMethod, TestCategory("DefaultApps"), DeploymentItem("NotepadScreenshotNoCursor.txt"), DeploymentItem("NotepadScreenshotWithCursor.txt")]
+        [TestMethod, TestCategory("DefaultApps"),
+         DeploymentItem("NotepadScreenshotNoCursor.txt"),
+         DeploymentItem("NotepadScreenshotWithCursor.txt"),
+         DeploymentItem("NotepadScreenshotWithCursorAndScrollbar.txt"),
+         DeploymentItem("NotepadScreenshotNoCursorWithScrollbar.txt")]
         public void FixtureNotePadCheckSetValueResizeMoveAndScreenshot()
         {
             try
@@ -142,8 +146,12 @@ namespace UiAutomationTest
                 var snapshot = _fixture.WindowSnapshot(8);
                 var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.txt");
                 var expected2 = File.ReadAllText("NotepadScreenshotWithCursor.txt");
+                var expected3 = File.ReadAllText("NotepadScreenshotWithCursorAndScrollbar.txt");
+                var expected4 = File.ReadAllText("NotepadScreenshotNoCursorWithScrollbar.txt");
+
                 Console.WriteLine(snapshot);
-                Assert.IsTrue(snapshot.Equals(expected1) || snapshot.Equals(expected2), "Snapshot matches");
+                Assert.IsTrue(snapshot.Equals(expected1) || snapshot.Equals(expected2) ||
+                              snapshot.Equals(expected3) || snapshot.Equals(expected4), "Snapshot matches");
                 UiAutomationFixture.WaitSeconds(1);
                 Assert.IsTrue(_fixture.ClickControl("Close"));
                 Assert.IsTrue(_fixture.WaitForControl("Save"), "Wait for Save");

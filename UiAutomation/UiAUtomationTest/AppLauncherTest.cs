@@ -22,7 +22,7 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("DefaultApps")]
         public void AppLauncherResolveTest()
         {
-            var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.1.6_8wekyb3d8bbwe");
+            var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe");
             Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
             var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy");
             Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
@@ -56,9 +56,15 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.SwitchToParentWindow(), "Switch to parent.");
 
             Assert.IsTrue(fixture.ClickControl("ControlType:ListItem && name:System"));
+            Assert.IsTrue(fixture.WaitForControl("id:PagesListView"));
             Assert.IsTrue(fixture.WaitForControlAndClick("Name:About"));
-            Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_WindowsVersionStatus_ValueTextBlock"));
-            Debug.Print("Version from settings: " + fixture.ValueOfControl("id:SystemSettings_PCSystem_WindowsVersionStatus_ValueTextBlock"));
+            // This is needed. If you don't do it, the process gets into a locked state.
+            Assert.IsTrue(fixture.WaitForControl("ControlType:Text && name:About"), "Wait for About text");
+            // The About title comes earlier than the rest of the page, so wait for the control we want to examine
+            Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_VersionString_ValueTextBlock"));
+            var version = fixture.ValueOfControl("id:SystemSettings_PCSystem_VersionString_ValueTextBlock");
+            Debug.Print("Version from settings: " + version);
+            Assert.IsTrue(int.TryParse(version, out _), "Version is numerical");
             Assert.IsTrue(fixture.ClickControl("name:Close Settings"), "Press Close Settings");
         }
     }

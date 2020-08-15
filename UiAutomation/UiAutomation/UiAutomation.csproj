@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UiAutomation</RootNamespace>
     <AssemblyName>UiAutomation</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -116,7 +116,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"%25PROGRAMFILES(X86)%25\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\tlbimp.exe" %25windir%25\system32\UIAutomationCore.dll /out:..\interop.UIAutomationCore.dll"</PreBuildEvent>
+    <PreBuildEvent>"%25PROGRAMFILES(X86)%25\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\tlbimp.exe" %25windir%25\system32\UIAutomationCore.dll /out:..\interop.UIAutomationCore.dll"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -11,6 +11,7 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using interop.UIAutomationCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
@@ -86,10 +87,10 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.WaitForControl(Fields.Pi), "Wait for Pi");
             Assert.IsTrue(_fixture.ClickControl(Fields.Degrees), "Set Radians");
             Assert.IsTrue(_fixture.WaitForControl(Fields.Radians), "Wait for Radians");
-            Assert.IsTrue(_fixture.ClickControl(Fields.One), "Push 1");
-            Assert.IsTrue(_fixture.ClickControl(Fields.Sine), "Push Sine");
-            Assert.AreEqual("0.8414709848078965066525023216303", _fixture.ValueOfControl(Fields.Result));
-            Assert.AreEqual(@"Expression is sine radians (1)", _fixture.ValueOfControl(Fields.CalculatorExpression), "Expression");
+            Assert.IsTrue(_fixture.ClickControl(Fields.Nine), "Push 9");
+            Assert.IsTrue(_fixture.ClickControl(Fields.Fact), "Push n!");
+            Assert.AreEqual("362,880", _fixture.ValueOfControl(Fields.Result));
+            Assert.AreEqual(@"Expression is factorial (9)", _fixture.ValueOfControl(Fields.CalculatorExpression), "Expression");
 
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click View menu 2nd time");
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.Standard), "Click Standard menu item");
@@ -127,11 +128,12 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click menu");
             Assert.IsTrue(_fixture.WaitForControl(Fields.Scientific));
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.Volume), "Click Volume");
-            Assert.IsTrue(_fixture.WaitForControl(Fields.OutputUnit), "Wait for Output Unit");
-            Assert.AreEqual("Milliliters", _fixture.ValueOfControl(Fields.OutputUnit));
+            // This is important. Apparently the output unit gets visible earlier than the Pane Root disappears
+            _fixture.WaitUntilControlDisappears("id:PaneRoot");
+            Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.OutputUnit), "Wait for Output Unit and click it");
+            Assert.IsTrue(_fixture.PressKey("{PgUp}{PgUp}{PgUp}"), "Press Page Up three times to get Liters in display");
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Liters"), "Set Output to Liters");
-            Assert.IsTrue(_fixture.WaitForControl(Fields.InputUnit), "Wait for Input Unit");
-            Assert.IsTrue(_fixture.ClickControl(Fields.InputUnit), "Click InputUnit");
+            Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.InputUnit), "Wait for Input Unit and click it");
             Assert.IsTrue(_fixture.PressKey("{PgDn}{PgDn}"), "Press Page Down twice to get Gallons (US) in display");
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.InputUnit, "Gallons (US)"), "Select Gallons");
             Assert.IsTrue(_fixture.WaitForControl(Fields.Input), "Wait for Input");
@@ -139,6 +141,8 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.PressKey("10"));
             Assert.AreEqual("10", _fixture.ValueOfControl(Fields.Input), "Input OK");
             Assert.AreEqual("37.85412", _fixture.ValueOfControl(Fields.Output), "Output OK");
+            Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Milliliters"), "Set Output to Milliliters");
+
         }
 
         [ClassCleanup]
@@ -176,6 +180,7 @@ namespace UiAutomationTest
             public static string CalculatorExpression => "id:CalculatorExpression";
             public static string Clear => "name:Clear";
             public static string Degrees => "id:DegButton";
+            public static string Fact => "name:Factorial";
             public static string Gradians => "id:GradButton";
             public static string Input => "id:Value2";
             public static string InputUnit => "id:Units2";
@@ -183,12 +188,14 @@ namespace UiAutomationTest
             public static string MemoryClear => "id:ClearMemoryButton";
             public static string Menu => "name:Open Navigation";
             public static string Negate => "id:negateButton";
+            public static string Nine => "name:Nine";
             public static string NonExisting => "name:non-existing control";
             public static string One => "name:one";
             public static string Output => "id:Value1";
             public static string OutputUnit => "id:Units1";
             public static string Radians => "id:RadButton";
             public static string Result => "id:CalculatorResults";
+            public static string SquareRoot => "name:Square root";
             public static string Scientific => "name:Scientific Calculator";
             public static string Sine => "name:Sine";
             public static string Standard => "name:Standard Calculator";
