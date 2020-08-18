@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -150,8 +150,9 @@ namespace UiAutomationTest
                 var expected4 = File.ReadAllText("NotepadScreenshotNoCursorWithScrollbar.txt");
 
                 Console.WriteLine(snapshot);
-                Assert.IsTrue(snapshot.Equals(expected1) || snapshot.Equals(expected2) ||
-                              snapshot.Equals(expected3) || snapshot.Equals(expected4), "Snapshot matches");
+                Assert.IsTrue(snapshot.Equals(expected1, StringComparison.Ordinal) || snapshot.Equals(expected2, StringComparison.Ordinal) ||
+                              snapshot.Equals(expected3, StringComparison.Ordinal) || snapshot.Equals(expected4, StringComparison.Ordinal),
+                    "Snapshot matches");
                 UiAutomationFixture.WaitSeconds(1);
                 Assert.IsTrue(_fixture.ClickControl("Close"));
                 Assert.IsTrue(_fixture.WaitForControl("Save"), "Wait for Save");

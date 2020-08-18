@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -28,22 +28,22 @@ namespace UiAutomationTest
 
         protected override void Verify(Exception e)
         {
-            if (e.GetType() != ExceptionType)
+            if (e?.GetType() != ExceptionType)
             {
                 Assert.Fail(
                     $"ExpectedExceptionWithMessageAttribute failed. Expected exception type: {ExceptionType.FullName}. " +
-                    $"Actual exception type: {e.GetType().FullName}. Exception message: {e.Message}"
+                    $"Actual exception type: {e?.GetType().FullName}. Exception message: {e?.Message}"
                 );
             }
 
-            var actualMessage = e.Message.Trim();
+            var actualMessage = e?.Message.Trim();
 
             if (ExpectedMessage != null)
             {
                 Assert.AreEqual(ExpectedMessage, actualMessage);
             }
 
-            Console.Write("ExpectedExceptionWithMessageAttribute:" + e.Message);
+            Console.Write("ExpectedExceptionWithMessageAttribute:" + e?.Message);
         }
     }
 }

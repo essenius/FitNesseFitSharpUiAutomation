@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2019 Rik Essenius
+﻿// Copyright 2017-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -10,6 +10,7 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System.Diagnostics;
+using static System.Globalization.CultureInfo;
 
 namespace UiAutomation.Model
 {
@@ -35,11 +36,14 @@ namespace UiAutomation.Model
         public override string ApplicationType => "Classic";
 
         public override Control WindowControl =>
-            !IsActive ? null : new Control("ProcessId:" + process.Id)
-            {
-                SearchType = SearchType.Shallow,
-                Parent = null
-            };
+            !IsActive
+                ? null
+                : new Control("ProcessId:" + process.Id.ToString(InvariantCulture))
+                {
+                    SearchType = SearchType.Shallow,
+                    Parent = null
+                };
+
         public override bool Exit(bool force) => process.Exit(force) && process.WaitForExit(force);
     }
 }

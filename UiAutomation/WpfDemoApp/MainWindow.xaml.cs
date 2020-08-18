@@ -1,4 +1,15 @@
-﻿using System;
+﻿// Copyright 2013-2020 Rik Essenius
+//
+//   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
+//   except in compliance with the License. You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software distributed under the License 
+//   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and limitations under the License
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,79 +38,6 @@ namespace WpfDemoApp
         }
 
         private static string AllTreeListItems(IEnumerable itemCollection) => TreeListItems(itemCollection, 0);
-
-        private static string GetDataFromListBox(ItemsControl source, Point point)
-        {
-            if (!(source.InputHitTest(point) is UIElement element)) return null;
-            var data = DependencyProperty.UnsetValue;
-            while (data == DependencyProperty.UnsetValue)
-            {
-                Debug.Assert(element != null, "element != null");
-                data = source.ItemContainerGenerator.ItemFromContainer(element);
-                if (data == DependencyProperty.UnsetValue)
-                {
-                    element = VisualTreeHelper.GetParent(element) as UIElement;
-                }
-                if (Equals(element, source))
-                {
-                    return null;
-                }
-            }
-            if (data == DependencyProperty.UnsetValue) return null;
-            return data is ListBoxItem listboxItem ? listboxItem.Content.ToString() : string.Empty;
-        }
-
-        private static IEnumerable<WorkItem> LoadCollectionData()
-        {
-            var workItems = new List<WorkItem>
-            {
-                new WorkItem
-                {
-                    Id = 100,
-                    Title = "Create UI Automation fixture",
-                    Status = "Done"
-                },
-                new WorkItem
-                {
-                    Id = 101,
-                    Title = "Create demo UI Automation application",
-                    Status = "Active"
-                },
-                new WorkItem
-                {
-                    Id = 102,
-                    Title = "Add UI Automation fixture to application",
-                    Status = "Approved"
-                },
-                new WorkItem
-                {
-                    Id = 103,
-                    Title = "Test UI Automation fixture with GridData object",
-                    Status = "New"
-                },
-                new WorkItem
-                {
-                    Id = 104,
-                    Title = "http://localhost:8080",
-                    Status = "Resolved"
-                }
-            };
-            return workItems;
-        }
-
-        private static string TreeListItems(IEnumerable items, int depth)
-        {
-            var returnValue = string.Empty;
-            foreach (var tli in items.OfType<TreeViewItem>())
-            {
-                returnValue += string.Concat(Enumerable.Repeat(" ", depth)) + tli.Header + "\n";
-                if (tli.HasItems)
-                {
-                    returnValue += TreeListItems(tli.Items, depth + 1);
-                }
-            }
-            return returnValue;
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -135,8 +73,29 @@ namespace WpfDemoApp
 
         private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var item = ComboBox1.SelectedItem as ComboBoxItem;
-            TextBlock1.Text = "Selected ComboBox1 item " + (item == null ? "none" : item.Content);
+            TextBlock1.Text = "Selected ComboBox1 item " + (!(ComboBox1.SelectedItem is ComboBoxItem item) ? "none" : item.Content);
+        }
+
+        private string CurrentCellFor(DataGrid grid)
+        {
+            if (grid.SelectedCells.Count == 0) return null;
+            var cellInfo = DataGrid1.SelectedCells[0];
+            return (cellInfo.Column.GetCellContent(cellInfo.Item) as TextBox)?.Text;
+        }
+
+        private void DataGrid1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            GridTextbox.Text = CurrentCellFor(DataGrid1) ?? "Nothing selected.";
+        }
+
+        private void DataGridHeaderCheckbox_OnChecked(object sender, RoutedEventArgs e)
+        {
+            DataGrid1.HeadersVisibility = DataGridHeadersVisibility.All;
+        }
+
+        private void DataGridHeaderCheckbox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            DataGrid1.HeadersVisibility = DataGridHeadersVisibility.None;
         }
 
         private void DatePicker1_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
@@ -145,6 +104,27 @@ namespace WpfDemoApp
             {
                 DatePickerTextBlock.Text = DatePicker1.SelectedDate.Value.ToShortDateString();
             }
+        }
+
+        private static string GetDataFromListBox(ItemsControl source, Point point)
+        {
+            if (!(source.InputHitTest(point) is UIElement element)) return null;
+            var data = DependencyProperty.UnsetValue;
+            while (data == DependencyProperty.UnsetValue)
+            {
+                Debug.Assert(element != null, "element != null");
+                data = source.ItemContainerGenerator.ItemFromContainer(element);
+                if (data == DependencyProperty.UnsetValue)
+                {
+                    element = VisualTreeHelper.GetParent(element) as UIElement;
+                }
+                if (Equals(element, source))
+                {
+                    return null;
+                }
+            }
+            if (data == DependencyProperty.UnsetValue) return null;
+            return data is ListBoxItem listboxItem ? listboxItem.Content.ToString() : string.Empty;
         }
 
         private void Label1_MouseDown(object sender, MouseButtonEventArgs e)
@@ -184,8 +164,45 @@ namespace WpfDemoApp
 
         private void ListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var item = ListBox1.SelectedItem as ListBoxItem;
-            TextBlock1.Text = "Selected ListBox1 item " + (item == null ? "none" : item.Content);
+            TextBlock1.Text = "Selected ListBox1 item " + (!(ListBox1.SelectedItem is ListBoxItem item) ? "none" : item.Content);
+        }
+
+        private static IEnumerable<WorkItem> LoadCollectionData()
+        {
+            var workItems = new List<WorkItem>
+            {
+                new WorkItem
+                {
+                    Id = 100,
+                    Title = "Create UI Automation fixture",
+                    Status = "Done"
+                },
+                new WorkItem
+                {
+                    Id = 101,
+                    Title = "Create demo UI Automation application",
+                    Status = "Active"
+                },
+                new WorkItem
+                {
+                    Id = 102,
+                    Title = "Add UI Automation fixture to application",
+                    Status = "Approved"
+                },
+                new WorkItem
+                {
+                    Id = 103,
+                    Title = "Test UI Automation fixture with GridData object",
+                    Status = "New"
+                },
+                new WorkItem
+                {
+                    Id = 104,
+                    Title = "http://localhost:8080",
+                    Status = "Resolved"
+                }
+            };
+            return workItems;
         }
 
         private void PasswordBox1_PasswordChanged(object sender, RoutedEventArgs e)
@@ -246,6 +263,7 @@ namespace WpfDemoApp
             if (!(sender is TextBlock textBlock) || !e.Data.GetDataPresent(DataFormats.StringFormat)) return;
             var dataString = (string) e.Data.GetData(DataFormats.StringFormat);
             var converter = new BrushConverter();
+            Debug.Assert(dataString != null, nameof(dataString) + "!= null");
             if (!converter.IsValid(dataString))
             {
                 textBlock.Text = "Could not convert '" + dataString + "' into a color";
@@ -268,27 +286,18 @@ namespace WpfDemoApp
             TextBlock1.Text = "Unchecked ThreeStateCheckBox";
         }
 
-        private void DataGridHeaderCheckbox_OnChecked(object sender, RoutedEventArgs e)
+        private static string TreeListItems(IEnumerable items, int depth)
         {
-            DataGrid1.HeadersVisibility = DataGridHeadersVisibility.All;
+            var returnValue = string.Empty;
+            foreach (var tli in items.OfType<TreeViewItem>())
+            {
+                returnValue += string.Concat(Enumerable.Repeat(" ", depth)) + tli.Header + "\n";
+                if (tli.HasItems)
+                {
+                    returnValue += TreeListItems(tli.Items, depth + 1);
+                }
+            }
+            return returnValue;
         }
-
-        private void DataGridHeaderCheckbox_OnUnchecked(object sender, RoutedEventArgs e)
-        {
-            DataGrid1.HeadersVisibility = DataGridHeadersVisibility.None;
-        }
-
-        private string CurrentCellFor(DataGrid grid)
-        {
-            if (grid.SelectedCells.Count == 0) return null;
-            var cellInfo = DataGrid1.SelectedCells[0];
-            return (cellInfo.Column.GetCellContent(cellInfo.Item) as TextBox)?.Text;
-        }
-
-        private void DataGrid1_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            GridTextbox.Text = CurrentCellFor(DataGrid1) ?? "Nothing selected.";
-        }
-
     }
 }

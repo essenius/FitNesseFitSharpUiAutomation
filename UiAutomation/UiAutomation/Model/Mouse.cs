@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -51,6 +51,8 @@ namespace UiAutomation.Model
             }
         }
 
+        public static bool DoubleClick(IUIAutomationElement element) => Click(element) && Click(element);
+
         public static bool DragDrop(IUIAutomationElement dragFrom, IUIAutomationElement dropTo) => DragFrom(dragFrom) && DropTo(dropTo);
 
         public static bool DragFrom(IUIAutomationElement element)
@@ -68,8 +70,6 @@ namespace UiAutomation.Model
             _dragFromPoint = null;
             return true;
         }
-
-        public static bool DoubleClick(IUIAutomationElement element) => Click(element) && Click(element);
 
         private static bool MouseEvent(NativeMethods.MouseEventFlags eventFlags, int x, int y)
         {

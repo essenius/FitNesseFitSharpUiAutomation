@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -224,7 +224,7 @@ namespace UiAutomation.Model
         /// <summary>
         ///     Return a control based on a search criterion
         /// </summary>
-        /// <param name="searchCriterion">the criterion (method1:locator1 && method2:locator2)</param>
+        /// <param name="searchCriterion">the criterion (method1:locator1 &amp;&amp; method2:locator2)</param>
         /// <param name="window">the parent window (in case the control is the window itself)</param>
         /// <returns>the found control</returns>
         public static Control FindControl(string searchCriterion, Control window)

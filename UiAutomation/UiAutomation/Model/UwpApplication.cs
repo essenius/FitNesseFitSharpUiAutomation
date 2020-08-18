@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Rik Essenius
+﻿// Copyright 2019-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -10,6 +10,7 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System.Diagnostics;
+using System.Globalization;
 
 namespace UiAutomation.Model
 {
@@ -54,7 +55,8 @@ namespace UiAutomation.Model
                 Control control = null;
                 process.WaitWithTimeoutTill(process1 =>
                 {
-                    control = Control.CreateContainedWindowControl(containerCriterion, "ProcessId:" + process1.Id);
+                    control = Control.CreateContainedWindowControl(containerCriterion,
+                        "ProcessId:" + process1.Id.ToString(CultureInfo.InvariantCulture));
                     return control != null;
                 });
                 return control;

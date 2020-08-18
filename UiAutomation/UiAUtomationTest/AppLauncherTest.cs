@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2019 Rik Essenius
+﻿// Copyright 2017-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -22,16 +22,23 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("DefaultApps")]
         public void AppLauncherResolveTest()
         {
-            var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe");
-            Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
-            var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy");
-            Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
+            using (var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe"))
+            {
+                Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
+            }
+            using (var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy"))
+            {
+                Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
+            }
         }
 
         [TestMethod, TestCategory("Unit")]
         public void AppLauncherTest2()
         {
-            Assert.IsFalse(new AppLauncher("bogus").Exists);
+            using (var launcher = new AppLauncher("bogus"))
+            {
+                Assert.IsFalse(launcher.Exists);
+            }
         }
 
         [TestMethod, TestCategory("DefaultApps")]

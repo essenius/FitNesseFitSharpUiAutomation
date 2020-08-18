@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2019 Rik Essenius
+﻿// Copyright 2017-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -15,6 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using static System.Globalization.CultureInfo;
 
 namespace UiAutomation.Model
 {
@@ -89,7 +90,7 @@ namespace UiAutomation.Model
                     FullName = GetFullName(packageName);
                     error = NativeMethods.OpenPackageInfoByFullName(FullName, 0, out _packageInfo);
                 }
-                Debug.Assert(error == NoError || error == ErrorNotFound, "error is " + error);
+                Debug.Assert(error == NoError || error == ErrorNotFound, "error is " + error.ToString(InvariantCulture));
             }
             catch (EntryPointNotFoundException)
             {
@@ -114,7 +115,8 @@ namespace UiAutomation.Model
 
         public void Dispose() => _packageInfo.Dispose();
 
-//        ~AppLauncher() => Dispose();
+
+        //        ~AppLauncher() => Dispose();
 
         private static string GetFullName(string family)
         {
@@ -125,7 +127,9 @@ namespace UiAutomation.Model
             bufferLength++;
             var buffer = new char[bufferLength];
             var ignore = new StringBuilder[count];
+#pragma warning disable IDE0059 // Unnecessary assignment of a value -- false positive. bufferLength is used.
             var error2 = NativeMethods.GetPackagesByPackageFamily(family, ref count, ignore, out bufferLength, buffer);
+#pragma warning restore IDE0059
 
             if (error2 != NoError) return null;
 
@@ -171,11 +175,11 @@ namespace UiAutomation.Model
         {
             if (!Exists) return null;
             var bufferLength = 0;
-            var error = NativeMethods.GetPackageApplicationIds(_packageInfo, ref bufferLength, null, out var appIdCount);
-            Debug.Assert(error == ErrorInsufficientBuffer, "error2 == " + error);
+            var error = NativeMethods.GetPackageApplicationIds(_packageInfo, ref bufferLength, null, out _);
+            Debug.Assert(error == ErrorInsufficientBuffer, "error2 == " + error.ToString(InvariantCulture));
             var buffer = new byte[bufferLength];
-            error = NativeMethods.GetPackageApplicationIds(_packageInfo, ref bufferLength, buffer, out appIdCount);
-            Debug.Assert(error == 0, "error3 == " + error);
+            error = NativeMethods.GetPackageApplicationIds(_packageInfo, ref bufferLength, buffer, out var appIdCount);
+            Debug.Assert(error == 0, "error3 == " + error.ToString(InvariantCulture));
             return Encoding.Unicode.GetString(buffer, IntPtr.Size * appIdCount, bufferLength - IntPtr.Size * appIdCount);
         }
     }

@@ -164,7 +164,8 @@
                             <ColumnDefinition Width="26*" />
                             <ColumnDefinition Width="883*" />
                         </Grid.ColumnDefinitions>
-                        <DataGrid CanUserAddRows="False" AutoGenerateColumns="True" Height="193" SelectionMode="Single" SelectionUnit="CellOrRowHeader"
+                        <DataGrid CanUserAddRows="False" AutoGenerateColumns="True" Height="193" SelectionMode="Single"
+                                  SelectionUnit="CellOrRowHeader"
                                   HorizontalAlignment="Left" Margin="19,16,0,0" Name="DataGrid1"
                                   VerticalAlignment="Top" Width="499" Grid.Column="1" Grid.ColumnSpan="2"
                                   MouseDoubleClick="DataGrid1_OnMouseDoubleClick" />
@@ -173,7 +174,9 @@
                                   Margin="37.286,238,0,0" VerticalAlignment="Top" Grid.Column="2"
                                   Checked="DataGridHeaderCheckbox_OnChecked"
                                   Unchecked="DataGridHeaderCheckbox_OnUnchecked" />
-                        <TextBox Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="208,236,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="284" Name="GridTextbox"/>
+                        <TextBox Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="208,236,0,0"
+                                 TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="284"
+                                 Name="GridTextbox" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="Text Controls" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top"

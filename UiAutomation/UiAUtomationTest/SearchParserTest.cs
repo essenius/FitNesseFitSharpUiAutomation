@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
@@ -21,25 +21,23 @@ namespace UiAutomationTest
     [TestClass]
     public class SearchParserTest
     {
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global", Justification = "False positive"),
-         SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global", Justification = "False positive")]
         public TestContext TestContext { get; set; }
 
-        [TestMethod, TestCategory("Unit"), 
+        [TestMethod, TestCategory("Unit"),
          DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\TestData.xml",
              "SearchParser.AndCriteria", DataAccessMethod.Sequential), DeploymentItem("UiAutomationTest\\TestData.xml")]
         public void SearchParserAndCriteriaTest()
         {
             Locator.DefaultConditionType = "Name";
             var input = TestContext.DataRow["input"].ToString();
-            var expectedCriterionCount = Convert.ToInt32(TestContext.DataRow["expectedCount"]);
+            var expectedCriterionCount = Convert.ToInt32(TestContext.DataRow["expectedCount"], CultureInfo.InvariantCulture);
             var resultList = new List<Tuple<string, string, string>>();
             for (var i = 1; i <= expectedCriterionCount; i++)
             {
                 resultList.Add(new Tuple<string, string, string>(
                     TestContext.DataRow["expectedMethod" + i].ToString(),
                     TestContext.DataRow["expectedLocator" + i].ToString(),
-                    TestContext.DataRow["expectedGridItem" +i]?.ToString()));
+                    TestContext.DataRow["expectedGridItem" + i]?.ToString()));
             }
 
             var searchParser = new SearchParser(input);

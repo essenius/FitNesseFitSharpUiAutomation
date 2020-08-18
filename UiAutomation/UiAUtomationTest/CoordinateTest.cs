@@ -7,6 +7,18 @@ namespace UiAUtomationTest
     [TestClass]
     public class CoordinateTest
     {
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
+        public void CoordinateInvalidParseTest()
+        {
+            var _ = new Coordinate("bogus");
+        }
+
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(FormatException))]
+        public void CoordinateNonNUmmericCoordinateTest()
+        {
+            var _ = new Coordinate("bogus,0");
+        }
+
         [TestMethod, TestCategory("Unit")]
         public void CoordinateParseTest()
         {
@@ -20,19 +32,7 @@ namespace UiAUtomationTest
             Assert.IsFalse(new Coordinate(23, 44).Equals(coordinate));
             Assert.IsFalse(new Coordinate(24, 45).Equals(coordinate));
             Assert.IsFalse(new Coordinate(24, 44).Equals(coordinate));
-            Assert.AreEqual(new Coordinate(23,45).GetHashCode(), coordinate.GetHashCode(), "Hash codes match");
-        }
-
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
-        public void CoordinateInvalidParseTest()
-        {
-            var _ = new Coordinate("bogus");
-        }
-
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(FormatException))]
-        public void CoordinateNonNUmmericCoordinateTest()
-        {
-            var _ = new Coordinate("bogus,0");
+            Assert.AreEqual(new Coordinate(23, 45).GetHashCode(), coordinate.GetHashCode(), "Hash codes match");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -20,12 +20,12 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rik Essenius")]
 [assembly: AssemblyProduct("UiAutomation")]
-[assembly: AssemblyCopyright("Copyright © Rik Essenius 2013-2019")]
+[assembly: AssemblyCopyright("Copyright © Rik Essenius 2013-2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("9e80f7bc-d816-4fa5-b937-dc1fd38cab73")]
-[assembly: AssemblyVersion("2.6.3")]
+[assembly: AssemblyVersion("2.6.4")]
 [assembly: InternalsVisibleTo("UiAutomationTest")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: CLSCompliant(true)]

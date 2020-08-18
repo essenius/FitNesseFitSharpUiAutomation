@@ -9,6 +9,12 @@ namespace UiAUtomationTest
     {
         public TestContext TestContext { get; set; }
 
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
+        public void GridItemNoColumnMatchTest()
+        {
+            var _ = new GridItem("col x");
+        }
+
         [TestMethod, TestCategory("Unit"),
          DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\TestData.xml",
              "GridItem", DataAccessMethod.Sequential), DeploymentItem("UiAutomationTest\\TestData.xml")]
@@ -21,23 +27,15 @@ namespace UiAUtomationTest
         }
 
         [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
-        public void GridItremNullArgumentTest()
-        {
-            var _ = new GridItem(null);
-        }
-
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
         public void GridItemWrongArgumentTest()
         {
             var _ = new GridItem("bogus");
         }
 
         [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
-        public void GridItemNoColumnMatchTest()
+        public void GridItremNullArgumentTest()
         {
-            var _ = new GridItem("col x");
+            var _ = new GridItem(null);
         }
-
-
     }
 }

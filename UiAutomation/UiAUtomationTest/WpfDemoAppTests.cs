@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -13,13 +13,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
 namespace UiAutomationTest
 {
-    [TestClass]
+    [TestClass, SuppressMessage("Performance", "CA1814:Prefer jagged arrays over multidimensional", Justification = "Matrix fully used and simpler")]
     public class WpfDemoAppTests
     {
         private const string WpfDemoAppPath = "..\\..\\..\\WpfDemoApp\\bin\\debug\\WpfDemoApp.exe";
@@ -45,7 +46,8 @@ namespace UiAutomationTest
             UiAutomationFixture.TimeoutSeconds = 3;
         }
 
-        [ClassInitialize]
+        [ClassInitialize, SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "False positive"),
+         SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive")]
         public static void PrepareTestSuite(TestContext testContext)
         {
             UiAutomationFixture.TimeoutSeconds = 10;

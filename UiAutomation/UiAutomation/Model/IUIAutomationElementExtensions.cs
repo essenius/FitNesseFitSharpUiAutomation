@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -12,8 +12,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Threading;
-using interop.UIAutomationCore;
 using ImageHandler;
+using interop.UIAutomationCore;
 
 namespace UiAutomation.Model
 {

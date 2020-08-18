@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2019 Rik Essenius
+﻿// Copyright 2013-2020 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,6 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using interop.UIAutomationCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
@@ -142,7 +141,6 @@ namespace UiAutomationTest
             Assert.AreEqual("10", _fixture.ValueOfControl(Fields.Input), "Input OK");
             Assert.AreEqual("37.85412", _fixture.ValueOfControl(Fields.Output), "Output OK");
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Milliliters"), "Set Output to Milliliters");
-
         }
 
         [ClassCleanup]
@@ -151,7 +149,8 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.ForcedCloseApplication(), "Calc stopped");
         }
 
-        [ClassInitialize]
+        [ClassInitialize, SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive"),
+         SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "False positive")]
         public static void Win10SetupCalc(TestContext testContext)
         {
             _fixture = new UiAutomationFixture();
@@ -195,9 +194,9 @@ namespace UiAutomationTest
             public static string OutputUnit => "id:Units1";
             public static string Radians => "id:RadButton";
             public static string Result => "id:CalculatorResults";
-            public static string SquareRoot => "name:Square root";
             public static string Scientific => "name:Scientific Calculator";
             public static string Sine => "name:Sine";
+            public static string SquareRoot => "name:Square root";
             public static string Standard => "name:Standard Calculator";
             public static string Three => "NamE:three";
             public static string Two => "name:two";
@@ -205,11 +204,10 @@ namespace UiAutomationTest
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness"),
-         SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
-        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "names cannot start with numbers")]
+         SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness"),
+         SuppressMessage("ReSharper", "InconsistentNaming", Justification = "names cannot start with numbers")]
         private static class Win10AppKeys
         {
-            public static string _10X => "^g";
             public static string A => "a";
             public static string AddToMemory => "^p";
             public static string And => "&";
@@ -270,6 +268,7 @@ namespace UiAutomationTest
             public static string SubtractFromMemory => "^q";
             public static string Tan => "t";
             public static string Tanh => "^t";
+            public static string TenX => "^g";
             public static string Toggle => " ";
             public static string Word => "{F3}";
             public static string X3 => "#";

@@ -28,3 +28,5 @@
 	  Same for WindowSnapshotObject
 2.6.1 Renamed MoveWindow to MoveWindowTo and ResizeWindow to ResizeWindowTo for consistency with other fixture functions
 2.6.2 Fixed some ReSharper findings, removed unused ProcessAsUser.cs
+2.6.3 Worked around a timing issue in ExpandAll
+2.6.4 Replaced [Documentation] attributes by XML documentation, introduced Roslyn static analysis, fixed new findings
