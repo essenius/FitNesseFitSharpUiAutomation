@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2020 Rik Essenius
+﻿// Copyright 2017-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -10,8 +10,8 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -19,7 +19,6 @@ using static System.Globalization.CultureInfo;
 
 namespace UiAutomation.Model
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
     internal enum ActivateOptions
     {
         None = 0x00000000, // No flags set
@@ -88,7 +87,14 @@ namespace UiAutomation.Model
                 if (error != NoError)
                 {
                     FullName = GetFullName(packageName);
-                    error = NativeMethods.OpenPackageInfoByFullName(FullName, 0, out _packageInfo);
+                    try
+                    {
+                        error = NativeMethods.OpenPackageInfoByFullName(FullName, 0, out _packageInfo);
+                    }
+                    catch (Win32Exception e)
+                    {
+                        Debug.Print(e.Message);
+                    }
                 }
                 Debug.Assert(error == NoError || error == ErrorNotFound, "error is " + error.ToString(InvariantCulture));
             }
@@ -98,7 +104,7 @@ namespace UiAutomation.Model
             }
         }
 
-        public bool Exists => _packageInfo != null && _packageInfo.AppExists;
+        public bool Exists => _packageInfo is { AppExists: true };
 
         public string FullName { get; }
 
@@ -121,18 +127,14 @@ namespace UiAutomation.Model
         private static string GetFullName(string family)
         {
             var count = 0;
-            var error = NativeMethods.GetPackagesByPackageFamily(family, ref count, null, out var bufferLength, null);
+            var bufferLength = 0;
+            var error = NativeMethods.GetPackagesByPackageFamily(family, ref count, null, ref bufferLength, null);
             if (error != ErrorInsufficientBuffer) return null;
-
+            var ignore = new IntPtr[count];
             bufferLength++;
             var buffer = new char[bufferLength];
-            var ignore = new StringBuilder[count];
-#pragma warning disable IDE0059 // Unnecessary assignment of a value -- false positive. bufferLength is used.
-            var error2 = NativeMethods.GetPackagesByPackageFamily(family, ref count, ignore, out bufferLength, buffer);
-#pragma warning restore IDE0059
-
+            var error2 = NativeMethods.GetPackagesByPackageFamily(family, ref count, ignore, ref bufferLength, buffer);
             if (error2 != NoError) return null;
-
             var names = buffer.Unpack();
             if (count == 1) return names[0];
             var architecture = Environment.Is64BitOperatingSystem ? "_x64_" : "_x86_";

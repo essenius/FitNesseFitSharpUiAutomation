@@ -30,3 +30,4 @@
 2.6.2 Fixed some ReSharper findings, removed unused ProcessAsUser.cs
 2.6.3 Worked around a timing issue in ExpandAll
 2.6.4 Replaced [Documentation] attributes by XML documentation, introduced Roslyn static analysis, fixed new findings
+3.0.0 Migration to .Net 5.0 (dual targeting .NET 5.0 and .NET Framework 4.8)

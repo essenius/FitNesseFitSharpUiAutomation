@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -16,8 +16,8 @@ using System.Text;
 
 namespace UiAutomation.Model
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness"),
-     SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Legacy Windows naming followed")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Legacy Windows naming followed")]
     internal static class NativeMethods
     {
         public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
@@ -32,8 +32,7 @@ namespace UiAutomation.Model
             WH_MOUSE_LL = 14
         }
 
-        [DllImport("kernel32"), SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist",
-             Justification = "App related APIs which do not exist in Win7 and before")]
+        [DllImport("kernel32")]
         public static extern int ClosePackageInfo(IntPtr pir);
 
         [DllImport("user32.dll")]
@@ -43,24 +42,26 @@ namespace UiAutomation.Model
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr GetForegroundWindow();
 
-        [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
+        [DllImport("kernel32")]
         public static extern int GetPackageApplicationIds(SafeAppHandle pir, ref int bufferLength, byte[] buffer, out int count);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         public static extern uint GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, StringBuilder packageFamilyName);
 
-        [DllImport("kernel32", CharSet = CharSet.Unicode)]
+        [DllImport("kernel32", CallingConvention = CallingConvention.Winapi, CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
         public static extern int GetPackagesByPackageFamily(
-            [MarshalAs(UnmanagedType.LPWStr)] string packageFamilyName, ref int count,
-            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)]
-            StringBuilder[] packageFullName,
-            out int bufferLength, char[] buffer);
+            [In] string packageFamilyName,
+            [In] [Out] ref int count,
+            [In] [MarshalAs(UnmanagedType.LPArray)]
+            IntPtr[] packageFullNames,
+            [In] [Out] ref int bufferLength,
+            [In] [Out] char[] buffer
+        );
 
         [DllImport("user32.dll")]
         public static extern int GetSystemMetrics(int smIndex);
 
-        // we'll deal with it by catching exceptions. See AppLauncher
-        [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist"), DllImport("kernel32")]
+        [DllImport("kernel32")]
         public static extern int OpenPackageInfoByFullName([MarshalAs(UnmanagedType.LPWStr)] string fullName, uint reserved,
             out SafeAppHandle packageInfo);
 

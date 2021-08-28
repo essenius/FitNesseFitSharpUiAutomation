@@ -1,4 +1,15 @@
-﻿using System;
+﻿// Copyright 2019-2021 Rik Essenius
+//
+//   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
+//   except in compliance with the License. You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software distributed under the License 
+//   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and limitations under the License.
+
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
@@ -15,13 +26,15 @@ namespace UiAUtomationTest
             var _ = new GridItem("col x");
         }
 
-        [TestMethod, TestCategory("Unit"),
-         DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\TestData.xml",
-             "GridItem", DataAccessMethod.Sequential), DeploymentItem("UiAutomationTest\\TestData.xml")]
-        public void GridItemParseTest()
+        [DataTestMethod, TestCategory("Unit")]
+        [DataRow(" row 10 , column   20 ", "row 10, column 20")]
+        [DataRow("12,34", "row 12, column 34")]
+        [DataRow("  56 , 7  ", "row 56, column 7" )]
+        [DataRow("row 8", "row 8" )]
+        [DataRow("col9", "column 9" )]
+        [DataRow("column30, row40", "row 40, column 30" )]
+        public void GridItemParseTest(string input, string output)
         {
-            var input = TestContext.DataRow["input"].ToString();
-            var output = TestContext.DataRow["output"].ToString();
             var item = GridItem.Parse(input);
             Assert.AreEqual(output, item.ToString());
         }

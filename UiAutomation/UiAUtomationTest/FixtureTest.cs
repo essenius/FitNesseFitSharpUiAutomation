@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
@@ -109,10 +110,10 @@ namespace UiAutomationTest
 
         // This test is a bit flaky because the behavior of Notepad isn't entirely predictable. Sometimes e.g. it shows a horizontal scrollbar.
         [TestMethod, TestCategory("DefaultApps"),
-         DeploymentItem("NotepadScreenshotNoCursor.txt"),
-         DeploymentItem("NotepadScreenshotWithCursor.txt"),
-         DeploymentItem("NotepadScreenshotWithCursorAndScrollbar.txt"),
-         DeploymentItem("NotepadScreenshotNoCursorWithScrollbar.txt")]
+         DeploymentItem("NotepadScreenshotNoCursor.html"),
+         DeploymentItem("NotepadScreenshotWithCursor.html"),
+         DeploymentItem("NotepadScreenshotWithCursorAndScrollbar.html"),
+         DeploymentItem("NotepadScreenshotNoCursorWithScrollbar.html")]
         public void FixtureNotePadCheckSetValueResizeMoveAndScreenshot()
         {
             try
@@ -144,10 +145,10 @@ namespace UiAutomationTest
 #pragma warning restore 618
                 Assert.AreEqual(desiredLocation, _fixture.WindowTopLeft);
                 var snapshot = _fixture.WindowSnapshot(8);
-                var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.txt");
-                var expected2 = File.ReadAllText("NotepadScreenshotWithCursor.txt");
-                var expected3 = File.ReadAllText("NotepadScreenshotWithCursorAndScrollbar.txt");
-                var expected4 = File.ReadAllText("NotepadScreenshotNoCursorWithScrollbar.txt");
+                var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.html");
+                var expected2 = File.ReadAllText("NotepadScreenshotWithCursor.html");
+                var expected3 = File.ReadAllText("NotepadScreenshotWithCursorAndScrollbar.html");
+                var expected4 = File.ReadAllText("NotepadScreenshotNoCursorWithScrollbar.html");
 
                 Console.WriteLine(snapshot);
                 Assert.IsTrue(snapshot.Equals(expected1, StringComparison.Ordinal) || snapshot.Equals(expected2, StringComparison.Ordinal) ||
@@ -301,17 +302,18 @@ namespace UiAutomationTest
         [TestMethod, TestCategory("Unit")]
         public void UwpAppsAreSupportedTest()
         {
-            var accessor = new PrivateType(typeof(UiAutomationFixture));
-            var savedVersion = accessor.GetStaticProperty("PlatformVersion");
-            accessor.SetStaticProperty("PlatformVersion", new Version(5, 0, 1000, 10));
-            Assert.IsFalse(UiAutomationFixture.UwpAppsAreSupported);
-            accessor.SetStaticProperty("PlatformVersion", new Version(6, 1));
-            Assert.IsFalse(UiAutomationFixture.UwpAppsAreSupported);
-            accessor.SetStaticProperty("PlatformVersion", new Version(6, 2, 9200, 0));
-            Assert.IsTrue(UiAutomationFixture.UwpAppsAreSupported);
-            accessor.SetStaticProperty("PlatformVersion", new Version(7, 0));
-            Assert.IsTrue(UiAutomationFixture.UwpAppsAreSupported);
-            accessor.SetStaticProperty("PlatformVersion", savedVersion);
+            var platformVersion = typeof(UiAutomationFixture).GetProperty("PlatformVersion", BindingFlags.Static | BindingFlags.NonPublic);
+            Assert.IsNotNull(platformVersion, "platformVersion != null");
+            var savedVersion = platformVersion.GetValue(null);
+            platformVersion.SetValue(null, new Version(5, 0, 1000, 10));
+            Assert.IsFalse(UiAutomationFixture.UwpAppsAreSupported, "5.0.1000.10");
+            platformVersion.SetValue(null, new Version(6, 1));
+            Assert.IsFalse(UiAutomationFixture.UwpAppsAreSupported, "6.1");
+            platformVersion.SetValue(null, new Version(6, 2, 9200, 0));
+            Assert.IsTrue(UiAutomationFixture.UwpAppsAreSupported, "6.2.9200.0");
+            platformVersion.SetValue(null, new Version(7, 0));
+            Assert.IsTrue(UiAutomationFixture.UwpAppsAreSupported, "7.0");
+            platformVersion.SetValue(null, savedVersion);
         }
     }
 }

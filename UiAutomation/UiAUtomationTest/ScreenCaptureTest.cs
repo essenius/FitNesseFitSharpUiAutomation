@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -50,7 +50,7 @@ namespace UiAutomationTest
             Assert.IsTrue(screenshot.ToString().StartsWith("Image", StringComparison.Ordinal), "Starts With Image");
             Assert.IsTrue(Regex.IsMatch(screenshot.ToString(), @".+\(\d+ x \d+\)$"), "Ends With (n x m)");
             var screenshotRendering = _fixture.SnapshotOfControl("Name:Help");
-            Assert.IsTrue(screenshotRendering.StartsWith("<img src='data:image/jpeg;base64,", StringComparison.Ordinal));
+            Assert.IsTrue(screenshotRendering.StartsWith("<img src=\"data:image/jpeg;base64,", StringComparison.Ordinal));
         }
     }
 }

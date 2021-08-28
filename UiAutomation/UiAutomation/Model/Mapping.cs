@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -11,14 +11,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace UiAutomation.Model
 {
-    [Serializable,
-     SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Hide implementation details")]
+    [Serializable]
     internal class Mapping<T> : Dictionary<string, T>
     {
         private readonly string _name;
@@ -27,7 +24,6 @@ namespace UiAutomation.Model
 
         protected Mapping(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Debug.Assert(info != null, "info != null");
             _name = (string) info.GetValue("MappingName", typeof(string));
         }
 
@@ -42,8 +38,6 @@ namespace UiAutomation.Model
             base.GetObjectData(info, context);
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
-            MessageId = "0", Justification = "OK to throw ArgumentNullException, will be caught in FitNesse")]
         public T Map(string keyToFind)
         {
             if (TryGetValue(keyToFind.Replace(" ", string.Empty), out var returnValue)) return returnValue;

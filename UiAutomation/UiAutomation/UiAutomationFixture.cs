@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -45,14 +45,13 @@ namespace UiAutomation
         private BaseApplication _sut;
         private Control _window;
 
-        /// <summary>Is the appliation under test active?</summary>
+        /// <summary>Is the application under test active?</summary>
         public bool ApplicationIsActive => _sut?.IsActive ?? false;
 
         /// <summary>The process Id of the currently active application under test</summary>
         public int? ApplicationProcessId => _sut?.ProcessId;
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
-         SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local", Justification = "Used in unit test (PrivateType)")]
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local", Justification = "Used in unit test (PrivateType)")]
         private static Version PlatformVersion { get; set; } = Environment.OSVersion.Version;
 
         /// <summary>Set/get the default timeout for all wait commands. Default value is 3 seconds. Max is 3600 * 24 * 24 (i.e. 24 days)</summary>
@@ -176,7 +175,7 @@ namespace UiAutomation
         }
 
         /// <summary>Returns whether the current application is an UWP app</summary>
-        public bool IsUwpApp() => _sut != null && _sut.ApplicationType == "UWP";
+        public bool IsUwpApp() => _sut is { ApplicationType: "UWP" };
 
         /// <summary>Maximize the window of the system under test</summary>
         public bool MaximizeWindow() => new Window(_window?.AutomationElement).Maximize();

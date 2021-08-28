@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2020 Rik Essenius
+﻿// Copyright 2019-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -42,7 +42,7 @@ namespace UiAutomation
         }
 
         /// <summary>Initialize GridItem with row, column in a string</summary>
-        /// <param name="input">"x,y" or "row x,column y" or "row x" or "column y" with x and y positive ints </param>
+        /// <param name="input">"x,y" or "row x,column y" or "row x" or "column y" with x and y positive int</param>
         public GridItem(string input)
         {
             const string message = "Could not parse GridItem. Expected: 'x,y' or 'row x,column y' or 'row x' or 'column y'";
@@ -59,7 +59,7 @@ namespace UiAutomation
         public int Column { get; private set; }
 
         /// <summary>Grid Item Type (Cell, Row or Column)</summary>
-        public GridItemType GridItemType { get; set; }
+        public GridItemType GridItemType { get; private set; }
 
         /// <summary>The row</summary>
         public int Row { get; private set; }
@@ -96,13 +96,13 @@ namespace UiAutomation
         /// <summary>Shown in FitNesse if returned as an object</summary>
         public override string ToString()
         {
-            switch (GridItemType)
+            return GridItemType switch
             {
-                case GridItemType.Cell: return Invariant($"row {Row}, column {Column}");
-                case GridItemType.Column: return Invariant($"column {Column}");
-                case GridItemType.Row: return Invariant($"row {Row}");
-                default: return string.Empty;
-            }
+                GridItemType.Cell => Invariant($"row {Row}, column {Column}"),
+                GridItemType.Column => Invariant($"column {Column}"),
+                GridItemType.Row => Invariant($"row {Row}"),
+                _ => string.Empty
+            };
         }
     }
 }

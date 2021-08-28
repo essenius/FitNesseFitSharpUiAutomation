@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -48,15 +48,18 @@ namespace UiAutomationTest
             Assert.AreEqual(123, locator.ConditionValue, "ConditionValue match for ProcessId");
         }
 
-        [TestMethod, TestCategory("Unit"),
-         DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\TestData.xml",
-             "Locator", DataAccessMethod.Sequential), DeploymentItem("UiAutomationTest\\TestData.xml")]
-        public void LocatorConstructorTest()
+        [DataTestMethod, TestCategory("Unit")]
+        [DataRow("abc:def [1,2]", "abc", "def", "1,2")]
+        [DataRow("abc: def", "abc", "def", "")]
+        [DataRow("def", "Name", "def", "")]
+        [DataRow("def [ 1 ]", "Name", "def", " 1 ")]
+
+        public void LocatorConstructorTest(string input, string method, string criterion, string gridItem)
         {
-            var input = TestContext.DataRow["input"].ToString();
+            /*var input = TestContext.DataRow["input"].ToString();
             var method = TestContext.DataRow["method"].ToString();
             var criterion = TestContext.DataRow["criterion"].ToString();
-            var gridItem = TestContext.DataRow["griditem"].ToString();
+            var gridItem = TestContext.DataRow["griditem"].ToString(); */
 
             var locator = new Locator(input);
             Assert.AreEqual(method, locator.Method, "Method OK");

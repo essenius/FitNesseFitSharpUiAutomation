@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -27,7 +27,7 @@ namespace UiAutomation.Model
         private const string Null = "null";
         private static readonly IUIAutomation Automation = new CUIAutomation();
 
-        internal static readonly PropertyMapper Properties = new PropertyMapper();
+        private static readonly PropertyMapper Properties = new PropertyMapper();
 
         private IUIAutomationElement _parent;
 
@@ -337,7 +337,7 @@ namespace UiAutomation.Model
 
         public bool IsEnabled() => AutomationElement != null && AutomationElement.CurrentIsEnabled != 0;
 
-        public bool IsVisible() => AutomationElement != null && AutomationElement.CurrentIsOffscreen == 0;
+        public bool IsVisible() => AutomationElement is { CurrentIsOffscreen: 0 };
 
         public static Control Parse(string searchCriterion) =>
             new Control(searchCriterion)

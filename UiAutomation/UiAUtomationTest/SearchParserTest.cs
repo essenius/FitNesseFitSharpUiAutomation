@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -10,8 +10,6 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
@@ -23,31 +21,53 @@ namespace UiAutomationTest
     {
         public TestContext TestContext { get; set; }
 
-        [TestMethod, TestCategory("Unit"),
-         DataSource(@"Microsoft.VisualStudio.TestTools.DataSource.XML", "|DataDirectory|\\TestData.xml",
-             "SearchParser.AndCriteria", DataAccessMethod.Sequential), DeploymentItem("UiAutomationTest\\TestData.xml")]
-        public void SearchParserAndCriteriaTest()
+        [DataTestMethod, TestCategory("Unit")]
+        [DataRow("abc:def && ghi:jkl", 2, new object[] { "abc", "ghi" }, new object[] { "def", "jkl" }, new object[]{})]
+
+        [DataRow("  ab   &&  cd   ", 2, new object[] { "Name", "Name" }, new object[] { "ab", "cd" }, new object[] { })]
+        [DataRow("ab&&cd", 1, new object[] { "Name" }, new object[] { "ab&&cd" }, new object[] { })]
+
+        [DataRow("ab && cd:ef && gh:ij", 3, new object[] { "Name", "cd", "gh"}, new object[] { "ab", "ef", "ij"}, new object[] {"","",""})]
+
+        [DataRow("&&", 1, new object[] {"Name"}, new object[]{"&&"}, new object[] { })]
+        [DataRow(" && ", 2, new object[] {"Name", "Name"}, new object[] { "", ""}, new object[] { })]
+        [DataRow("A & B", 1, new object[] {"Name"}, new object[] {"A & B"}, new object[] { })]
+        [DataRow("A & B && C & D", 2, new object[] {"Name", "Name"}, new object[] { "A & B", "C & D"}, new object[] { })]
+        [DataRow("  abc  ", 1,  new object[] {"Name"}, new object[] {"abc"}, new object[] { })]
+        [DataRow("abc:def", 1,  new object[]{"abc"}, new object[]{"def"}, new object[] { })]
+        [DataRow("abc : def", 1,  new object[]{"abc"}, new object[]{"def"}, new object[] { })]
+        [DataRow("abc:def:ghi", 1,  new object[]{"abc"}, new object[] {"def:ghi"}, new object[] { })]
+        [DataRow("abc : def:ghi", 1,  new object[] {"abc"}, new object[] {"def:ghi"}, new object[] { })]
+        [DataRow("abc : def : ghi", 1,  new object[] {"abc"}, new object[] {"def : ghi"}, new object[] { })]
+        [DataRow("abc:def[row 1, column 1]", 1,  new object[] {"abc"}, new object[] {"def"}, new object[] { "row 1, column 1" })]
+
+        [DataRow(":abc", 1,  new object[] {""}, new object[] { "abc" }, new object[] { })]
+        [DataRow("abc:", 1,  new object[] { "abc" }, new object[] { "" }, new object[] { })]
+        [DataRow(":", 1,  new object[] { "" }, new object[] { "" }, new object[] { })]
+        [DataRow("", 1,  new object[] { "Name" }, new object[] { "" }, new object[] { })]
+        public void SearchParserAndCriteriaTest(string input, int expectedCriterionCount, object[] expectedMethod, object[] expectedLocator, object[] expectedGridItem)
         {
             Locator.DefaultConditionType = "Name";
-            var input = TestContext.DataRow["input"].ToString();
-            var expectedCriterionCount = Convert.ToInt32(TestContext.DataRow["expectedCount"], CultureInfo.InvariantCulture);
-            var resultList = new List<Tuple<string, string, string>>();
-            for (var i = 1; i <= expectedCriterionCount; i++)
+            /*var resultList = new List<Tuple<string, string, string>>();
+            /*for (var i = 1; i <= expectedCriterionCount; i++)
             {
                 resultList.Add(new Tuple<string, string, string>(
                     TestContext.DataRow["expectedMethod" + i].ToString(),
                     TestContext.DataRow["expectedLocator" + i].ToString(),
                     TestContext.DataRow["expectedGridItem" + i]?.ToString()));
-            }
+            } */
 
             var searchParser = new SearchParser(input);
 
-            Assert.AreEqual(resultList.Count, searchParser.Locators.Count, "Locator count OK");
-            for (var i = 0; i < resultList.Count; i++)
+            Assert.AreEqual(expectedCriterionCount, searchParser.Locators.Count, "Locator count OK");
+            for (var i = 0; i < expectedCriterionCount; i++)
             {
-                Assert.AreEqual(resultList[i].Item1, searchParser.Locators[i].Method, "Methods OK");
-                Assert.AreEqual(resultList[i].Item2, searchParser.Locators[i].Criterion, "Locator OK");
-                Assert.AreEqual(resultList[i].Item3, searchParser.Locators[i].GridItem, "GridItem OK");
+                Assert.AreEqual(expectedMethod[i], searchParser.Locators[i].Method, "Methods OK");
+                Assert.AreEqual(expectedLocator[i], searchParser.Locators[i].Criterion, "Locator OK");
+                if (expectedGridItem.Length > i)
+                {
+                    Assert.AreEqual(expectedGridItem[i], searchParser.Locators[i].GridItem, "GridItem OK");
+                }
             }
         }
 

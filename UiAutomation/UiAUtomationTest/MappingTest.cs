@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -10,10 +10,7 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
@@ -22,16 +19,16 @@ namespace UiAutomationTest
     [TestClass]
     public class MappingTest
     {
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentNullException)),
-         SuppressMessage("ReSharper", "AssignNullToNotNullAttribute", Justification = "expecting exception")]
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentNullException))]
         public void MappingInvalidSerializationTest()
         {
             var map = new Mapping<int>("test");
             var sc = new StreamingContext();
+            // ReSharper disable once AssignNullToNotNullAttribute -- intent is to force an exception
             map.GetObjectData(null, sc);
         }
 
-        [TestMethod, TestCategory("Unit")]
+        /*[TestMethod, TestCategory("Unit")]
         public void MappingSerializeTest()
         {
             var map = new Mapping<int>("Number")
@@ -60,6 +57,6 @@ namespace UiAutomationTest
             {
                 Assert.AreEqual("Three is an unrecognized Number", exception.Message, "Exception message");
             }
-        }
+        } */
     }
 }

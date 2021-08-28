@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2020 Rik Essenius
+﻿// Copyright 2019-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -22,12 +22,10 @@ namespace UiAutomation.Model
 
         public UwpApplication(string identifier, string arguments)
         {
-            using (var app = new AppLauncher(identifier))
-            {
-                if (!app.Exists) return; // process will be set to null via the base
-                var pid = app.Launch(arguments);
-                process = pid == null ? null : Process.GetProcessById(pid.Value);
-            }
+            using var app = new AppLauncher(identifier);
+            if (!app.Exists) return; // process will be set to null via the base
+            var pid = app.Launch(arguments);
+            process = pid == null ? null : Process.GetProcessById(pid.Value);
         }
 
         public override string ApplicationType => "UWP";

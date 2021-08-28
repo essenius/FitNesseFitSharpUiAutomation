@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiAutomation", "UiAutomation\UiAutomation.csproj", "{CF651DC7-4350-41FF-BEA2-A80757B8D02B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiAutomation", "UiAutomation\UiAutomation.csproj", "{291CE5B1-6E64-4F67-8822-BBAF250D13E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiAutomationTest", "UiAUtomationTest\UiAutomationTest.csproj", "{AC165229-9EB7-4877-97C8-446BA35333A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiAutomationTest", "UiAutomationTest\UiAutomationTest.csproj", "{27BC513D-9278-4B06-9ADC-29D1CF5F81A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfDemoApp", "WpfDemoApp\WpfDemoApp.csproj", "{6DD06520-B22B-4878-BEFF-84302064DA44}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{72DBF833-A31D-41A0-B7D8-B075A75CE07D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfDemoApp", "WpfDemoApp\WpfDemoApp.csproj", "{9B9C2B6E-1BD1-4681-9B80-B19FA87AD23B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,20 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CF651DC7-4350-41FF-BEA2-A80757B8D02B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF651DC7-4350-41FF-BEA2-A80757B8D02B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF651DC7-4350-41FF-BEA2-A80757B8D02B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF651DC7-4350-41FF-BEA2-A80757B8D02B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC165229-9EB7-4877-97C8-446BA35333A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC165229-9EB7-4877-97C8-446BA35333A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC165229-9EB7-4877-97C8-446BA35333A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC165229-9EB7-4877-97C8-446BA35333A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6DD06520-B22B-4878-BEFF-84302064DA44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DD06520-B22B-4878-BEFF-84302064DA44}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6DD06520-B22B-4878-BEFF-84302064DA44}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6DD06520-B22B-4878-BEFF-84302064DA44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{291CE5B1-6E64-4F67-8822-BBAF250D13E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{291CE5B1-6E64-4F67-8822-BBAF250D13E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{291CE5B1-6E64-4F67-8822-BBAF250D13E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{291CE5B1-6E64-4F67-8822-BBAF250D13E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27BC513D-9278-4B06-9ADC-29D1CF5F81A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27BC513D-9278-4B06-9ADC-29D1CF5F81A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27BC513D-9278-4B06-9ADC-29D1CF5F81A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27BC513D-9278-4B06-9ADC-29D1CF5F81A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B9C2B6E-1BD1-4681-9B80-B19FA87AD23B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B9C2B6E-1BD1-4681-9B80-B19FA87AD23B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B9C2B6E-1BD1-4681-9B80-B19FA87AD23B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B9C2B6E-1BD1-4681-9B80-B19FA87AD23B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6FA5A360-402A-415B-86CA-56AC786C0565}
 	EndGlobalSection
 EndGlobal
