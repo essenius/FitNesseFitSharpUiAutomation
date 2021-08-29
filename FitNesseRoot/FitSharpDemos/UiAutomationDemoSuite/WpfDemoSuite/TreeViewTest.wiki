@@ -2,7 +2,6 @@
 |set focus to control|@control                    |
 |expand control      |@control                    |
 
-
 !|script                                                                  |
 |select item         |Caption:Tree View                                   |
 |set value of control|ControlType:Tree|to                  |Core Product 3|
@@ -17,3 +16,4 @@
 |check               |value of control|ControlType:Tree    |Step 2        |
 |click control       |id:ShowTreeInTextBlockButton                        |
 |check               |value of control|id:TreeViewTextBlock|=~/Product 4/ |
+|show                |window snapshot                                     |
