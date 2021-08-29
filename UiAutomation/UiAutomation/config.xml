@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<suiteConfig>
+  <ApplicationUnderTest>
+    <AddAssembly>UiAutomation.dll</AddAssembly>
+    <AddAssembly>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.6\System.Windows.Forms.dll</AddAssembly>
+    <AddNamespace>UIAutomation</AddNamespace>
+  </ApplicationUnderTest>
+  <Settings>
+    <Runner>fitSharp.Slim.Service.Runner</Runner>
+  </Settings>
+</suiteConfig>

@@ -35,8 +35,8 @@ namespace UiAutomation
     ///     see e.g. https://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/c3f142e1-0624-4ec5-a313-482e72d5454d/
     ///     To make the constants work, set the reference property "Embed Interop Types" for interop.UIAutomationCore to False
     ///     The dll can be generated via:
-    ///     "c:\Program Files(x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\TlbImp.exe"
-    ///     c:\Windows\System32\UIAutomationCore.dll -out:interop.UIAutomationCore.dll
+    ///       "c:\Program Files(x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\TlbImp.exe"
+    ///         c:\Windows\System32\UIAutomationCore.dll -out:interop.UIAutomationCore.dll
     ///     Unless stated otherwise, design decisions have been made because they seemed reasonable.
     /// </remarks>
     public class UiAutomationFixture
@@ -349,6 +349,9 @@ namespace UiAutomation
 
         /// <summary>Waits for a process to end (via ProcessId or Name)</summary>
         public static bool WaitUntilProcessEnds(string searchCriterion) => WaitForProcess(searchCriterion, false);
+
+        /// <summary>Take a snapshot of the current window and render it as an HTML base 64 image</summary>
+        public string WindowSnapshot() => WindowSnapshotObject().Rendering;
 
         /// <summary>Take a snapshot of the current window removing a border width and render it as an HTML base 64 image</summary>
         public string WindowSnapshot(int border) => WindowSnapshotObjectMinusOuterPixels(border).Rendering;

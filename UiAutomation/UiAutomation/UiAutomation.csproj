@@ -7,16 +7,17 @@
     <LangVersion>8.0</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysysMode>AllEnabledByDefault</AnalysysMode>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <Authors>Rik Essenius</Authors>
     <Description>FitNesse fixture for testing WPF and WinForms GUIs</Description>
     <Copyright>Copyright © Rik Essenius 2013-2021</Copyright>
     <RepositoryUrl>https://github.com/essenius/FitNesseFitSharpFeatureDemos</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <ProjectGuid>{291CE5B1-6E64-4F67-8822-BBAF250D13E2}</ProjectGuid>
     <DocumentationFile>UiAutomation.xml</DocumentationFile>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +27,12 @@
       <_Parameter1>UIAutomationTest</_Parameter1>
     </AssemblyAttribute>
 
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,6 @@
 |set focus and expand|Products                            |
 |control is visible  |Core Products                       |
 |Collapse Control    |Processes                           |
-|Control Exists      |Step 1                              |
 |reject              |control           |step 1|is visible|
 |Collapse Control    |id:TreeView1                        |
 |reject              |Control is Visible|Product 1        |

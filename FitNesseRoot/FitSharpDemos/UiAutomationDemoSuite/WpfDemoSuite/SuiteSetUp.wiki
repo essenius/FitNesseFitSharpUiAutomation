@@ -1,6 +1,3 @@
-!| import    |
-|UIAutomation|
-
-!|Script          |UI Automation Fixture                             |
-|Search By        |Name                                              |
-|Start Application|UiAutomation\WpfDemoApp\bin\release\WpfDemoApp.exe|
+!|Script          |UI Automation Fixture|
+|Search By        |Name                 |
+|Start Application|${WpfDemoApp}        |

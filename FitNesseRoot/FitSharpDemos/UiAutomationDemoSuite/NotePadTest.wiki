@@ -1,6 +1,3 @@
-!| import    |
-|UIAutomation|
-
 !|script          |UI Automation Fixture                       |
 |Search By        |Name                                        |
 |Set Timeout      |5               |seconds                    |

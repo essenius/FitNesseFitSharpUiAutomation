@@ -1,2 +1,2 @@
-!path UiAutomation\UiAutomation\bin\release\UiAutomation.dll
+!define WpfDemoApp {WpfDemoApp.exe}
 !contents -R2 -g -p -f -h
