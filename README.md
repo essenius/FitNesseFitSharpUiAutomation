@@ -17,7 +17,7 @@ It only works on Windows since it uses Windows UI technology.
    ```
    After executing above command, FitSharp will be installed to <I>C:\Apps\FitSharp</I>.
    
-3. Clone the repo to a local folder, e.g. <I>C:\Data\FitNesseDemo</I>. This is hte folder where plugins.properties should be.
+3. Clone the repo to a local folder, e.g. <I>C:\Data\FitNesseDemo</I>. This is the folder where plugins.properties should be.
 ```
 mkdir c:\data\FitNesseDemo
 cd /d c:\data\FitNesseDemo
