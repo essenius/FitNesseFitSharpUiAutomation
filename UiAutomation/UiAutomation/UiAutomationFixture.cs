@@ -125,30 +125,24 @@ namespace UiAutomation
             ApplyMethodToControl(x => x.DoubleClick(), searchCriterion);
 
         /// <summary>Drag the mouse from a control. Use together with Drop On Control</summary>
-        public bool DragControl(string searchCriterion)
-        {
-            return ApplyMethodToControl(x =>
+        public bool DragControl(string searchCriterion) =>
+            ApplyMethodToControl(x =>
             {
                 Mouse.DragFrom(x.AutomationElement);
                 return true;
             }, searchCriterion);
-        }
 
         /// <summary>Drag the mouse from a control and drop onto another control</summary>
-        public bool DragControlAndDropOnControl(string dragCriterion, string dropCriterion)
-        {
-            return ApplyMethodToControl(x =>
+        public bool DragControlAndDropOnControl(string dragCriterion, string dropCriterion) =>
+            ApplyMethodToControl(x =>
             {
                 var y = ApplyMethodToControl(drop => drop, dropCriterion);
                 return Mouse.DragDrop(x.AutomationElement, y.AutomationElement);
             }, dragCriterion);
-        }
 
         /// <summary>Drop a dragged control onto another one. Use together with Drag Control</summary>
-        public bool DropOnControl(string searchCriterion)
-        {
-            return ApplyMethodToControl(x => Mouse.DropTo(x.AutomationElement), searchCriterion);
-        }
+        public bool DropOnControl(string searchCriterion) =>
+            ApplyMethodToControl(x => Mouse.DropTo(x.AutomationElement), searchCriterion);
 
         /// <summary>Expand an expandable control (e.g. TreeItem)</summary>
         public bool ExpandControl(string searchCriterion) => ApplyMethodToControl(x => x.Expand(), searchCriterion);
@@ -258,15 +252,13 @@ namespace UiAutomation
         public void SetAutomaticSwitchToStartedApplication() => _automaticSwitchToStartedApplication = true;
 
         /// <summary>Set the focus to a control</summary>
-        public bool SetFocusToControl(string searchCriterion)
-        {
-            return ApplyMethodToControl(x =>
+        public bool SetFocusToControl(string searchCriterion) =>
+            ApplyMethodToControl(x =>
             {
                 if (x.AutomationElement == null) return false;
                 x.AutomationElement.SetFocus();
                 return true;
             }, searchCriterion);
-        }
 
         /// <summary>Set the value of a control. Tries to use an appropriate method based on the control type</summary>
         public bool SetValueOfControlTo(string searchCriterion, string newValue) =>
@@ -343,14 +335,12 @@ namespace UiAutomation
         public bool WaitForControlAndClick(string searchCriterion) =>
             WaitForControl(searchCriterion) && ClickControl(searchCriterion);
 
-        private static bool WaitForProcess(string searchCriterion, bool shouldbeAlive)
-        {
-            return searchCriterion.WaitWithTimeoutTill(criterion =>
+        private static bool WaitForProcess(string searchCriterion, bool shouldbeAlive) =>
+            searchCriterion.WaitWithTimeoutTill(criterion =>
             {
                 var processId = new ProcessHandler(searchCriterion).Id();
                 return shouldbeAlive ? processId != null : processId == null;
             });
-        }
 
         /// <summary>Waits for a process to become active (typically via Name, can also use ProcessId</summary>
         public static bool WaitForProcess(string searchCriterion) => WaitForProcess(searchCriterion, true);

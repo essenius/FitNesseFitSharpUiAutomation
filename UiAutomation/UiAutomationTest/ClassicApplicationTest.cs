@@ -9,20 +9,32 @@
 //   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and limitations under the License.
 
+using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UiAutomation;
+using UiAutomation.Model;
 
 namespace UiAutomationTest
 {
     [TestClass]
-    public class ExtractGridTest
+    public class ClassicApplicationTest
     {
         [TestMethod]
         [TestCategory("Unit")]
-        public void ExtractGridNotfoundTest()
+        [ExpectedExceptionWithMessage(typeof(Win32Exception), "The system cannot find the file specified")]
+        public void ClassicApplicationConstructorNonexistingFileRaisesException()
         {
-            var fixture = new ExtractGrid("dummy");
-            Assert.IsNull(fixture.Query());
+            var _ = new ClassicApplication("nonexisting.exe", null, null);
+        }
+
+        [TestMethod]
+        [TestCategory("DefaultApps")]
+        public void ClassicApplicationConstructorTest1()
+        {
+            var app = new ClassicApplication("notepad.exe", null, null);
+            app.WaitForInputIdle();
+            Assert.IsNotNull(app.MainWindowHandle);
+            ExtensionFunctions.TimeoutInMilliseconds = 1000;
+            Assert.IsTrue(app.Exit(false));
         }
     }
 }

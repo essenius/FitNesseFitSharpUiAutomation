@@ -43,7 +43,7 @@ namespace UiAutomation.Model
 
                 if (!MouseEvent(
                     NativeMethods.MouseEventFlags.Move | NativeMethods.MouseEventFlags.Absolute,
-                    clickPoint.X, 
+                    clickPoint.X,
                     clickPoint.Y))
                 {
                     return false;
@@ -102,7 +102,7 @@ namespace UiAutomation.Model
 
         private static bool MoveToAndDo(Point position, NativeMethods.MouseEventFlags eventFlags) =>
             MouseEvent(
-                NativeMethods.MouseEventFlags.Absolute | NativeMethods.MouseEventFlags.Move, 
+                NativeMethods.MouseEventFlags.Absolute | NativeMethods.MouseEventFlags.Move,
                 position.X,
                 position.Y) &&
             MouseEvent(eventFlags, 0, 0);

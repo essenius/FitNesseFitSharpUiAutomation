@@ -19,7 +19,9 @@ namespace UiAutomationTest
     [TestClass]
     public class MappingTest
     {
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
+        [TestCategory("Unit")]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void MappingInvalidSerializationTest()
         {
             var map = new Mapping<int>("test");

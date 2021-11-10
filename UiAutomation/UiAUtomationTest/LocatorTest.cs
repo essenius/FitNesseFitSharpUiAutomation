@@ -44,11 +44,11 @@ namespace UiAutomationTest
             Assert.AreEqual("MyId", locator.ConditionValue, "ConditionValue match for Id");
             locator = new Locator("ControlType:RadioButton");
             Assert.AreEqual(
-                UIA_PropertyIds.UIA_ControlTypePropertyId, 
+                UIA_PropertyIds.UIA_ControlTypePropertyId,
                 locator.ConditionType,
                 "ConditionType match for ControlType");
             Assert.AreEqual(
-                UIA_ControlTypeIds.UIA_RadioButtonControlTypeId, 
+                UIA_ControlTypeIds.UIA_RadioButtonControlTypeId,
                 locator.ConditionValue,
                 "ConditionValue match for ControlType");
             locator = new Locator("IsEnabled:false");

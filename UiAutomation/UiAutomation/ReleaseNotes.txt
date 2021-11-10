@@ -31,4 +31,5 @@
 2.6.3 Worked around a timing issue in ExpandAll
 2.6.4 Replaced [Documentation] attributes by XML documentation, introduced Roslyn static analysis, fixed new findings
 3.0.0 Migration to .Net 5.0 (dual targeting .NET 5.0 and .NET Framework 4.8)
-3.1.0 Introduced PressKeys as alternative for PressKey to make test workflows more natural. Corrected defect in API for WindowSnapshot, Reformatted code. 
+3.1.0 Updated demo pages; added WindowSnapshot without params 
+3.2.0 Introduced PressKeys as alternative for PressKey to make test workflows more natural. Corrected defect in API for WindowSnapshot, Reformatted code. 

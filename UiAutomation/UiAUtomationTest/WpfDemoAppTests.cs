@@ -86,7 +86,7 @@ namespace UiAutomationTest
                 var rowCollection = table[row] as Collection<object>;
                 Assert.IsNotNull(rowCollection);
                 Assert.AreEqual(
-                    expectedValues.GetLength(1), 
+                    expectedValues.GetLength(1),
                     rowCollection.Count, "Column Count for {0}", searchCriterion);
                 for (var column = 0; column < rowCollection.Count; column++)
                 {
@@ -94,15 +94,15 @@ namespace UiAutomationTest
                     Assert.IsNotNull(columnCollection);
                     Assert.AreEqual(
                         2,
-                        columnCollection.Count, 
+                        columnCollection.Count,
                         "Cell Count for {0}({1},{2})", searchCriterion, row, column);
                     Assert.AreEqual(
-                        header[column], 
-                        columnCollection[0], 
+                        header[column],
+                        columnCollection[0],
                         "Header for {0}({1},{2})", searchCriterion, row, column);
                     Assert.AreEqual(
-                        expectedValues[row, column], 
-                        columnCollection[1], 
+                        expectedValues[row, column],
+                        columnCollection[1],
                         "value for {0}({1},{2})", searchCriterion, row, column);
                 }
             }
@@ -289,7 +289,7 @@ namespace UiAutomationTest
                 _fixture.CellInControlContaining(dataGrid, "Create demo UI Automation application").ToString(),
                 "Get row with cell 'Demo UI...'");
             Assert.AreEqual(
-                "row 3, column 2", 
+                "row 3, column 2",
                 _fixture.CellInControlContaining("DataGrid1", "Approved").ToString(),
                 "Get row with cell 'Approved'");
             Assert.IsNull(_fixture.CellInControlContaining(dataGrid, "Non-existing value"), "Search non-existent cell");
@@ -306,13 +306,13 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.DoubleClickControl($"{dataGrid}[row 3, col 2]"), "DoubleClick row 3 column 2");
             Assert.IsTrue(_fixture.ClickControl($"{dataGrid} [4,3]"), "Click row 4 column 3");
             Assert.AreEqual(
-                "row 4, column 3", 
+                "row 4, column 3",
                 _fixture.SelectedCellInControl(dataGrid).ToString(),
                 "selected cell is 4,3");
             Assert.AreEqual("Approved", _fixture.ValueOfControl("GridTextbox"), "GridBTextBox contains Approved");
             Assert.IsTrue(_fixture.ClickControl($"{dataGrid}[row 2]"), "Click Row 2");
             Assert.AreEqual(
-                "row 2, column 1", 
+                "row 2, column 1",
                 _fixture.SelectedCellInControl("DataGrid1").ToString(),
                 "Selected cell returns value of first column");
             Assert.IsTrue(_fixture.ClickControl($"{dataGrid}[col 2]"), "Click Header 2");
@@ -353,7 +353,7 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.SelectItem("Caption:Usual Controls"), "Select 'Usual Controls' tab");
             Assert.AreEqual(
                 "MultiValueListBoxItem3;MultiValueListBoxItem5",
-                _fixture.ValueOfControl("id:MultiValueListBox"), 
+                _fixture.ValueOfControl("id:MultiValueListBox"),
                 "Default value of MultiValueListBox");
             Assert.IsTrue(_fixture.SetValueOfControlTo("id:MultiValueListBox", ""), "Clearing value");
             Assert.IsTrue(

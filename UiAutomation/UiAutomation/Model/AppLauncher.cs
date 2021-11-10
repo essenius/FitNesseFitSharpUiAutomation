@@ -58,21 +58,21 @@ namespace UiAutomation.Model
     {
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         public extern IntPtr ActivateApplication(
-            [In] string appUserModelId, 
+            [In] string appUserModelId,
             [In] string arguments,
             [In] ActivateOptions options,
             [Out] out int processId);
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         public extern IntPtr ActivateForFile(
-            [In] string appUserModelId, 
-            [In] IntPtr itemArray, 
+            [In] string appUserModelId,
+            [In] IntPtr itemArray,
             [In] string verb,
             [Out] out int processId);
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         public extern IntPtr ActivateForProtocol(
-            [In] string appUserModelId, 
+            [In] string appUserModelId,
             [In] IntPtr itemArray,
             [Out] out int processId);
     }
@@ -134,7 +134,7 @@ namespace UiAutomation.Model
         }
 
         public void Dispose() => _packageInfo.Dispose();
-        
+
         private static string GetFullName(string family)
         {
             var count = 0;

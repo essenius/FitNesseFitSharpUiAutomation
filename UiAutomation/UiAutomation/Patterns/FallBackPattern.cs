@@ -64,7 +64,7 @@ namespace UiAutomation.Patterns
 
         private static IUIAutomationElement FirstControlUnder(
             IUIAutomationElement element,
-            IUIAutomationTreeWalker walker, 
+            IUIAutomationTreeWalker walker,
             int controlType)
         {
             var child = walker.GetFirstChildElement(element);

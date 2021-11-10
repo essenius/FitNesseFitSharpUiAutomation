@@ -34,7 +34,7 @@ namespace UiAutomationTest
         {
             var fileSystem = new FileSystem();
             Assert.AreEqual(
-                "C:\\Windows\\System32\\calc.exe", 
+                "C:\\Windows\\System32\\calc.exe",
                 fileSystem.FindExecutable("Calc.exe"),
                 "Found in env path");
             Assert.AreEqual(

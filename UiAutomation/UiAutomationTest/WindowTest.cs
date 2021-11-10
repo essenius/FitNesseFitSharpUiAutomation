@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2019-2021 Rik Essenius2019 
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -10,19 +10,23 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UiAutomation;
+using UiAutomation.Model;
 
-namespace UiAutomationTest
+namespace UiAUtomationTest
 {
     [TestClass]
-    public class ExtractGridTest
+    public class WindowTest
     {
         [TestMethod]
         [TestCategory("Unit")]
-        public void ExtractGridNotfoundTest()
+        public void WindowTestNull()
         {
-            var fixture = new ExtractGrid("dummy");
-            Assert.IsNull(fixture.Query());
+            var window = new Window(null);
+            Assert.IsFalse(window.Maximize());
+            Assert.IsFalse(window.Minimize());
+            Assert.IsFalse(window.Move(10, 10));
+            Assert.IsFalse(window.Resize(100, 100));
+            Assert.IsFalse(window.IsTopmost());
         }
     }
 }

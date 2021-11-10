@@ -140,7 +140,7 @@ namespace UiAutomation.Model
         {
             if (AutomationElement == null) return false;
             if (AutomationElement.GetCurrentPattern(
-                    UIA_PatternIds.UIA_InvokePatternId) is IUIAutomationInvokePattern invokePattern)
+                UIA_PatternIds.UIA_InvokePatternId) is IUIAutomationInvokePattern invokePattern)
             {
                 try
                 {
@@ -161,8 +161,8 @@ namespace UiAutomation.Model
 
         private static IUIAutomationCondition CreateCondition(LocatorCollection locators)
         {
-            if (!locators.Any() || (locators.Count == 1 && string.IsNullOrEmpty(locators[0].Method) &&
-                string.IsNullOrEmpty(locators[0].Criterion)))
+            if (!locators.Any() || locators.Count == 1 && string.IsNullOrEmpty(locators[0].Method) &&
+                string.IsNullOrEmpty(locators[0].Criterion))
             {
                 return Automation.CreateTrueCondition();
             }
@@ -210,7 +210,7 @@ namespace UiAutomation.Model
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "False positive")]
         private static IEnumerable<IUIAutomationElement> FindAllElements(
-            string searchCriterion, 
+            string searchCriterion,
             TreeScope myTreeScope,
             IUIAutomationElement parent)
         {
@@ -272,7 +272,7 @@ namespace UiAutomation.Model
         }
 
         private static Control[] FindControls(
-            string childSearchCriterion, 
+            string childSearchCriterion,
             TreeScope treeScope,
             IUIAutomationElement parent)
         {
@@ -288,7 +288,7 @@ namespace UiAutomation.Model
 
         private static IUIAutomationElement FindFirstControlUnder(
             IUIAutomationElement element,
-            IUIAutomationTreeWalker walker, 
+            IUIAutomationTreeWalker walker,
             int controlType)
         {
             var child = walker.GetFirstChildElement(element);

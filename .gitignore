@@ -347,4 +347,4 @@ ASALocalRun/
 .mfractor/
 
 # XML documentation
-UiAutomation.xml
+UiAutomation*.xml
