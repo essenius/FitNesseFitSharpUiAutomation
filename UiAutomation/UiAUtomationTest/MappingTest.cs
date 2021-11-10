@@ -24,39 +24,7 @@ namespace UiAutomationTest
         {
             var map = new Mapping<int>("test");
             var sc = new StreamingContext();
-            // ReSharper disable once AssignNullToNotNullAttribute -- intent is to force an exception
             map.GetObjectData(null, sc);
         }
-
-        /*[TestMethod, TestCategory("Unit")]
-        public void MappingSerializeTest()
-        {
-            var map = new Mapping<int>("Number")
-            {
-                {"One", 1},
-                {"Two", 2}
-            };
-
-            IFormatter formatter = new BinaryFormatter();
-            Stream writeStream = new FileStream("mapping.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-            formatter.Serialize(writeStream, map);
-            writeStream.Close();
-
-            Stream readStream = new FileStream("mapping.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
-            var deserializedMap = (Mapping<int>) formatter.Deserialize(readStream);
-            readStream.Close();
-
-            Assert.AreEqual(1, deserializedMap.Map("One"), "Mapping One");
-            Assert.AreEqual(2, deserializedMap.Map("Two"), "Mapping Two");
-            try
-            {
-                deserializedMap.Map("Three");
-                Assert.Fail("No exception raised mapping Three");
-            }
-            catch (ArgumentException exception)
-            {
-                Assert.AreEqual("Three is an unrecognized Number", exception.Message, "Exception message");
-            }
-        } */
     }
 }

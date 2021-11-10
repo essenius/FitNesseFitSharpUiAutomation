@@ -1,4 +1,4 @@
-﻿// Copyright 2016-2020 Rik Essenius
+﻿// Copyright 2016-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -45,11 +45,13 @@ namespace UiAutomation
                 list = Control.RootChildControls(_searchCriterion).ToList();
             }
 
-            var rows = new Collection<Collection<string>> {new Collection<string> {"Automation Id", "Name", "Value", "Location"}};
+            var rows = new Collection<Collection<string>>
+                { new Collection<string> { "Automation Id", "Name", "Value", "Location" } };
             foreach (var entry in list)
             {
                 var position = Mouse.AbsolutePosition(entry.AutomationElement);
-                var row = new Collection<string> {entry.AutomationId, entry.Name, entry.Value, Invariant($"x:{position.X}, y:{position.Y}")};
+                var row = new Collection<string>
+                    { entry.AutomationId, entry.Name, entry.Value, Invariant($"x:{position.X}, y:{position.Y}") };
                 rows.Add(row);
             }
             return rows;
@@ -91,7 +93,7 @@ namespace UiAutomation
                 var row = new Collection<object>();
                 for (var i = 0; i < headerRow.Count; i++)
                 {
-                    row.Add(new Collection<string> {headerRow[i], entry[i]});
+                    row.Add(new Collection<string> { headerRow[i], entry[i] });
                 }
                 table.Add(row);
             }

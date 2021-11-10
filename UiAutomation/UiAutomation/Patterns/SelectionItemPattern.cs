@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -23,8 +23,8 @@ namespace UiAutomation.Patterns
         public SelectionItemPattern(IUIAutomationElement element, bool canSelectMultiple = false)
         {
             _canSelectMultiple = canSelectMultiple;
-            _selectionItemPattern =
-                element.GetCurrentPattern(UIA_PatternIds.UIA_SelectionItemPatternId) as IUIAutomationSelectionItemPattern;
+            _selectionItemPattern = element.GetCurrentPattern(UIA_PatternIds.UIA_SelectionItemPatternId) as
+                IUIAutomationSelectionItemPattern;
         }
 
         public static string SelectValue => "select";

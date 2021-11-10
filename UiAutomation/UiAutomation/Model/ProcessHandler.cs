@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2020 Rik Essenius
+﻿// Copyright 2019-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -26,7 +26,8 @@ namespace UiAutomation.Model
         public ProcessHandler(string searchCriterion)
         {
             var searcher = new SearchParser(searchCriterion);
-            if (!searcher.IsValidProcessCondition()) throw new ArgumentException("Could not understand process condition " + searchCriterion);
+            if (!searcher.IsValidProcessCondition())
+                throw new ArgumentException("Could not understand process condition " + searchCriterion);
             var locator = searcher.Locators[0];
             if (locator.ConditionType == UIA_PropertyIds.UIA_ProcessIdPropertyId)
             {

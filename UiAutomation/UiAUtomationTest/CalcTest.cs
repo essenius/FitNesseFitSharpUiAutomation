@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -22,14 +22,16 @@ namespace UiAutomationTest
         private static UiAutomationFixture _fixture;
         private static int _testCounter;
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckDefaultResult()
         {
             var actual = _fixture.ValueOfControl(Fields.Result);
             Assert.AreEqual("0", actual, "Result is '{0}' rather than '0'", actual);
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckEnterNumber()
         {
             Assert.IsTrue(_fixture.ClickControl(Fields.One));
@@ -39,14 +41,16 @@ namespace UiAutomationTest
             Assert.AreEqual("Display is -123", _fixture.NameOfControl(Fields.Result));
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckExists()
         {
             Assert.IsTrue(_fixture.ControlExists(Fields.Result), "Result control exists");
             Assert.IsFalse(_fixture.ControlExists(Fields.NonExisting), "Non-existing control does not exist");
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckGracefulHandlingOfNonexistingControl()
         {
             UiAutomationFixture.TimeoutSeconds = 1;
@@ -54,20 +58,25 @@ namespace UiAutomationTest
             Assert.IsFalse(_fixture.SelectItem(Fields.NonExisting), "Select non-existing Item");
             Assert.AreEqual("null", _fixture.ValueOfControl(Fields.NonExisting), "Get value of non-existing Control");
             Assert.IsFalse(_fixture.WaitForControl(Fields.NonExisting), "Wait for non-existing control");
-            Assert.IsTrue(_fixture.WaitUntilControlDisappears(Fields.NonExisting),
+            Assert.IsTrue(
+                _fixture.WaitUntilControlDisappears(Fields.NonExisting),
                 "Wait for non-existing control to disappear");
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckInvalidOperations()
         {
             Assert.IsTrue(_fixture.ControlExists(Fields.One), "Control '1' exists");
             Assert.IsFalse(_fixture.ToggleControl(Fields.One), "Cannot toggle control '1'");
-            Assert.IsFalse(_fixture.SetValueOfControlTo(Fields.CalculatorExpression, "M"), "Setting value of control without patterns");
+            Assert.IsFalse(
+                _fixture.SetValueOfControlTo(Fields.CalculatorExpression, "M"),
+                "Setting value of control without patterns");
             Assert.IsFalse(_fixture.SelectItem(Fields.One), "Selecting value of control without selection pattern");
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckKeyPresses()
         {
             UiAutomationFixture.TimeoutSeconds = 1;
@@ -77,7 +86,8 @@ namespace UiAutomationTest
             Assert.IsFalse(_fixture.WaitForControl(Fields.Pi), "Wait for Pi fails");
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckScientific()
         {
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click menu");
@@ -89,14 +99,18 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.ClickControl(Fields.Nine), "Push 9");
             Assert.IsTrue(_fixture.ClickControl(Fields.Fact), "Push n!");
             Assert.AreEqual("362,880", _fixture.ValueOfControl(Fields.Result));
-            Assert.AreEqual(@"Expression is factorial (9)", _fixture.ValueOfControl(Fields.CalculatorExpression), "Expression");
+            Assert.AreEqual(
+                @"Expression is factorial (9)",
+                _fixture.ValueOfControl(Fields.CalculatorExpression),
+                "Expression");
 
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click View menu 2nd time");
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.Standard), "Click Standard menu item");
             Assert.IsTrue(_fixture.WaitUntilControlDisappears(Fields.Radians));
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckSimplifiedApi()
         {
             Assert.IsTrue(_fixture.ClickControl("Clear"), "Push Clear");
@@ -105,7 +119,8 @@ namespace UiAutomationTest
             Assert.AreEqual("1", _fixture.ValueOfControl("CalculatorResults"), "Result is 1");
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcCheckWindowValue()
         {
             UiAutomationFixture.SearchBy("ControlType");
@@ -113,15 +128,20 @@ namespace UiAutomationTest
             Assert.AreEqual("Calculator", _fixture.ValueOfControl("Window"), "value of Window is 'Calculator'");
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcGetChildValue()
         {
-            _fixture.PressKey("456");
-            Assert.AreEqual("456", _fixture.FirstTextUnder(Fields.Result), "The first text control under the Result box contains 456");
+            _fixture.PressKeys("456");
+            Assert.AreEqual(
+                "456",
+                _fixture.FirstTextUnder(Fields.Result),
+                "The first text control under the Result box contains 456");
             Assert.AreEqual("456", _fixture.ValueOfControl(Fields.Result));
         }
 
-        [TestMethod, TestCategory("Calc")]
+        [TestMethod]
+        [TestCategory("Calc")]
         public void CalcVolume()
         {
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click menu");
@@ -130,27 +150,27 @@ namespace UiAutomationTest
             // This is important. Apparently the output unit gets visible earlier than the Pane Root disappears
             _fixture.WaitUntilControlDisappears("id:PaneRoot");
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.OutputUnit), "Wait for Output Unit and click it");
-            Assert.IsTrue(_fixture.PressKey("{PgUp}{PgUp}{PgUp}"), "Press Page Up three times to get Liters in display");
+            Assert.IsTrue(
+                _fixture.PressKeys("{PgUp}{PgUp}{PgUp}"),
+                "Press Page Up three times to get Liters in display");
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Liters"), "Set Output to Liters");
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.InputUnit), "Wait for Input Unit and click it");
-            Assert.IsTrue(_fixture.PressKey("{PgDn}{PgDn}"), "Press Page Down twice to get Gallons (US) in display");
+            Assert.IsTrue(_fixture.PressKeys("{PgDn}{PgDn}"), "Press Page Down twice to get Gallons (US) in display");
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.InputUnit, "Gallons (US)"), "Select Gallons");
             Assert.IsTrue(_fixture.WaitForControl(Fields.Input), "Wait for Input");
             Assert.IsTrue(_fixture.ClickControl(Fields.Input));
-            Assert.IsTrue(_fixture.PressKey("10"));
+            Assert.IsTrue(_fixture.PressKeys("10"));
             Assert.AreEqual("10", _fixture.ValueOfControl(Fields.Input), "Input OK");
             Assert.AreEqual("37.85412", _fixture.ValueOfControl(Fields.Output), "Output OK");
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Milliliters"), "Set Output to Milliliters");
         }
 
         [ClassCleanup]
-        public static void TearDown()
-        {
-            Assert.IsTrue(_fixture.ForcedCloseApplication(), "Calc stopped");
-        }
+        public static void TearDown() => Assert.IsTrue(_fixture.ForcedCloseApplication(), "Calc stopped");
 
-        [ClassInitialize, SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive"),
-         SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "False positive")]
+        [ClassInitialize]
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive")]
+        [SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "False positive")]
         public static void Win10SetupCalc(TestContext testContext)
         {
             _fixture = new UiAutomationFixture();
@@ -171,8 +191,8 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.PressKey(Win10AppKeys.ClearAllInput));
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness"),
-         SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
+        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
         private static class Fields
         {
             public const string Pi = "id:piButton";
@@ -203,9 +223,9 @@ namespace UiAutomationTest
             public static string Volume => "name:Volume Converter";
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness"),
-         SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness"),
-         SuppressMessage("ReSharper", "InconsistentNaming", Justification = "names cannot start with numbers")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
+        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
+        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "names cannot start with numbers")]
         private static class Win10AppKeys
         {
             public static string A => "a";

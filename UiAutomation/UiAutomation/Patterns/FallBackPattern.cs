@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -33,7 +33,9 @@ namespace UiAutomation.Patterns
         // Also, UWP applications are more likely to include special Unicode characters in the text (e.g. for text direction or alignment); we strip those out.
         public bool TryGet(out string returnValue)
         {
-            returnValue = FirstControlUnder(_element, _automation.RawViewWalker, UIA_ControlTypeIds.UIA_TextControlTypeId)?.CurrentName;
+            returnValue =
+                FirstControlUnder(_element, _automation.RawViewWalker, UIA_ControlTypeIds.UIA_TextControlTypeId)
+                    ?.CurrentName;
             if (string.IsNullOrEmpty(returnValue))
             {
                 returnValue = _element.CurrentName;
@@ -60,7 +62,10 @@ namespace UiAutomation.Patterns
 
         private bool DoesApply() => _element.CurrentIsKeyboardFocusable != 0;
 
-        private static IUIAutomationElement FirstControlUnder(IUIAutomationElement element, IUIAutomationTreeWalker walker, int controlType)
+        private static IUIAutomationElement FirstControlUnder(
+            IUIAutomationElement element,
+            IUIAutomationTreeWalker walker, 
+            int controlType)
         {
             var child = walker.GetFirstChildElement(element);
             while (child != null)

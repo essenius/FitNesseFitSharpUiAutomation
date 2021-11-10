@@ -121,8 +121,8 @@
                 see e.g. https://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/c3f142e1-0624-4ec5-a313-482e72d5454d/
                 To make the constants work, set the reference property "Embed Interop Types" for interop.UIAutomationCore to False
                 The dll can be generated via:
-                  "c:\Program Files(x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\TlbImp.exe"
-                    c:\Windows\System32\UIAutomationCore.dll -out:interop.UIAutomationCore.dll
+                "c:\Program Files(x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\TlbImp.exe"
+                c:\Windows\System32\UIAutomationCore.dll -out:interop.UIAutomationCore.dll
                 Unless stated otherwise, design decisions have been made because they seemed reasonable.
             </remarks>
         </member>
@@ -220,6 +220,10 @@
             <summary>Use the SendKeys.SendWait method to simulate keypresses.</summary>
             <param name="key">For more details on formats see https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys </param>
         </member>
+        <member name="M:UiAutomation.UiAutomationFixture.PressKeys(System.String)">
+            <summary>Use the SendKeys.SendWait method to simulate keypresses. Synonym for PressKey</summary>
+            <param name="key">For more details on formats see https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys </param>
+        </member>
         <member name="M:UiAutomation.UiAutomationFixture.PropertyOfControl(System.String,System.String)">
             <summary>Returns a property of a control</summary>
         </member>
@@ -298,11 +302,8 @@
         <member name="M:UiAutomation.UiAutomationFixture.WindowSnapshot">
             <summary>Take a snapshot of the current window and render it as an HTML base 64 image</summary>
         </member>
-        <member name="M:UiAutomation.UiAutomationFixture.WindowSnapshot(System.Int32)">
+        <member name="M:UiAutomation.UiAutomationFixture.WindowSnapshotMinusOuterPixels(System.Int32)">
             <summary>Take a snapshot of the current window removing a border width and render it as an HTML base 64 image</summary>
-        </member>
-        <member name="M:UiAutomation.UiAutomationFixture.WindowSnapshotMinusOuterPixels">
-            <summary>Take a snapshot of the current window and render it as an HTML base 64 image</summary>
         </member>
         <member name="M:UiAutomation.UiAutomationFixture.WindowSnapshotObject">
             <summary>Take a snapshot of the current window and return it as a Snapshot object</summary>

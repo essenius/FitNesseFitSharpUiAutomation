@@ -19,7 +19,8 @@ namespace UiAutomationTest
     [TestClass]
     public class AppLauncherTest
     {
-        [TestMethod, TestCategory("DefaultApps")]
+        [TestMethod]
+        [TestCategory("DefaultApps")]
         public void AppLauncherResolveTest()
         {
             using (var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe"))
@@ -30,14 +31,16 @@ namespace UiAutomationTest
             Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
         }
 
-        [TestMethod, TestCategory("Unit")]
+        [TestMethod]
+        [TestCategory("Unit")]
         public void AppLauncherTest2()
         {
             using var launcher = new AppLauncher("bogus");
             Assert.IsFalse(launcher.Exists);
         }
 
-        [TestMethod, TestCategory("DefaultApps")]
+        [TestMethod]
+        [TestCategory("DefaultApps")]
         public void AppLauncherUwpAppTest()
         {
             var fixture = new UiAutomationFixture();
@@ -67,7 +70,7 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_VersionString_ValueTextBlock"));
             var version = fixture.ValueOfControl("id:SystemSettings_PCSystem_VersionString_ValueTextBlock");
             Debug.Print("Version from settings: " + version);
-            Assert.IsTrue(int.TryParse(version, out _), "Version is numerical");
+            Assert.IsFalse(string.IsNullOrEmpty(version), "Version is not empty");
             Assert.IsTrue(fixture.ClickControl("name:Close Settings"), "Press Close Settings");
         }
     }

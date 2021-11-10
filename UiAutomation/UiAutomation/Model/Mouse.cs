@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -41,7 +41,10 @@ namespace UiAutomation.Model
             {
                 var clickPoint = AbsolutePosition(element);
 
-                if (!MouseEvent(NativeMethods.MouseEventFlags.Move | NativeMethods.MouseEventFlags.Absolute, clickPoint.X, clickPoint.Y))
+                if (!MouseEvent(
+                    NativeMethods.MouseEventFlags.Move | NativeMethods.MouseEventFlags.Absolute,
+                    clickPoint.X, 
+                    clickPoint.Y))
                 {
                     return false;
                 }
@@ -53,7 +56,8 @@ namespace UiAutomation.Model
 
         public static bool DoubleClick(IUIAutomationElement element) => Click(element) && Click(element);
 
-        public static bool DragDrop(IUIAutomationElement dragFrom, IUIAutomationElement dropTo) => DragFrom(dragFrom) && DropTo(dropTo);
+        public static bool DragDrop(IUIAutomationElement dragFrom, IUIAutomationElement dropTo) =>
+            DragFrom(dragFrom) && DropTo(dropTo);
 
         public static bool DragFrom(IUIAutomationElement element)
         {
@@ -85,7 +89,7 @@ namespace UiAutomation.Model
                             x = x,
                             y = y,
                             mouseData = 0,
-                            flags = (uint) eventFlags
+                            flags = (uint)eventFlags
                         }
                     }
                 }
@@ -97,7 +101,10 @@ namespace UiAutomation.Model
         }
 
         private static bool MoveToAndDo(Point position, NativeMethods.MouseEventFlags eventFlags) =>
-            MouseEvent(NativeMethods.MouseEventFlags.Absolute | NativeMethods.MouseEventFlags.Move, position.X, position.Y) &&
+            MouseEvent(
+                NativeMethods.MouseEventFlags.Absolute | NativeMethods.MouseEventFlags.Move, 
+                position.X,
+                position.Y) &&
             MouseEvent(eventFlags, 0, 0);
     }
 }

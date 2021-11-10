@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2020 Rik Essenius
+﻿// Copyright 2017-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -18,7 +18,8 @@ namespace UiAutomationTest
     [TestClass]
     public class ApplicationFactoryTest
     {
-        [TestMethod, TestCategory("DefaultApps")]
+        [TestMethod]
+        [TestCategory("DefaultApps")]
         public void ApplicationFactoryStartClassicTest()
         {
             var app = ApplicationFactory.Start("notepad.exe", null);
@@ -33,14 +34,16 @@ namespace UiAutomationTest
             Assert.IsFalse(app1.IsActive, "App1 is not active");
         }
 
-        [TestMethod, TestCategory("DefaultApps")]
+        [TestMethod]
+        [TestCategory("DefaultApps")]
         public void ApplicationFactoryStartNonexistingAppTest()
         {
             var app = ApplicationFactory.Start("nonexisting", null);
             Assert.IsNull(app);
         }
 
-        [TestMethod, TestCategory("DefaultApps")]
+        [TestMethod]
+        [TestCategory("DefaultApps")]
         public void ApplicationFactoryStartUwpTest()
         {
             var app = ApplicationFactory.Start(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null);
@@ -59,7 +62,8 @@ namespace UiAutomationTest
             Assert.IsTrue(app1.Exit(false), "Exiting a second time should work");
         }
 
-        [TestMethod, TestCategory("Unit")]
+        [TestMethod]
+        [TestCategory("Unit")]
         public void UwpApplicationStartNonexistingAppTest()
         {
             var app = new UwpApplication("nonexisting", string.Empty);

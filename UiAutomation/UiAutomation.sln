@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiAutomation", "UiAutomation\UiAutomation.csproj", "{291CE5B1-6E64-4F67-8822-BBAF250D13E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UiAutomation", "UiAutomation\UiAutomation.csproj", "{291CE5B1-6E64-4F67-8822-BBAF250D13E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiAutomationTest", "UiAutomationTest\UiAutomationTest.csproj", "{27BC513D-9278-4B06-9ADC-29D1CF5F81A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UiAutomationTest", "UiAutomationTest\UiAutomationTest.csproj", "{27BC513D-9278-4B06-9ADC-29D1CF5F81A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfDemoApp", "WpfDemoApp\WpfDemoApp.csproj", "{9B9C2B6E-1BD1-4681-9B80-B19FA87AD23B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfDemoApp", "WpfDemoApp\WpfDemoApp.csproj", "{9B9C2B6E-1BD1-4681-9B80-B19FA87AD23B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{26A02111-E4EB-4B63-A396-7A832481DBD9}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

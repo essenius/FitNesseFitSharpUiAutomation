@@ -26,7 +26,8 @@ namespace UiAutomation.Patterns
         {
             _element = element;
             _automation = automation;
-            _selectionPattern = element.GetCurrentPattern(UIA_PatternIds.UIA_SelectionPatternId) as IUIAutomationSelectionPattern;
+            _selectionPattern = element.GetCurrentPattern(UIA_PatternIds.UIA_SelectionPatternId) as
+                IUIAutomationSelectionPattern;
         }
 
         public bool TryGet(out string returnValue)
@@ -59,8 +60,8 @@ namespace UiAutomation.Patterns
             var item = _element.FindFirst(TreeScope.TreeScope_Descendants, condition);
             return item == null
                 ? SetResult.Failure
-                : new SelectionItemPattern(item, _selectionPattern.CurrentCanSelectMultiple != 0).TrySet(SelectionItemPattern
-                    .SelectValue);
+                : new SelectionItemPattern(item, _selectionPattern.CurrentCanSelectMultiple != 0)
+                    .TrySet(SelectionItemPattern.SelectValue);
         }
 
         private static void DeselectAll(IUIAutomationElementArray elementArray)

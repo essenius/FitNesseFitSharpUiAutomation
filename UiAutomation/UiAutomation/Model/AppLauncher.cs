@@ -21,47 +21,60 @@ namespace UiAutomation.Model
 {
     internal enum ActivateOptions
     {
-        None = 0x00000000, // No flags set
-        DesignMode = 0x00000001, // The application is being activated for design mode
-        NoErrorUi = 0x00000002, // Do not show an error dialog if the app fails to activate                                
-        NoSplashScreen = 0x00000004 // Do not show the splash screen when activating the app
+        None = 0x00000000,
+        DesignMode = 0x00000001, // For for design mode
+        NoErrorUi = 0x00000002, // No error dialog if the app fails to activate                                
+        NoSplashScreen = 0x00000004 // No splash screen when activating the app
     }
 
-    [ComImport, Guid("2e941141-7f97-4756-ba1d-9decde894a3d"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [ComImport]
+    [Guid("2e941141-7f97-4756-ba1d-9decde894a3d")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IApplicationActivationManager
     {
         // Activates the specified immersive application for the "Launch" contract, passing the provided arguments
         // string into the application. Callers can obtain the process Id of the application instance fulfilling this contract.
         IntPtr ActivateApplication(
-            [In, MarshalAs(UnmanagedType.LPWStr)] string appUserModelId,
-            [In, MarshalAs(UnmanagedType.LPWStr)] string arguments,
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string appUserModelId,
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string arguments,
             [In] ActivateOptions options,
             [Out] out int processId);
 
         IntPtr ActivateForFile(
-            [In, MarshalAs(UnmanagedType.LPWStr)] string appUserModelId,
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string appUserModelId,
             [In] IntPtr itemArray,
-            [In, MarshalAs(UnmanagedType.LPWStr)] string verb,
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string verb,
             [Out] out int processId);
 
         IntPtr ActivateForProtocol(
-            [In, MarshalAs(UnmanagedType.LPWStr)] string appUserModelId,
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string appUserModelId,
             [In] IntPtr itemArray,
             [Out] out int processId);
     }
 
-    [ComImport, Guid("45BA127D-10A8-46EA-8AB7-56EA9078943C")]
+    [ComImport]
+    [Guid("45BA127D-10A8-46EA-8AB7-56EA9078943C")]
     internal class ApplicationActivationManager : IApplicationActivationManager
     {
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        public extern IntPtr ActivateApplication([In] string appUserModelId, [In] string arguments, [In] ActivateOptions options,
+        public extern IntPtr ActivateApplication(
+            [In] string appUserModelId, 
+            [In] string arguments,
+            [In] ActivateOptions options,
             [Out] out int processId);
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        public extern IntPtr ActivateForFile([In] string appUserModelId, [In] IntPtr itemArray, [In] string verb, [Out] out int processId);
+        public extern IntPtr ActivateForFile(
+            [In] string appUserModelId, 
+            [In] IntPtr itemArray, 
+            [In] string verb,
+            [Out] out int processId);
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        public extern IntPtr ActivateForProtocol([In] string appUserModelId, [In] IntPtr itemArray, [Out] out int processId);
+        public extern IntPtr ActivateForProtocol(
+            [In] string appUserModelId, 
+            [In] IntPtr itemArray,
+            [Out] out int processId);
     }
 
     internal sealed class AppLauncher : IDisposable
@@ -96,7 +109,8 @@ namespace UiAutomation.Model
                         Debug.Print(e.Message);
                     }
                 }
-                Debug.Assert(error == NoError || error == ErrorNotFound, "error is " + error.ToString(InvariantCulture));
+                Debug.Assert(error == NoError || error == ErrorNotFound,
+                    "error is " + error.ToString(InvariantCulture));
             }
             catch (EntryPointNotFoundException)
             {
@@ -114,16 +128,13 @@ namespace UiAutomation.Model
             {
                 var versionMajor = Environment.OSVersion.Version.Major;
                 var versionMinor = Environment.OSVersion.Version.Minor;
-                var version = versionMajor + (double) versionMinor / 10;
+                var version = versionMajor + (double)versionMinor / 10;
                 return version <= 6.1;
             }
         }
 
         public void Dispose() => _packageInfo.Dispose();
-
-
-        //        ~AppLauncher() => Dispose();
-
+        
         private static string GetFullName(string family)
         {
             var count = 0;
@@ -163,7 +174,7 @@ namespace UiAutomation.Model
         {
             if (!Exists) return null;
             var packageApplicationId = PackageApplicationId();
-            var activation = (IApplicationActivationManager) new ApplicationActivationManager();
+            var activation = (IApplicationActivationManager)new ApplicationActivationManager();
             var hResult = activation.ActivateApplication(packageApplicationId, arguments ?? string.Empty,
                 ActivateOptions.NoErrorUi, out var processId);
             if (hResult != IntPtr.Zero)
@@ -182,7 +193,8 @@ namespace UiAutomation.Model
             var buffer = new byte[bufferLength];
             error = NativeMethods.GetPackageApplicationIds(_packageInfo, ref bufferLength, buffer, out var appIdCount);
             Debug.Assert(error == 0, "error3 == " + error.ToString(InvariantCulture));
-            return Encoding.Unicode.GetString(buffer, IntPtr.Size * appIdCount, bufferLength - IntPtr.Size * appIdCount);
+            return Encoding.Unicode.GetString(buffer, IntPtr.Size * appIdCount,
+                bufferLength - IntPtr.Size * appIdCount);
         }
     }
 }

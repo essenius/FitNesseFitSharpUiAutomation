@@ -45,7 +45,8 @@ namespace UiAutomation
         /// <param name="input">"x,y" or "row x,column y" or "row x" or "column y" with x and y positive int</param>
         public GridItem(string input)
         {
-            const string message = "Could not parse GridItem. Expected: 'x,y' or 'row x,column y' or 'row x' or 'column y'";
+            const string message =
+                "Could not parse GridItem. Expected: 'x,y' or 'row x,column y' or 'row x' or 'column y'";
             if (string.IsNullOrEmpty(input)) throw new ArgumentException(message);
             if (ParsePair(input)) return;
             var list = input.Split(',');
@@ -94,15 +95,13 @@ namespace UiAutomation
         }
 
         /// <summary>Shown in FitNesse if returned as an object</summary>
-        public override string ToString()
-        {
-            return GridItemType switch
+        public override string ToString() =>
+            GridItemType switch
             {
                 GridItemType.Cell => Invariant($"row {Row}, column {Column}"),
                 GridItemType.Column => Invariant($"column {Column}"),
                 GridItemType.Row => Invariant($"row {Row}"),
                 _ => string.Empty
             };
-        }
     }
 }

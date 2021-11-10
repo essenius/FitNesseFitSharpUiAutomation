@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2020 Rik Essenius
+﻿// Copyright 2019-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -20,7 +20,8 @@ namespace UiAUtomationTest
     [TestClass]
     public class ListOfControlsTest
     {
-        [TestMethod, TestCategory("DefaultApps")]
+        [TestMethod]
+        [TestCategory("DefaultApps")]
         public void ListOfControlsQueryTest()
         {
             var listOfControls = new ListOfControls(null, "ControlType:Window");
@@ -44,7 +45,8 @@ namespace UiAUtomationTest
             }
         }
 
-        [TestMethod, TestCategory("DefaultApps")]
+        [TestMethod]
+        [TestCategory("DefaultApps")]
         public void ListOfControlsTableTest()
         {
             var fixture = new UiAutomationFixture();

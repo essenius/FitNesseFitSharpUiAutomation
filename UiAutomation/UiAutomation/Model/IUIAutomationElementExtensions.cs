@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -17,7 +17,8 @@ using interop.UIAutomationCore;
 
 namespace UiAutomation.Model
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "following Microsoft's naming of this assembly")]
+    [SuppressMessage("ReSharper", "InconsistentNaming",
+        Justification = "following Microsoft's naming of this assembly")]
     internal static class IUIAutomationElementExtensions
     {
         internal static Snapshot Capture(this IUIAutomationElement element, int border = 0)
@@ -42,7 +43,8 @@ namespace UiAutomation.Model
                 }
             }
 
-            if (!(element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is IUIAutomationExpandCollapsePattern
+            if (!(element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is
+                    IUIAutomationExpandCollapsePattern
                     expandCollapsePattern) || expandCollapsePattern.CurrentExpandCollapseState ==
                 ExpandCollapseState.ExpandCollapseState_LeafNode)
             {
@@ -56,7 +58,8 @@ namespace UiAutomation.Model
         {
             if (element.CurrentIsOffscreen != 0) return false;
             var returnValue = false;
-            if (element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is IUIAutomationExpandCollapsePattern expandCollapsePattern &&
+            if (element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is
+                    IUIAutomationExpandCollapsePattern expandCollapsePattern &&
                 expandCollapsePattern.CurrentExpandCollapseState != ExpandCollapseState.ExpandCollapseState_LeafNode)
             {
                 returnValue = true;

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -28,8 +28,12 @@ namespace UiAutomation.Model
             string criterion;
             if (locatorString.Contains(TypeDelimiter))
             {
-                Method = locatorString.Substring(0, locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal)).Trim();
-                criterion = locatorString.Substring(locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal) + 1).Trim();
+                Method = locatorString
+                    .Substring(0, locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal))
+                    .Trim();
+                criterion = locatorString
+                    .Substring(locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal) + 1)
+                    .Trim();
             }
             else
             {
@@ -55,7 +59,8 @@ namespace UiAutomation.Model
             get
             {
                 if (ConditionTypeMapper.IsControlType(Method)) return ControlType;
-                if (ConditionTypeMapper.IsNumericalType(Method)) return Convert.ToInt32(Criterion, CultureInfo.CurrentCulture);
+                if (ConditionTypeMapper.IsNumericalType(Method))
+                    return Convert.ToInt32(Criterion, CultureInfo.CurrentCulture);
                 if (ConditionTypeMapper.IsBooleanType(Method)) return bool.Parse(Criterion);
                 return UnescapedCriterion;
             }
@@ -75,7 +80,8 @@ namespace UiAutomation.Model
 
         public string GridItem { get; }
 
-        public bool IsWindowSearch => ConditionTypeMapper.IsControlType(Method) && ControlTypeMapper.IsWindow(UnescapedCriterion);
+        public bool IsWindowSearch =>
+            ConditionTypeMapper.IsControlType(Method) && ControlTypeMapper.IsWindow(UnescapedCriterion);
 
         public string Method { get; }
 

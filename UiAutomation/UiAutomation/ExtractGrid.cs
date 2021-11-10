@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -29,7 +29,8 @@ namespace UiAutomation
         {
             // we are not looking for a window here, so no need for the Window parameter
             var control = Control.FindControl(_locator, null);
-            if (!(control?.AutomationElement?.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) is IUIAutomationGridPattern gridPattern))
+            if (!(control?.AutomationElement?.GetCurrentPattern(UIA_PatternIds.UIA_GridPatternId) is
+                IUIAutomationGridPattern gridPattern))
             {
                 return null;
             }
@@ -44,7 +45,8 @@ namespace UiAutomation
             var headers = headerContainer.FindAllElements("ControlType:HeaderItem");
             foreach (var columnHeader in headers)
             {
-                headerCollection.Add(columnHeader.GetCurrentPropertyValue(UIA_PropertyIds.UIA_NamePropertyId).ToString());
+                headerCollection.Add(
+                    columnHeader.GetCurrentPropertyValue(UIA_PropertyIds.UIA_NamePropertyId).ToString());
             }
 
             var rowCollection = new Collection<object>();
@@ -54,10 +56,11 @@ namespace UiAutomation
                 var cellCollection = new Collection<object>();
                 for (var column = 0; column < gridPattern.CurrentColumnCount; column++)
                 {
-                    if (headerCollection.Count <= column) headerCollection.Add("Column " + (column + 1).ToString(CultureInfo.CurrentCulture));
+                    if (headerCollection.Count <= column)
+                        headerCollection.Add("Column " + (column + 1).ToString(CultureInfo.CurrentCulture));
 
                     var cell = gridPattern.GetItem(row, column);
-                    cellCollection.Add(new Collection<object> {headerCollection[column], Control.GetValue(cell)});
+                    cellCollection.Add(new Collection<object> { headerCollection[column], Control.GetValue(cell) });
                 }
 
                 rowCollection.Add(cellCollection);

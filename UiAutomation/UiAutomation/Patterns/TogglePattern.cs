@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,8 @@ namespace UiAutomation.Patterns
         private readonly IUIAutomationTogglePattern _togglePattern;
 
         public TogglePattern(IUIAutomationElement element) =>
-            _togglePattern = element.GetCurrentPattern(UIA_PatternIds.UIA_TogglePatternId) as IUIAutomationTogglePattern;
+            _togglePattern = element.GetCurrentPattern(UIA_PatternIds.UIA_TogglePatternId) as
+                IUIAutomationTogglePattern;
 
         public bool TryGet(out string returnValue)
         {

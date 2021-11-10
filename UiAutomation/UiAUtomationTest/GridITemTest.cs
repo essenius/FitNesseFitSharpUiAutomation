@@ -20,32 +20,39 @@ namespace UiAUtomationTest
     {
         public TestContext TestContext { get; set; }
 
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        [TestCategory("Unit")]
+        [ExpectedException(typeof(ArgumentException))]
         public void GridItemNoColumnMatchTest()
         {
             var _ = new GridItem("col x");
         }
 
-        [DataTestMethod, TestCategory("Unit")]
+        [DataTestMethod]
+        [TestCategory("Unit")]
         [DataRow(" row 10 , column   20 ", "row 10, column 20")]
         [DataRow("12,34", "row 12, column 34")]
-        [DataRow("  56 , 7  ", "row 56, column 7" )]
-        [DataRow("row 8", "row 8" )]
-        [DataRow("col9", "column 9" )]
-        [DataRow("column30, row40", "row 40, column 30" )]
+        [DataRow("  56 , 7  ", "row 56, column 7")]
+        [DataRow("row 8", "row 8")]
+        [DataRow("col9", "column 9")]
+        [DataRow("column30, row40", "row 40, column 30")]
         public void GridItemParseTest(string input, string output)
         {
             var item = GridItem.Parse(input);
             Assert.AreEqual(output, item.ToString());
         }
 
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        [TestCategory("Unit")]
+        [ExpectedException(typeof(ArgumentException))]
         public void GridItemWrongArgumentTest()
         {
             var _ = new GridItem("bogus");
         }
 
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        [TestCategory("Unit")]
+        [ExpectedException(typeof(ArgumentException))]
         public void GridItremNullArgumentTest()
         {
             var _ = new GridItem(null);

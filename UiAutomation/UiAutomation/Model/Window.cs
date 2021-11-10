@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2020 Rik Essenius
+﻿// Copyright 2019-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -22,17 +22,22 @@ namespace UiAutomation.Model
         public Window(IUIAutomationElement window)
         {
             _window = window;
-            _transformPattern = window?.GetCurrentPattern(UIA_PatternIds.UIA_TransformPatternId) as IUIAutomationTransformPattern;
+            _transformPattern =
+                window?.GetCurrentPattern(UIA_PatternIds.UIA_TransformPatternId) as IUIAutomationTransformPattern;
         }
 
         private tagRECT BoundingRectangle => _window.CurrentBoundingRectangle;
 
-        public Coordinate Size => new Coordinate(BoundingRectangle.right - BoundingRectangle.left, BoundingRectangle.bottom - BoundingRectangle.top);
+        public Coordinate Size => new Coordinate(
+            BoundingRectangle.right - BoundingRectangle.left,
+            BoundingRectangle.bottom - BoundingRectangle.top);
+
         public Coordinate TopLeft => new Coordinate(BoundingRectangle.left, BoundingRectangle.top);
 
         public bool IsTopmost()
         {
-            _windowPattern = _window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
+            _windowPattern =
+                _window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
             if (_windowPattern == null) return false;
             return _windowPattern.CurrentIsTopmost != 0;
         }
@@ -58,16 +63,14 @@ namespace UiAutomation.Model
 
         private bool SetWindowVisualState(WindowVisualState state)
         {
-            _windowPattern = _window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
+            _windowPattern =
+                _window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
             if (_windowPattern == null) return false;
             _windowPattern.SetWindowVisualState(state);
             _windowPattern.WaitWithTimeoutTill(x => x.CurrentWindowVisualState == state);
             return _windowPattern.CurrentWindowVisualState == state;
         }
 
-        public bool WaitTillOnScreen()
-        {
-            return this.WaitWithTimeoutTill(x => x.IsTopmost());
-        }
+        public bool WaitTillOnScreen() => this.WaitWithTimeoutTill(x => x.IsTopmost());
     }
 }

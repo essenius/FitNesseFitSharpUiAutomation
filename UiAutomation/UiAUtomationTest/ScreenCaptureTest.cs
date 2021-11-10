@@ -34,7 +34,8 @@ namespace UiAutomationTest
             _fixture.WaitForControl(@"controltype:edit");
         }
 
-        [TestMethod, TestCategory("DefaultApps")]
+        [TestMethod]
+        [TestCategory("DefaultApps")]
         public void ScreenCaptureTakeTest()
         {
             var image = Snapshot.CaptureScreen(new Rectangle(0, 0, 2, 1));
@@ -42,7 +43,8 @@ namespace UiAutomationTest
             Assert.IsTrue(image.ToString().EndsWith("(2 x 1)", StringComparison.Ordinal));
             Assert.AreEqual("image/jpeg", image.MimeType);
 
-            _fixture.SetValueOfControlTo(@"controltype:edit",
+            _fixture.SetValueOfControlTo(
+                @"controltype:edit",
                 "The quick brown fox jumps over the lazy dog.\r\nShe sells sea shells on the sea shore");
             _fixture.ClickControl("Name:Help");
             _fixture.WaitForControl("Name:About Notepad");
@@ -50,7 +52,9 @@ namespace UiAutomationTest
             Assert.IsTrue(screenshot.ToString().StartsWith("Image", StringComparison.Ordinal), "Starts With Image");
             Assert.IsTrue(Regex.IsMatch(screenshot.ToString(), @".+\(\d+ x \d+\)$"), "Ends With (n x m)");
             var screenshotRendering = _fixture.SnapshotOfControl("Name:Help");
-            Assert.IsTrue(screenshotRendering.StartsWith("<img src=\"data:image/jpeg;base64,", StringComparison.Ordinal));
+            Assert.IsTrue(
+                screenshotRendering.StartsWith("<img src=\"data:image/jpeg;base64,", StringComparison.Ordinal),
+                "starts with <img src");
         }
     }
 }

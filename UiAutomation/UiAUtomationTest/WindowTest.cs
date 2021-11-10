@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2020 Rik Essenius2019 
+﻿// Copyright 2019-2021 Rik Essenius2019 
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -17,7 +17,8 @@ namespace UiAUtomationTest
     [TestClass]
     public class WindowTest
     {
-        [TestMethod, TestCategory("Unit")]
+        [TestMethod]
+        [TestCategory("Unit")]
         public void WindowTestNull()
         {
             var window = new Window(null);

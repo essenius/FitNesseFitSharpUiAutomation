@@ -14,7 +14,6 @@ using Microsoft.Win32.SafeHandles;
 
 namespace UiAutomation.Model
 {
-    
     internal class SafeAppHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         private const long Success = 0;

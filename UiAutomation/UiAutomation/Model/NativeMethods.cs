@@ -43,12 +43,20 @@ namespace UiAutomation.Model
         public static extern IntPtr GetForegroundWindow();
 
         [DllImport("kernel32")]
-        public static extern int GetPackageApplicationIds(SafeAppHandle pir, ref int bufferLength, byte[] buffer, out int count);
+        public static extern int GetPackageApplicationIds(
+            SafeAppHandle pir,
+            ref int bufferLength,
+            byte[] buffer,
+            out int count);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern uint GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, StringBuilder packageFamilyName);
+        public static extern uint GetPackageFamilyName(
+            IntPtr hProcess,
+            ref uint packageFamilyNameLength,
+            StringBuilder packageFamilyName);
 
-        [DllImport("kernel32", CallingConvention = CallingConvention.Winapi, CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
+        [DllImport("kernel32", CallingConvention = CallingConvention.Winapi, CharSet = CharSet.Unicode,
+            ExactSpelling = true, SetLastError = true)]
         public static extern int GetPackagesByPackageFamily(
             [In] string packageFamilyName,
             [In] [Out] ref int count,
@@ -62,7 +70,9 @@ namespace UiAutomation.Model
         public static extern int GetSystemMetrics(int smIndex);
 
         [DllImport("kernel32")]
-        public static extern int OpenPackageInfoByFullName([MarshalAs(UnmanagedType.LPWStr)] string fullName, uint reserved,
+        public static extern int OpenPackageInfoByFullName(
+            [MarshalAs(UnmanagedType.LPWStr)] string fullName,
+            uint reserved,
             out SafeAppHandle packageInfo);
 
         [DllImport("user32.dll", SetLastError = true)]

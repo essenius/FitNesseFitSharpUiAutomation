@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2021 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -31,7 +31,8 @@ namespace UiAutomation.Model
         {
             if (searchCriteriaString == null) // empty string is allowed, null isn't
             {
-                throw new ArgumentNullException(nameof(searchCriteriaString), "SearchParser requires non-null search criteria");
+                throw new ArgumentNullException(nameof(searchCriteriaString),
+                    "SearchParser requires non-null search criteria");
             }
 
             var searchCriteria = Regex.Split(searchCriteriaString, AndDelimiter);
@@ -46,7 +47,8 @@ namespace UiAutomation.Model
 
         public bool IsValidProcessCondition()
         {
-            var validProcessConditions = new List<int> {UIA_PropertyIds.UIA_ProcessIdPropertyId, UIA_PropertyIds.UIA_NamePropertyId};
+            var validProcessConditions = new List<int>
+                { UIA_PropertyIds.UIA_ProcessIdPropertyId, UIA_PropertyIds.UIA_NamePropertyId };
             return Locators.Count == 1 && validProcessConditions.Contains(Locators[0].ConditionType);
         }
 

@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="config.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

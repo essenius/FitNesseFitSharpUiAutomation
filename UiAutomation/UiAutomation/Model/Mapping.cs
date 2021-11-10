@@ -22,10 +22,8 @@ namespace UiAutomation.Model
 
         public Mapping(string newName) : base(StringComparer.OrdinalIgnoreCase) => _name = newName;
 
-        protected Mapping(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            _name = (string) info.GetValue("MappingName", typeof(string));
-        }
+        protected Mapping(SerializationInfo info, StreamingContext context) : base(info, context) =>
+            _name = (string)info.GetValue("MappingName", typeof(string));
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
