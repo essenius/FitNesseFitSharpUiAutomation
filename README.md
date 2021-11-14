@@ -8,10 +8,14 @@ It only works on Windows since it uses Windows UI technology.
 The steps to install are very similar to that of installing the [FibonacciDemo](../../../FitNesseFitSharpFibonacciDemo).
 
 Differences are:
-* Download the repo code as a zip file and extract the contents of the folder ```FitNesseFitSharpUiAutomation-master```. 
-* Build command becomes: `dotnet build %LOCALAPPDATA%\FitNesse\UiAutomation\UiAutomation.sln`
-* Go to folder: `cd /D %LOCALAPPDATA%\FitNesse\UiAutomation\UiAutomationTest\bin\debug\net5.0-windows`
-* Before running FitNesse, edit `config.xml` and validate that it points to the right `System.Windows.Forms.dll`
+* Download the repo code as a zip file and extract the contents of the folder `FitNesseFitSharpUiAutomation-master` into `%LOCALAPPDATA%\FitNesse`. 
+
+* Go to the solution folder: `cd /D %LOCALAPPDATA%\FitNesse\UiAutomation`
+* Build solution: `dotnet build --configuration release UiAutomation.sln`
+* Go to fixture folder: `cd UiAutomation`
+* Publish, including selecting the right runtime: `dotnet publish -o bin\Deploy\net5.0-windows -f net5.0-windows -c release -r win-x64 UiAutomation.csproj`
+* Go to the assemby folder `bin\Deploy\net5.0-windows` and start FitNesse.
+* Before running FitNesse, edit `config.xml` and validate that it points to an existing `System.Windows.Forms.dll`.
 * Run the suite: Open a browser and enter the URL http://localhost:8080/FitSharpDemos.UiAutomationSuite?suite
 
 # Contribute
