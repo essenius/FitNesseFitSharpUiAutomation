@@ -15,7 +15,7 @@ Differences are:
     * Build solution: `dotnet build --configuration release UiAutomation.sln`
     * Go to fixture folder: `cd UiAutomation`
     * Publish, including selecting the right runtime:<br/> `dotnet publish -o bin\Deploy\net5.0-windows -f net5.0-windows -c release -r win-x64 UiAutomation.csproj`
-* If you don't have .NET 5 SDK installed: `download UiAutomation.zip` from the latest [release](../../eeleases) and extract it into `UiAutomation/UiAutomation`
+* If you don't have .NET 5 SDK installed: `download UiAutomation.zip` from the latest [release](../../releases) and extract it into `UiAutomation/UiAutomation`
 * Go to the assemby folder `UiAutomation\UiAutomation\bin\Deploy\net5.0-windows`.
 * Edit `config.xml` and validate that it points to an existing `System.Windows.Forms.dll`. <br/>You can find out the right version via the command `dotnet --list-runtimes | find "Desktop.App 5"`
 * Run FitNesse
