@@ -21,5 +21,9 @@ Differences are:
 * Run FitNesse
 * Run the suite: Open a browser and enter the URL http://localhost:8080/FitSharpDemos.UiAutomationSuite?suite
 
+# Learning more
+
+Have a look at the [wiki](../../wiki).
+
 # Contribute
 Enter an [issue](../../issues) or provide a [pull request](../../pulls). 
