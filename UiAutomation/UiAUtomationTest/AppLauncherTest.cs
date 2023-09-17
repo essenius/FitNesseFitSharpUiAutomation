@@ -71,7 +71,7 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_ProcessorStatus_DescriptionTextBlock"), "Wait for processor");
             var version = fixture.ValueOfControl("id:SystemSettings_PCSystem_ProcessorStatus_ValueTextBlock");
             Debug.Print("Processor from settings: " + version);
-            Assert.IsFalse(string.IsNullOrEmpty(version), "PRocessor is not empty");
+            Assert.IsFalse(string.IsNullOrEmpty(version), "Processor is not empty");
             Assert.IsTrue(fixture.ClickControl("name:Close Settings"), "Press Close Settings");
         }
     }
