@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0-windows;net48</TargetFrameworks>
+    <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysysMode>AllEnabledByDefault</AnalysysMode>
-    <Version>3.2.0</Version>
+    <Version>3.3.0</Version>
     <Authors>Rik Essenius</Authors>
     <Description>Test assembly for UIAutomation Fixture</Description>
-    <Copyright>Copyright © Rik Essenius 2013-2021</Copyright>
+    <Copyright>Copyright © Rik Essenius 2013-2023</Copyright>
     <RepositoryUrl>https://github.com/essenius/FitNesseFitSharpFeatureDemos</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -33,13 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="NotepadScreenshotNoCursor.html">
+    <None Update="DemoApp-400x140-8.base64">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="NotepadScreenshotNoCursorWithScrollbar.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="NotepadScreenshotWithCursor.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="NotepadScreenshotWithCursorAndScrollbar.html">

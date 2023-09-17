@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2023 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -14,15 +14,19 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using ImageHandler;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
 namespace UiAutomationTest
 {
     [TestClass]
-    [SuppressMessage("Performance", "CA1814:Prefer jagged arrays over multidimensional",
-        Justification = "Matrix fully used and simpler")]
+    // Can't put deployment items on the ClassInitialize method
+    [DeploymentItem("WpfDemoApp.exe")]
+    [DeploymentItem("WpfDemoApp.exe.config")]
     public class WpfDemoAppTests
     {
         private const string WpfDemoAppPath = "WpfDemoApp.exe";
@@ -49,7 +53,7 @@ namespace UiAutomationTest
         }
 
         [ClassInitialize]
-        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive")]
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive, prescribed parameter for class initialization")]
         public static void PrepareTestSuite(TestContext testContext)
         {
             UiAutomationFixture.TimeoutSeconds = 10;
@@ -110,9 +114,6 @@ namespace UiAutomationTest
 
         [TestMethod]
         [TestCategory("DemoApp")]
-        // we need at least one of the test markings these as deployment items. Putting it on the ClassInitialize method doesn't work
-        [DeploymentItem("WpfDemoApp.exe")]
-        [DeploymentItem("WpfDemoApp.exe.config")]
         public void WpfDemoCheckCalendar()
         {
             Assert.IsTrue(_fixture.SelectItem("Caption:More Controls"), "Select 'More Controls' tab");
@@ -620,6 +621,30 @@ namespace UiAutomationTest
                 1,
                 _fixture.PropertyOfControl("ToggleState", "id:DataGridHeaderCheckbox"),
                 "ToggleState is on after");
+        }
+
+        [TestMethod]
+        [TestCategory("DemoApp")]
+        [DeploymentItem("DemoApp-400x140-8.base64")]
+        // For this to work the scaling factor of the display must be 100%.
+        // TODO: figure out how to lift this restriction
+        public void WpfDemoSnapshot()
+        {
+            Assert.IsTrue(_fixture.SelectItem("caption:Usual Controls"), "Select 'Usual Controls' tab");
+            var desiredSize = new Coordinate(416, 156);
+            Assert.IsTrue(_fixture.ResizeWindowTo(desiredSize), "Resize succeeds");
+            // The outer pixels are not part of the window, but are added by the window manager for e.g. the glass effect. We don't want that as it is not predictable 
+            var snapshot = _fixture.WindowSnapshotObjectMinusOuterPixels(8);
+
+            // read a base64 string from a file and decode it
+            var expected = Snapshot.Parse(File.ReadAllText("DemoApp-400x140-8.base64"));
+
+            var startTime = DateTime.Now;
+            var similarity = expected.SimilarityTo(snapshot);
+            var duration = DateTime.Now - startTime;
+            Assert.IsTrue(similarity > 0.995, $"Snapshot similarity is {similarity} in {duration.TotalMilliseconds} ms");
+            var snapshot2 = _fixture.WindowSnapshot();
+            Assert.AreEqual(_fixture.WindowSnapshotMinusOuterPixels(0), snapshot2, "snapshot with border 0 is equal to snapshot");
         }
     }
 }

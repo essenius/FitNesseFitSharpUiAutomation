@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2023 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
+// ReSharper disable UnusedMember.Local - included for completeness
 
 namespace UiAutomationTest
 {
@@ -103,10 +104,12 @@ namespace UiAutomationTest
                 @"Expression is factorial (9)",
                 _fixture.ValueOfControl(Fields.CalculatorExpression),
                 "Expression");
-
+            Assert.IsTrue(_fixture.ControlExists(Fields.Trigonometry), "Trigonometry field is there");
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click View menu 2nd time");
-            Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.Standard), "Click Standard menu item");
-            Assert.IsTrue(_fixture.WaitUntilControlDisappears(Fields.Radians));
+            Assert.IsTrue(_fixture.WaitForControl(Fields.Standard), "Wait for Standard menu item");
+            UiAutomationFixture.WaitSeconds(0.1);
+            Assert.IsTrue(_fixture.ClickControl(Fields.Standard), "Click Standard menu item");
+            Assert.IsTrue(_fixture.WaitUntilControlDisappears(Fields.Trigonometry));
         }
 
         [TestMethod]
@@ -170,16 +173,13 @@ namespace UiAutomationTest
 
         [ClassInitialize]
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive")]
-        [SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "False positive")]
         public static void Win10SetupCalc(TestContext testContext)
         {
             _fixture = new UiAutomationFixture();
-            UiAutomationFixture.TimeoutSeconds = 5;
-            Assert.IsFalse(_fixture.SwitchToProcess("name:Calculator"), "Check there is no calculator running already");
-            _fixture.NoAutomaticSwitchToStartedApplication();
-            _fixture.StartApplication("calc.exe");
-            Assert.IsTrue(UiAutomationFixture.WaitForProcess("name:Calculator"), "Wait for process Calculator");
-            Assert.IsTrue(_fixture.SwitchToProcess("name:Calculator"), "Switch to calc app");
+            if (!_fixture.SwitchToProcess("name:CalculatorApp"))
+            {
+                Assert.IsTrue(_fixture.StartApplication("Microsoft.WindowsCalculator_8wekyb3d8bbwe"), "Calc started");
+            }
         }
 
         [TestInitialize]
@@ -191,8 +191,6 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.PressKey(Win10AppKeys.ClearAllInput));
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
         private static class Fields
         {
             public const string Pi = "id:piButton";
@@ -201,8 +199,8 @@ namespace UiAutomationTest
             public static string Degrees => "id:DegButton";
             public static string Fact => "name:Factorial";
             public static string Gradians => "id:GradButton";
-            public static string Input => "id:Value2";
-            public static string InputUnit => "id:Units2";
+            public static string Input => "id:Value1";
+            public static string InputUnit => "id:Units1";
             public static string MemoryAdd => "name:Memory Add";
             public static string MemoryClear => "id:ClearMemoryButton";
             public static string Menu => "name:Open Navigation";
@@ -210,22 +208,21 @@ namespace UiAutomationTest
             public static string Nine => "name:Nine";
             public static string NonExisting => "name:non-existing control";
             public static string One => "name:one";
-            public static string Output => "id:Value1";
-            public static string OutputUnit => "id:Units1";
+            public static string Output => "id:Value2";
+            public static string OutputUnit => "id:Units2";
             public static string Radians => "id:RadButton";
             public static string Result => "id:CalculatorResults";
             public static string Scientific => "name:Scientific Calculator";
             public static string Sine => "name:Sine";
             public static string SquareRoot => "name:Square root";
-            public static string Standard => "name:Standard Calculator";
+            public static string Standard => "id:Standard";
+
+            public static string Trigonometry => "name:Trigonometry";
             public static string Three => "NamE:three";
             public static string Two => "name:two";
             public static string Volume => "name:Volume Converter";
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Completeness")]
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
-        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "names cannot start with numbers")]
         private static class Win10AppKeys
         {
             public static string A => "a";

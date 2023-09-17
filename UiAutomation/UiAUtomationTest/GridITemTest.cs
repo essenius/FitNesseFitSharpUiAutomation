@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2021 Rik Essenius
+﻿// Copyright 2019-2023 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -18,8 +18,6 @@ namespace UiAUtomationTest
     [TestClass]
     public class GridITemTest
     {
-        public TestContext TestContext { get; set; }
-
         [TestMethod]
         [TestCategory("Unit")]
         [ExpectedException(typeof(ArgumentException))]

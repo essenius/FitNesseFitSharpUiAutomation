@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0-windows;net48</TargetFrameworks>
+    <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <LangVersion>8.0</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysysMode>AllEnabledByDefault</AnalysysMode>
-    <Version>3.2.0</Version>
+    <Version>3.3.0</Version>
     <Authors>Rik Essenius</Authors>
     <Description>FitNesse fixture for testing WPF and WinForms GUIs</Description>
-    <Copyright>Copyright © Rik Essenius 2013-2021</Copyright>
+    <Copyright>Copyright © Rik Essenius 2013-2023</Copyright>
     <RepositoryUrl>https://github.com/essenius/FitNesseFitSharpFeatureDemos</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ImageHandler" Version="3.0.1" />
+    <PackageReference Include="ImageHandler" Version="3.2.2" />
     <Reference Include="Lib\interop.UIAutomationCore.dll" />
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>UIAutomationTest</_Parameter1>

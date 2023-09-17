@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2023 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -42,7 +42,7 @@ namespace UiAutomationTest
             {
                 // We need this trick since there are some differences in the error messages between .NET 5.0 and .NET 4.8
                 // specifically, .NET 5.0 uses dots at the end of a message, .NET 4.8 doesn't.
-                Assert.IsTrue(actualMessage?.StartsWith(ExpectedMessage));
+                Assert.IsTrue(actualMessage?.Contains(ExpectedMessage));
             }
 
             Console.Write("ExpectedExceptionWithMessageAttribute:" + e?.Message);

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2023 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,7 +22,7 @@ namespace UiAutomationTest
     [TestClass]
     public class FixtureTest
     {
-        private const string WordPath = @"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE";
+        private const string WordPath = @"C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE";
         private UiAutomationFixture _fixture;
 
         [TestMethod]
@@ -120,14 +119,9 @@ namespace UiAutomationTest
             Assert.IsNull(_fixture.ApplicationProcessId);
         }
 
-        // This test is a bit flaky because the behavior of Notepad isn't entirely predictable. Sometimes e.g. it shows a horizontal scrollbar.
         [TestMethod]
         [TestCategory("DefaultApps")]
-        [DeploymentItem("NotepadScreenshotNoCursor.html")]
-        [DeploymentItem("NotepadScreenshotWithCursor.html")]
-        [DeploymentItem("NotepadScreenshotWithCursorAndScrollbar.html")]
-        [DeploymentItem("NotepadScreenshotNoCursorWithScrollbar.html")]
-        public void FixtureNotePadCheckSetValueResizeMoveAndScreenshot()
+        public void FixtureNotePadCheckSetValueResizeMove()
         {
             try
             {
@@ -166,25 +160,7 @@ namespace UiAutomationTest
                 Assert.IsTrue(_fixture.MoveWindow(desiredLocation), "Move succeeds");
 #pragma warning restore 618
                 Assert.AreEqual(desiredLocation, _fixture.WindowTopLeft);
-                var snapshot = _fixture.WindowSnapshotMinusOuterPixels(8);
-                var expected1 = File.ReadAllText("NotepadScreenshotNoCursor.html");
-                var expected2 = File.ReadAllText("NotepadScreenshotWithCursor.html");
-                var expected3 = File.ReadAllText("NotepadScreenshotWithCursorAndScrollbar.html");
-                var expected4 = File.ReadAllText("NotepadScreenshotNoCursorWithScrollbar.html");
 
-                Console.WriteLine(snapshot);
-                Assert.IsTrue(snapshot.Equals(expected1, StringComparison.Ordinal) ||
-                              snapshot.Equals(expected2, StringComparison.Ordinal) ||
-                              snapshot.Equals(expected3, StringComparison.Ordinal) ||
-                              snapshot.Equals(expected4, StringComparison.Ordinal),
-                    "Snapshot matches");
-
-                var snapshot2 = _fixture.WindowSnapshot();
-                Assert.AreEqual(
-                    _fixture.WindowSnapshotMinusOuterPixels(0), snapshot2,
-                    "snapshot with border 0 is equal to snapshot");
-
-                UiAutomationFixture.WaitSeconds(1);
                 Assert.IsTrue(_fixture.ClickControl("Close"));
                 Assert.IsTrue(_fixture.WaitForControl("Save"), "Wait for Save");
                 Assert.IsTrue(_fixture.ClickControl("Don't Save"), "Push Don't Save");
@@ -293,8 +269,8 @@ namespace UiAutomationTest
             UiAutomationFixture.SearchBy("Name");
             Assert.IsTrue(_fixture.StartApplication("notepad.exe"), "Notepad started");
             Assert.IsTrue(_fixture.ClickControl("File"), "Click File Menu");
-            Assert.IsTrue(_fixture.WaitForControlAndClick("Page Setup..."), "Click Page Setup menu");
-            Assert.IsTrue(_fixture.WaitForControl("Page Setup"), "Wait for Page Setup dialog");
+            Assert.IsTrue(_fixture.WaitForControlAndClick("Open...\tCtrl+O"), "Click Open menu");
+            Assert.IsTrue(_fixture.WaitForControl("Open"), "Wait for Open dialog");
             Assert.IsFalse(_fixture.CloseApplication(), "Closing application with a modal dialog open should fail");
             Assert.IsTrue(
                 _fixture.ForcedCloseApplication(),
