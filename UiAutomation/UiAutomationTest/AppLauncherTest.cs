@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2021 Rik Essenius
+﻿// Copyright 2017-2023 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -46,7 +46,7 @@ namespace UiAutomationTest
             var fixture = new UiAutomationFixture();
             UiAutomationFixture.TimeoutSeconds = 2;
             Assert.IsTrue(
-                fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null));
+                fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null), "App started");
             Assert.IsTrue(fixture.IsUwpApp(), "Is UWP App");
             // Switch to parent as that contains the close button. Elements on child windows are found too.
             // UWP apps have a container called Application Frame Host.
@@ -61,16 +61,17 @@ namespace UiAutomationTest
 
             Assert.IsTrue(fixture.SwitchToParentWindow(), "Switch to parent.");
 
-            Assert.IsTrue(fixture.ClickControl("ControlType:ListItem && name:System"));
+            Assert.IsTrue(fixture.ClickControl("ControlType:ListItem && name:System"), "click system");
             Assert.IsTrue(fixture.WaitForControl("id:PagesListView"));
-            Assert.IsTrue(fixture.WaitForControlAndClick("Name:About"));
+            fixture.SetValueOfControlTo("id:TextBox", "ab");
+            Assert.IsTrue(fixture.WaitForControlAndClick("Name:About your PC"));
             // This is needed. If you don't do it, the process gets into a locked state.
             Assert.IsTrue(fixture.WaitForControl("ControlType:Text && name:About"), "Wait for About text");
             // The About title comes earlier than the rest of the page, so wait for the control we want to examine
-            Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_VersionString_ValueTextBlock"));
-            var version = fixture.ValueOfControl("id:SystemSettings_PCSystem_VersionString_ValueTextBlock");
-            Debug.Print("Version from settings: " + version);
-            Assert.IsFalse(string.IsNullOrEmpty(version), "Version is not empty");
+            Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_ProcessorStatus_DescriptionTextBlock"), "Wait for processor");
+            var version = fixture.ValueOfControl("id:SystemSettings_PCSystem_ProcessorStatus_ValueTextBlock");
+            Debug.Print("Processor from settings: " + version);
+            Assert.IsFalse(string.IsNullOrEmpty(version), "PRocessor is not empty");
             Assert.IsTrue(fixture.ClickControl("name:Close Settings"), "Press Close Settings");
         }
     }

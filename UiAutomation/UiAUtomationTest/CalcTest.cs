@@ -178,6 +178,7 @@ namespace UiAutomationTest
             _fixture = new UiAutomationFixture();
             if (!_fixture.SwitchToProcess("name:CalculatorApp"))
             {
+                _fixture.SetAutomaticSwitchToStartedApplication();
                 Assert.IsTrue(_fixture.StartApplication("Microsoft.WindowsCalculator_8wekyb3d8bbwe"), "Calc started");
             }
         }
