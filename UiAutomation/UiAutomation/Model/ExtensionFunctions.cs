@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2020 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -26,7 +26,6 @@ namespace UiAutomation.Model
             if (process == null) return true;
             process.Refresh();
             if (process.HasExited) return true;
-
             if (process.CloseMainWindow()) return true;
 
             if (!force) return false;
@@ -36,12 +35,15 @@ namespace UiAutomation.Model
         }
 
         public static string StripUnicodeCharacters(this string input) => Encoding.ASCII.GetString(
-            Encoding.Convert(Encoding.UTF8,
+            Encoding.Convert(
+                Encoding.UTF8,
                 Encoding.GetEncoding(Encoding.ASCII.EncodingName,
                     new EncoderReplacementFallback(string.Empty),
                     new DecoderExceptionFallback()
                 ),
-                Encoding.UTF8.GetBytes(input)));
+                Encoding.UTF8.GetBytes(input)
+            )
+        );
 
         /// <summary>
         ///     Unpack a buffer containing potentially multiple zero-terminating strings into a list of strings
@@ -61,6 +63,7 @@ namespace UiAutomation.Model
                 entry.Clear();
                 bufferIndex++;
             }
+
             return result;
         }
 

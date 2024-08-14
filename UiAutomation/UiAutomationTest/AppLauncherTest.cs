@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2023 Rik Essenius
+﻿// Copyright 2017-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -19,34 +19,33 @@ namespace UiAutomationTest
     [TestClass]
     public class AppLauncherTest
     {
-        [TestMethod]
-        [TestCategory("DefaultApps")]
+        [TestMethod, TestCategory("DefaultApps")]
         public void AppLauncherResolveTest()
         {
             using (var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe"))
             {
                 Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
             }
+
             using var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy");
             Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
         }
 
-        [TestMethod]
-        [TestCategory("Unit")]
-        public void AppLauncherTest2()
+        [TestMethod, TestCategory("Unit")]
+        public void AppLauncherInvalidAppTest()
         {
             using var launcher = new AppLauncher("bogus");
             Assert.IsFalse(launcher.Exists);
         }
 
-        [TestMethod]
-        [TestCategory("DefaultApps")]
+        [TestMethod, TestCategory("DefaultApps")]
         public void AppLauncherUwpAppTest()
         {
             var fixture = new UiAutomationFixture();
             UiAutomationFixture.TimeoutSeconds = 2;
             Assert.IsTrue(
-                fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null), "App started");
+                fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null), "App started"
+            );
             Assert.IsTrue(fixture.IsUwpApp(), "Is UWP App");
             // Switch to parent as that contains the close button. Elements on child windows are found too.
             // UWP apps have a container called Application Frame Host.
@@ -62,9 +61,9 @@ namespace UiAutomationTest
             Assert.IsTrue(fixture.SwitchToParentWindow(), "Switch to parent.");
 
             Assert.IsTrue(fixture.ClickControl("ControlType:ListItem && name:System"), "click system");
-            Assert.IsTrue(fixture.WaitForControl("id:PagesListView"));
+            Assert.IsTrue(fixture.WaitForControl("id:settingPagesList"), "Wait for SettingPagesList");
             fixture.SetValueOfControlTo("id:TextBox", "ab");
-            Assert.IsTrue(fixture.WaitForControlAndClick("Name:About your PC"));
+            Assert.IsTrue(fixture.WaitForControlAndClick("Name:About your PC"), "Click About your PC");
             // This is needed. If you don't do it, the process gets into a locked state.
             Assert.IsTrue(fixture.WaitForControl("ControlType:Text && name:About"), "Wait for About text");
             // The About title comes earlier than the rest of the page, so wait for the control we want to examine

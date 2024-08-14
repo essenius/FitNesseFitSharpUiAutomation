@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -30,12 +30,11 @@ namespace UiAutomationTest
         public void Init()
         {
             _fixture = new UiAutomationFixture();
-            Assert.IsTrue(_fixture.StartApplication("notepad.exe"), "notepad started");
-            _fixture.WaitForControl(@"controltype:edit");
+            Assert.IsTrue(_fixture.StartApplication(FixtureTest.WordPadPath), "WordPad started");
+            _fixture.WaitForControl(@"controltype:document");
         }
 
-        [TestMethod]
-        [TestCategory("DefaultApps")]
+        [TestMethod, TestCategory("DefaultApps")]
         public void ScreenCaptureTakeTest()
         {
             var image = Snapshot.CaptureScreen(new Rectangle(0, 0, 2, 1));
@@ -44,17 +43,20 @@ namespace UiAutomationTest
             Assert.AreEqual("image/jpeg", image.MimeType);
 
             _fixture.SetValueOfControlTo(
-                @"controltype:edit",
-                "The quick brown fox jumps over the lazy dog.\r\nShe sells sea shells on the sea shore");
-            _fixture.ClickControl("Name:Help");
-            _fixture.WaitForControl("Name:About Notepad");
-            var screenshot = _fixture.SnapshotObjectOfControl("Name:Help");
+                @"controltype:document",
+                "The quick brown fox jumps over the lazy dog.\r\nShe sells sea shells on the sea shore"
+            );
+            _fixture.ClickControl("Name:Date and time");
+            _fixture.WaitForControl("Name:Available formats");
+            var screenshot = _fixture.SnapshotObjectOfControl("Name:Date and Time && ControlType:Window");
             Assert.IsTrue(screenshot.ToString().StartsWith("Image", StringComparison.Ordinal), "Starts With Image");
             Assert.IsTrue(Regex.IsMatch(screenshot.ToString(), @".+\(\d+ x \d+\)$"), "Ends With (n x m)");
-            var screenshotRendering = _fixture.SnapshotOfControl("Name:Help");
+            var screenshotRendering = _fixture.SnapshotOfControl("Name:Date and Time && ControlType:Window");
             Assert.IsTrue(
                 screenshotRendering.StartsWith("<img src=\"data:image/jpeg;base64,", StringComparison.Ordinal),
-                "starts with <img src");
+                "starts with <img src"
+            );
+            Assert.IsTrue(_fixture.ClickControl("Name:Cancel"));
         }
     }
 }

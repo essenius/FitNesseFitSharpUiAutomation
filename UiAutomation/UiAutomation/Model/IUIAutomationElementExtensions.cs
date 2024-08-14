@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2023 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -15,18 +15,23 @@ using System.Threading;
 using ImageHandler;
 using interop.UIAutomationCore;
 
-
 namespace UiAutomation.Model
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming",
-        Justification = "following Microsoft's naming of this assembly")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "following Microsoft's naming of this assembly")]
     internal static class IUIAutomationElementExtensions
     {
         internal static Snapshot Capture(this IUIAutomationElement element, int border = 0)
         {
             var rect = element.CurrentBoundingRectangle;
-            var bounds = new Rectangle(rect.left + border, rect.top + border,
-                rect.right - rect.left - 2 * border, rect.bottom - rect.top - 2 * border);
+            var hWnd = NativeMethods.GetForegroundWindow();
+            var dpi = NativeMethods.GetDpiForWindow(hWnd);
+            var factor = dpi / 96.0;
+            var bounds = new Rectangle(
+                Convert(rect.left, factor, border),
+                Convert(rect.top, factor, border),
+                Convert(rect.right - rect.left, factor, -2 * border),
+                Convert(rect.bottom - rect.top, factor, -2 * border)
+            );
             return Snapshot.CaptureScreen(bounds);
         }
 
@@ -44,23 +49,23 @@ namespace UiAutomation.Model
                 }
             }
 
-            if (!(element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is
-                    IUIAutomationExpandCollapsePattern
-                    expandCollapsePattern) || expandCollapsePattern.CurrentExpandCollapseState ==
-                ExpandCollapseState.ExpandCollapseState_LeafNode)
+            if (!(element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is IUIAutomationExpandCollapsePattern expandCollapsePattern) ||
+                expandCollapsePattern.CurrentExpandCollapseState == ExpandCollapseState.ExpandCollapseState_LeafNode)
             {
                 return returnValue;
             }
+
             expandCollapsePattern.Collapse();
             return true;
         }
+
+        private static int Convert(int value, double factor, int border) => (int)((value + border) * factor + 0.5);
 
         public static bool ExpandAll(this IUIAutomationElement element, IUIAutomation automation, int level)
         {
             if (element.CurrentIsOffscreen != 0) return false;
             var returnValue = false;
-            if (element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is
-                    IUIAutomationExpandCollapsePattern expandCollapsePattern &&
+            if (element.GetCurrentPattern(UIA_PatternIds.UIA_ExpandCollapsePatternId) is IUIAutomationExpandCollapsePattern expandCollapsePattern &&
                 expandCollapsePattern.CurrentExpandCollapseState != ExpandCollapseState.ExpandCollapseState_LeafNode)
             {
                 returnValue = true;

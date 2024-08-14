@@ -45,20 +45,20 @@ namespace UiAutomation
                 list = Control.RootChildControls(_searchCriterion).ToList();
             }
 
-            var rows = new Collection<Collection<string>>
-                { new Collection<string> { "Automation Id", "Name", "Value", "Location" } };
+            var rows = new Collection<Collection<string>> { new Collection<string> { "Automation Id", "Name", "Value", "Location" } };
             foreach (var entry in list)
             {
                 var position = Mouse.AbsolutePosition(entry.AutomationElement);
-                var row = new Collection<string>
-                    { entry.AutomationId, entry.Name, entry.Value, Invariant($"x:{position.X}, y:{position.Y}") };
+                var row = new Collection<string> { entry.AutomationId, entry.Name, entry.Value, Invariant($"x:{position.X}, y:{position.Y}") };
                 rows.Add(row);
             }
+
             return rows;
         }
 
         /// <summary>
-        ///     Table interface, returning the controls meeting the criteria in the provided process (by ID). If that's null, starts
+        ///     Table interface, returning the controls meeting the criteria in the provided process (by ID). If that's null,
+        ///     starts
         ///     form the root element
         /// </summary>
         public Collection<object> DoTable()
@@ -71,13 +71,16 @@ namespace UiAutomation
                 {
                     resultRow.Add(Report(cell));
                 }
+
                 result.Add(resultRow);
             }
+
             return result;
         }
 
         /// <summary>
-        ///     Query interface returning the controls meeting the criteria in the provided process (by ID). If that's null, starts form
+        ///     Query interface returning the controls meeting the criteria in the provided process (by ID). If that's null, starts
+        ///     form
         ///     the root element
         /// </summary>
         public Collection<object> Query()
@@ -95,8 +98,10 @@ namespace UiAutomation
                 {
                     row.Add(new Collection<string> { headerRow[i], entry[i] });
                 }
+
                 table.Add(row);
             }
+
             return table;
         }
 

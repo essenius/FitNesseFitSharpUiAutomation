@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -19,13 +19,12 @@ namespace UiAutomationTest
     [TestClass]
     public class MappingTest
     {
-        [TestMethod]
-        [TestCategory("Unit")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentNullException))]
         public void MappingInvalidSerializationTest()
         {
             var map = new Mapping<int>("test");
             var sc = new StreamingContext();
+            // ReSharper disable once AssignNullToNotNullAttribute -- testing proper exception
             map.GetObjectData(null, sc);
         }
     }

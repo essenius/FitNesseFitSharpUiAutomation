@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -40,6 +40,7 @@ namespace UiAutomation.Model
                 Method = DefaultConditionType;
                 criterion = locatorString.Trim();
             }
+
             // Find non-whitespace, then optional whitespace, and then text between brackets. If it matches, we have a grid item specification
             var match = Regex.Match(criterion, @"([^\s]*)\s*\[(.*)\]", RegexOptions.IgnoreCase);
             if (!match.Success)
@@ -48,6 +49,7 @@ namespace UiAutomation.Model
                 GridItem = string.Empty;
                 return;
             }
+
             Criterion = match.Groups[1].Value;
             GridItem = match.Groups[2].Value;
         }
@@ -59,8 +61,7 @@ namespace UiAutomation.Model
             get
             {
                 if (ConditionTypeMapper.IsControlType(Method)) return ControlType;
-                if (ConditionTypeMapper.IsNumericalType(Method))
-                    return Convert.ToInt32(Criterion, CultureInfo.CurrentCulture);
+                if (ConditionTypeMapper.IsNumericalType(Method)) return Convert.ToInt32(Criterion, CultureInfo.CurrentCulture);
                 if (ConditionTypeMapper.IsBooleanType(Method)) return bool.Parse(Criterion);
                 return UnescapedCriterion;
             }
@@ -80,8 +81,7 @@ namespace UiAutomation.Model
 
         public string GridItem { get; }
 
-        public bool IsWindowSearch =>
-            ConditionTypeMapper.IsControlType(Method) && ControlTypeMapper.IsWindow(UnescapedCriterion);
+        public bool IsMainWindowSearch => ConditionTypeMapper.IsControlType(Method) && ControlTypeMapper.IsMainWindow(UnescapedCriterion);
 
         public string Method { get; }
 

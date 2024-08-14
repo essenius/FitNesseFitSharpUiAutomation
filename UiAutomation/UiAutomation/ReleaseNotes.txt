@@ -33,3 +33,4 @@
 3.0.0 Migration to .Net 5.0 (dual targeting .NET 5.0 and .NET Framework 4.8)
 3.1.0 Updated demo pages; added WindowSnapshot without params 
 3.2.0 Introduced PressKeys as alternative for PressKey to make test workflows more natural. Corrected defect in API for WindowSnapshot, Reformatted code. 
+3.4.0 Adapted tests for Windows 11 (Notepad is now UWP, used Wordpad for classic tests), fixed window detection in UWP, added MainWindow control type, introduced DPI correction 

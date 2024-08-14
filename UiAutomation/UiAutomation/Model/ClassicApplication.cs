@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2020 Rik Essenius
+﻿// Copyright 2017-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -30,7 +30,7 @@ namespace UiAutomation.Model
                 UseShellExecute = false
             };
 
-            process = Process.Start(startInfo);
+            _process = Process.Start(startInfo);
         }
 
         public override string ApplicationType => "Classic";
@@ -38,12 +38,12 @@ namespace UiAutomation.Model
         public override Control WindowControl =>
             !IsActive
                 ? null
-                : new Control("ProcessId:" + process.Id.ToString(InvariantCulture))
+                : new Control("ProcessId:" + _process.Id.ToString(InvariantCulture))
                 {
                     SearchType = SearchType.Shallow,
                     Parent = null
                 };
 
-        public override bool Exit(bool force) => process.Exit(force) && process.WaitForExit(force);
+        public override bool Exit(bool force) => _process.Exit(force) && _process.WaitForExit(force);
     }
 }

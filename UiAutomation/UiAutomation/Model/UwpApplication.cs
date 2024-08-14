@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2021 Rik Essenius
+﻿// Copyright 2019-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -10,7 +10,6 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System.Diagnostics;
-using System.Globalization;
 
 namespace UiAutomation.Model
 {
@@ -25,48 +24,23 @@ namespace UiAutomation.Model
             using var app = new AppLauncher(identifier);
             if (!app.Exists) return; // process will be set to null via the base
             var pid = app.Launch(arguments);
-            process = pid == null ? null : Process.GetProcessById(pid.Value);
+            _process = pid == null ? null : Process.GetProcessById(pid.Value);
         }
 
         public override string ApplicationType => "UWP";
 
-        private Process ParentProcess
-        {
-            get
-            {
-                var parent = WindowControl.FindParentElement;
-                var parentProcessId = parent.CurrentProcessId;
-                return Process.GetProcessById(parentProcessId);
-            }
-        }
-
-        public override Control WindowControl
-        {
-            get
-            {
-                // UWP application windows run in containers of class ApplicationFrameWindow, and not directly under the desktop.
-                // So we try to create a 'contained control'.
-                // We do this in a loop because sometimes it takes longer for the container to get recognized.
-                const string containerCriterion = "ClassName:ApplicationFrameWindow";
-
-                if (!IsActive) return null;
-                Control control = null;
-                process.WaitWithTimeoutTill(process1 =>
-                {
-                    control = Control.CreateContainedWindowControl(containerCriterion,
-                        "ProcessId:" + process1.Id.ToString(CultureInfo.InvariantCulture));
-                    return control != null;
-                });
-                return control;
-            }
-        }
+        public override Control WindowControl =>
+            // UWP application windows can run in subwindows, and not directly under the desktop.
+            // So we try to create a 'contained control'.
+            // We do this in a loop because sometimes it takes longer for the container to get recognized.
+            !IsActive ? null : Control.CreateContainedWindowControl(_process.Id);
 
         public override bool Exit(bool force)
         {
-            if (process == null) return true;
-            process.Refresh();
-            if (process.HasExited) return true;
-            return ParentProcess.Exit(force) && process.WaitForExit(force);
+            if (_process == null) return true;
+            _process.Refresh();
+            if (_process.HasExited) return true;
+            return _process.Exit(force) && _process.WaitForExit(force);
         }
     }
 }

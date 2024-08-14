@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -9,30 +9,42 @@
 //   is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and limitations under the License.
 
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 using UiAutomation.Patterns;
 
-namespace UiAUtomationTest
+namespace UiAutomationTest
 {
     [TestClass]
     public class PatternTest
     {
-        [TestMethod]
-        [TestCategory("Experiments")]
+        [TestMethod, TestCategory("Experiments")]
         public void PatternTest1()
         {
             var fixture = new UiAutomationFixture();
             try
             {
-                UiAutomationFixture.TimeoutSeconds = 1;
+                UiAutomationFixture.TimeoutSeconds = 3;
                 UiAutomationFixture.SearchBy("Name");
-                Assert.IsTrue(fixture.StartApplication("notepad.exe"), "Notepad started");
-                var control = fixture.GetControl("classname:edit");
+                if (!fixture.SwitchToProcess("name:Notepad"))
+                {
+                    fixture.NoAutomaticSwitchToStartedApplication();
+                    Assert.IsTrue(fixture.StartApplication(@"Microsoft.WindowsNotepad_8wekyb3d8bbwe"), "Notepad started");
+                    while (fixture.ApplicationIsActive) Thread.Sleep(100);
+                    Assert.IsTrue(fixture.SwitchToProcess("name:Notepad"), "Switch succeeded");
+                    Assert.IsTrue(fixture.IsUwpApp(), "Is UWP App");
+                }
+                // Assert.IsTrue(fixture.SwitchToParentWindow(), "Switch to parent.");
+                fixture.PressKey("^n");
+                fixture.WaitForControl("Untitled");
+                var control = fixture.GetControl("classname:RichEditD2DPT");
+                Assert.IsNotNull(control, "edit control found");
                 var pattern = new LegacyIAccessiblePattern(control.AutomationElement);
                 Assert.AreEqual(SetResult.Success, pattern.TrySet("hello"));
                 Assert.IsTrue(pattern.TryGet(out var content));
                 Assert.AreEqual("hello", content);
+                fixture.PressKeys("^a{DELETE}^w");
             }
             finally
             {

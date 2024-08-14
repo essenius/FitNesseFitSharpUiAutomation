@@ -7,10 +7,10 @@
     <LangVersion>8.0</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysysMode>AllEnabledByDefault</AnalysysMode>
-    <Version>3.3.0</Version>
+    <Version>3.4.0</Version>
     <Authors>Rik Essenius</Authors>
     <Description>FitNesse fixture for testing WPF and WinForms GUIs</Description>
-    <Copyright>Copyright © Rik Essenius 2013-2023</Copyright>
+    <Copyright>Copyright © Rik Essenius 2013-2024</Copyright>
     <RepositoryUrl>https://github.com/essenius/FitNesseFitSharpFeatureDemos</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

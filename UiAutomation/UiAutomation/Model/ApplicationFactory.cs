@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2021 Rik Essenius
+﻿// Copyright 2017-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -25,11 +25,12 @@ namespace UiAutomation.Model
         public static BaseApplication Start(string identifier, string arguments)
         {
             const int fileNotFound = 0x02;
+            const int accessDenied = 0x05;
             try
             {
                 return new ClassicApplication(identifier, arguments, null);
             }
-            catch (Win32Exception ex) when (ex.NativeErrorCode == fileNotFound)
+            catch (Win32Exception ex) when (ex.NativeErrorCode == fileNotFound || ex.NativeErrorCode == accessDenied)
             {
                 var app = new UwpApplication(identifier, arguments);
                 return app.IsActive ? app : null;

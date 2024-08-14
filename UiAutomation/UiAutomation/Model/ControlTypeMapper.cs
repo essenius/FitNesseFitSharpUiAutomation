@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -59,7 +59,8 @@ namespace UiAutomation.Model
                 { "ToolTip", UIA_ControlTypeIds.UIA_ToolTipControlTypeId },
                 { "Tree", UIA_ControlTypeIds.UIA_TreeControlTypeId }, // checked
                 { "TreeItem", UIA_ControlTypeIds.UIA_TreeItemControlTypeId }, // checked
-                { "Window", UIA_ControlTypeIds.UIA_WindowControlTypeId }
+                { "Window", UIA_ControlTypeIds.UIA_WindowControlTypeId },
+                { "MainWindow", UIA_ControlTypeIds.UIA_WindowControlTypeId }
             };
 
             foreach (var line in initValues)
@@ -68,6 +69,6 @@ namespace UiAutomation.Model
             }
         }
 
-        public static bool IsWindow(string condition) => condition.Equals("Window", StringComparison.OrdinalIgnoreCase);
+        public static bool IsMainWindow(string condition) => condition.Equals("MainWindow", StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -14,9 +14,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
+// ReSharper disable UnusedMember.Global -- keeping in for completeness
+
 namespace UiAutomation.Model
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Completeness")]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Legacy Windows naming followed")]
     internal static class NativeMethods
     {
@@ -39,6 +40,9 @@ namespace UiAutomation.Model
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
 
+        [DllImport("user32.dll")]
+        public static extern uint GetDpiForWindow(IntPtr hWnd);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr GetForegroundWindow();
 
@@ -50,30 +54,24 @@ namespace UiAutomation.Model
             out int count);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern uint GetPackageFamilyName(
-            IntPtr hProcess,
-            ref uint packageFamilyNameLength,
-            StringBuilder packageFamilyName);
+        public static extern uint GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, StringBuilder packageFamilyName);
 
         [DllImport("kernel32", CallingConvention = CallingConvention.Winapi, CharSet = CharSet.Unicode,
-            ExactSpelling = true, SetLastError = true)]
+            ExactSpelling = true, SetLastError = true
+        )]
         public static extern int GetPackagesByPackageFamily(
             [In] string packageFamilyName,
-            [In] [Out] ref int count,
-            [In] [MarshalAs(UnmanagedType.LPArray)]
-            IntPtr[] packageFullNames,
-            [In] [Out] ref int bufferLength,
-            [In] [Out] char[] buffer
+            [In, Out]  ref int count,
+            [In, MarshalAs(UnmanagedType.LPArray)]  IntPtr[] packageFullNames,
+            [In, Out]  ref int bufferLength,
+            [In, Out]  char[] buffer
         );
 
         [DllImport("user32.dll")]
         public static extern int GetSystemMetrics(int smIndex);
 
         [DllImport("kernel32")]
-        public static extern int OpenPackageInfoByFullName(
-            [MarshalAs(UnmanagedType.LPWStr)] string fullName,
-            uint reserved,
-            out SafeAppHandle packageInfo);
+        public static extern int OpenPackageInfoByFullName([MarshalAs(UnmanagedType.LPWStr)] string fullName, uint reserved, out SafeAppHandle packageInfo);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);

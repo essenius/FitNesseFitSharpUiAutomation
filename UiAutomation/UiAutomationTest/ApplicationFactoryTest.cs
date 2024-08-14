@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2021 Rik Essenius
+﻿// Copyright 2017-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -18,32 +18,29 @@ namespace UiAutomationTest
     [TestClass]
     public class ApplicationFactoryTest
     {
-        [TestMethod]
-        [TestCategory("DefaultApps")]
+        [TestMethod, TestCategory("DefaultApps")]
         public void ApplicationFactoryStartClassicTest()
         {
-            var app = ApplicationFactory.Start("notepad.exe", null);
+            var app = ApplicationFactory.Start(FixtureTest.WordPadPath, null);
             app.WaitForInputIdle();
-            Assert.IsInstanceOfType(app, typeof(ClassicApplication));
+            Assert.IsInstanceOfType(app, typeof(ClassicApplication), "app is classic");
             var app1 = ApplicationFactory.AttachToProcess(app.ProcessId);
-            Assert.IsInstanceOfType(app1, typeof(ClassicApplication));
-            Assert.AreEqual(app.ProcessId, app1.ProcessId);
+            Assert.IsInstanceOfType(app1, typeof(ClassicApplication), "app1 is classic");
+            Assert.AreEqual(app.ProcessId, app1.ProcessId, "Process IDs equal");
             ExtensionFunctions.TimeoutInMilliseconds = 1000;
-            Assert.IsTrue(app.Exit(false));
+            Assert.IsTrue(app.Exit(true), "Exit");
             Assert.IsFalse(app.IsActive, "App is not active");
             Assert.IsFalse(app1.IsActive, "App1 is not active");
         }
 
-        [TestMethod]
-        [TestCategory("DefaultApps")]
+        [TestMethod, TestCategory("DefaultApps")]
         public void ApplicationFactoryStartNonexistingAppTest()
         {
             var app = ApplicationFactory.Start("nonexisting", null);
             Assert.IsNull(app);
         }
 
-        [TestMethod]
-        [TestCategory("DefaultApps")]
+        [TestMethod, TestCategory("DefaultApps")]
         public void ApplicationFactoryStartUwpTest()
         {
             var app = ApplicationFactory.Start(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null);
@@ -54,7 +51,7 @@ namespace UiAutomationTest
             Assert.IsInstanceOfType(app1, typeof(UwpApplication));
             Assert.AreEqual(app.ProcessId, app1.ProcessId);
             ExtensionFunctions.TimeoutInMilliseconds = 3000;
-            Assert.IsTrue(app.Exit(false));
+            Assert.IsTrue(app.Exit(true), "Exit succeeds");
             Assert.IsFalse(app.IsActive, "App is not active");
             Assert.IsFalse(app1.IsActive, "App1 is not active");
             Assert.IsNull(app1.WindowControl, "WindowControl for exited app is null");
@@ -62,8 +59,7 @@ namespace UiAutomationTest
             Assert.IsTrue(app1.Exit(false), "Exiting a second time should work");
         }
 
-        [TestMethod]
-        [TestCategory("Unit")]
+        [TestMethod, TestCategory("Unit")]
         public void UwpApplicationStartNonexistingAppTest()
         {
             var app = new UwpApplication("nonexisting", string.Empty);
