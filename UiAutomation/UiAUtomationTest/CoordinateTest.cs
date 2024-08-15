@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -13,29 +13,24 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
-namespace UiAUtomationTest
+namespace UiAutomationTest
 {
     [TestClass]
     public class CoordinateTest
     {
-        [TestMethod]
-        [TestCategory("Unit")]
-        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
         public void CoordinateInvalidParseTest()
         {
-            var _ = new Coordinate("bogus");
+            _ = new Coordinate("bogus");
         }
 
-        [TestMethod]
-        [TestCategory("Unit")]
-        [ExpectedException(typeof(FormatException))]
+        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(FormatException))]
         public void CoordinateNonNUmmericCoordinateTest()
         {
-            var _ = new Coordinate("bogus,0");
+            _ = new Coordinate("bogus,0");
         }
 
-        [TestMethod]
-        [TestCategory("Unit")]
+        [TestMethod, TestCategory("Unit")]
         public void CoordinateParseTest()
         {
             var coordinate = Coordinate.Parse(string.Empty);

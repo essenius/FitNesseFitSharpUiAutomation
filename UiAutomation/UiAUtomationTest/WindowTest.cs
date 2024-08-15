@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2021 Rik Essenius2019 
+﻿// Copyright 2019-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -12,13 +12,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
-namespace UiAUtomationTest
+namespace UiAutomationTest
 {
     [TestClass]
     public class WindowTest
     {
-        [TestMethod]
-        [TestCategory("Unit")]
+        [TestMethod, TestCategory("Unit")]
         public void WindowTestNull()
         {
             var window = new Window(null);

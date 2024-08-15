@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2023 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
+
 // ReSharper disable UnusedMember.Local - included for completeness
 
 namespace UiAutomationTest
@@ -23,16 +24,14 @@ namespace UiAutomationTest
         private static UiAutomationFixture _fixture;
         private static int _testCounter;
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckDefaultResult()
         {
             var actual = _fixture.ValueOfControl(Fields.Result);
             Assert.AreEqual("0", actual, "Result is '{0}' rather than '0'", actual);
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckEnterNumber()
         {
             Assert.IsTrue(_fixture.ClickControl(Fields.One));
@@ -42,16 +41,14 @@ namespace UiAutomationTest
             Assert.AreEqual("Display is -123", _fixture.NameOfControl(Fields.Result));
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckExists()
         {
             Assert.IsTrue(_fixture.ControlExists(Fields.Result), "Result control exists");
             Assert.IsFalse(_fixture.ControlExists(Fields.NonExisting), "Non-existing control does not exist");
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckGracefulHandlingOfNonexistingControl()
         {
             UiAutomationFixture.TimeoutSeconds = 1;
@@ -61,23 +58,23 @@ namespace UiAutomationTest
             Assert.IsFalse(_fixture.WaitForControl(Fields.NonExisting), "Wait for non-existing control");
             Assert.IsTrue(
                 _fixture.WaitUntilControlDisappears(Fields.NonExisting),
-                "Wait for non-existing control to disappear");
+                "Wait for non-existing control to disappear"
+            );
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckInvalidOperations()
         {
             Assert.IsTrue(_fixture.ControlExists(Fields.One), "Control '1' exists");
             Assert.IsFalse(_fixture.ToggleControl(Fields.One), "Cannot toggle control '1'");
             Assert.IsFalse(
                 _fixture.SetValueOfControlTo(Fields.CalculatorExpression, "M"),
-                "Setting value of control without patterns");
+                "Setting value of control without patterns"
+            );
             Assert.IsFalse(_fixture.SelectItem(Fields.One), "Selecting value of control without selection pattern");
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckKeyPresses()
         {
             UiAutomationFixture.TimeoutSeconds = 1;
@@ -87,8 +84,7 @@ namespace UiAutomationTest
             Assert.IsFalse(_fixture.WaitForControl(Fields.Pi), "Wait for Pi fails");
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckScientific()
         {
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click menu");
@@ -103,7 +99,8 @@ namespace UiAutomationTest
             Assert.AreEqual(
                 @"Expression is factorial (9)",
                 _fixture.ValueOfControl(Fields.CalculatorExpression),
-                "Expression");
+                "Expression"
+            );
             Assert.IsTrue(_fixture.ControlExists(Fields.Trigonometry), "Trigonometry field is there");
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click View menu 2nd time");
             Assert.IsTrue(_fixture.WaitForControl(Fields.Standard), "Wait for Standard menu item");
@@ -112,8 +109,7 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.WaitUntilControlDisappears(Fields.Trigonometry));
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckSimplifiedApi()
         {
             Assert.IsTrue(_fixture.ClickControl("Clear"), "Push Clear");
@@ -122,29 +118,28 @@ namespace UiAutomationTest
             Assert.AreEqual("1", _fixture.ValueOfControl("CalculatorResults"), "Result is 1");
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcCheckWindowValue()
         {
             UiAutomationFixture.SearchBy("ControlType");
             // also test legacy pattern get since we don't use the Window pattern yet.
-            Assert.AreEqual("Calculator", _fixture.ValueOfControl("Window"), "value of Window is 'Calculator'");
+            var result = _fixture.ValueOfControl("ControlType:MainWindow");
+            Assert.AreEqual("Calculator", result, "value of Window is 'Calculator'");
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcGetChildValue()
         {
             _fixture.PressKeys("456");
             Assert.AreEqual(
                 "456",
                 _fixture.FirstTextUnder(Fields.Result),
-                "The first text control under the Result box contains 456");
+                "The first text control under the Result box contains 456"
+            );
             Assert.AreEqual("456", _fixture.ValueOfControl(Fields.Result));
         }
 
-        [TestMethod]
-        [TestCategory("Calc")]
+        [TestMethod, TestCategory("Calc")]
         public void CalcVolume()
         {
             Assert.IsTrue(_fixture.ClickControl(Fields.Menu), "Click menu");
@@ -152,10 +147,12 @@ namespace UiAutomationTest
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.Volume), "Click Volume");
             // This is important. Apparently the output unit gets visible earlier than the Pane Root disappears
             _fixture.WaitUntilControlDisappears("id:PaneRoot");
+            Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.ClearEntry), "Wait for Clear entry and click it");
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.OutputUnit), "Wait for Output Unit and click it");
             Assert.IsTrue(
                 _fixture.PressKeys("{PgUp}{PgUp}{PgUp}"),
-                "Press Page Up three times to get Liters in display");
+                "Press Page Up three times to get Liters in display"
+            );
             Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Liters"), "Set Output to Liters");
             Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.InputUnit), "Wait for Input Unit and click it");
             Assert.IsTrue(_fixture.PressKeys("{PgDn}{PgDn}"), "Press Page Down twice to get Gallons (US) in display");
@@ -171,16 +168,13 @@ namespace UiAutomationTest
         [ClassCleanup]
         public static void TearDown() => Assert.IsTrue(_fixture.ForcedCloseApplication(), "Calc stopped");
 
-        [ClassInitialize]
-        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive")]
+        [ClassInitialize, SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "False positive")]
         public static void Win10SetupCalc(TestContext testContext)
         {
             _fixture = new UiAutomationFixture();
-            if (!_fixture.SwitchToProcess("name:CalculatorApp"))
-            {
-                _fixture.SetAutomaticSwitchToStartedApplication();
-                Assert.IsTrue(_fixture.StartApplication("Microsoft.WindowsCalculator_8wekyb3d8bbwe"), "Calc started");
-            }
+            if (_fixture.SwitchToProcess("name:CalculatorApp")) return;
+            _fixture.SetAutomaticSwitchToStartedApplication();
+            Assert.IsTrue(_fixture.StartApplication("Microsoft.WindowsCalculator_8wekyb3d8bbwe"), "Calc started");
         }
 
         [TestInitialize]
@@ -197,6 +191,7 @@ namespace UiAutomationTest
             public const string Pi = "id:piButton";
             public static string CalculatorExpression => "id:CalculatorExpression";
             public static string Clear => "name:Clear";
+            public static string ClearEntry => "name:Clear entry";
             public static string Degrees => "id:DegButton";
             public static string Fact => "name:Factorial";
             public static string Gradians => "id:GradButton";
@@ -217,9 +212,9 @@ namespace UiAutomationTest
             public static string Sine => "name:Sine";
             public static string SquareRoot => "name:Square root";
             public static string Standard => "id:Standard";
+            public static string Three => "NamE:three";
 
             public static string Trigonometry => "name:Trigonometry";
-            public static string Three => "NamE:three";
             public static string Two => "name:two";
             public static string Volume => "name:Volume Converter";
         }

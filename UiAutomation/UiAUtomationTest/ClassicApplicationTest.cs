@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -18,23 +18,22 @@ namespace UiAutomationTest
     [TestClass]
     public class ClassicApplicationTest
     {
-        [TestMethod]
-        [TestCategory("Unit")]
-        [ExpectedExceptionWithMessage(typeof(Win32Exception), "The system cannot find the file specified")]
+        [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(Win32Exception), "The system cannot find the file specified")]
         public void ClassicApplicationConstructorNonexistingFileRaisesException()
         {
-            var _ = new ClassicApplication("nonexisting.exe", null, null);
+            _ = new ClassicApplication("nonexisting.exe", null, null);
         }
 
-        [TestMethod]
-        [TestCategory("DefaultApps")]
+        [TestMethod, TestCategory("DemoApp"), DeploymentItem("WpfDemoApp.exe"), DeploymentItem("WpfDemoApp.exe.config")]
         public void ClassicApplicationConstructorTest1()
         {
-            var app = new ClassicApplication("notepad.exe", null, null);
+            var app = new ClassicApplication("WpfDemoApp.exe", null, null);
             app.WaitForInputIdle();
-            Assert.IsNotNull(app.MainWindowHandle);
-            ExtensionFunctions.TimeoutInMilliseconds = 1000;
-            Assert.IsTrue(app.Exit(false));
+            Assert.IsTrue(app.WaitForMainWindow());
+            Assert.IsTrue(app.IsActive, "App is active");
+            Assert.IsNotNull(app.MainWindowHandle, "Handle not null");
+            ExtensionFunctions.TimeoutInMilliseconds = 2000;
+            Assert.IsTrue(app.Exit(false), "Exit");
         }
     }
 }
