@@ -19,7 +19,7 @@ namespace UiAutomationTest;
 [TestClass]
 public class PatternTest
 {
-    [TestMethod, TestCategory("Experiments")]
+    [TestMethod, TestCategory("DefaultApps")]
     public void LegacySetGetTest()
     {
         var fixture = new UiAutomationFixture();
@@ -66,7 +66,7 @@ public class PatternTest
         Assert.AreEqual(SetResult.NotApplicable, result);
     }
 
-    [TestMethod]
+    [TestMethod, TestCategory("Unit")]
     public void LegacyTryGetNullTest()
     {
         var elementMock = new IUIAutomationElementMock { CurrentIsKeyboardFocusable = 0 };
@@ -74,7 +74,7 @@ public class PatternTest
         AssertGetFalse(pattern);
     }
 
-    [TestMethod]
+    [TestMethod, TestCategory("Unit")]
     public void LegacyTrySetNotApplicableTest()
     {
         var elementMock = new IUIAutomationElementMock { CurrentIsKeyboardFocusable = 0 };
@@ -82,7 +82,7 @@ public class PatternTest
         AssertSetNotApplicable(pattern);
     }
 
-    [TestMethod]
+    [TestMethod, TestCategory("Unit")]
     public void TextTrySetNotApplicableTest()
     {
         var elementMock = new IUIAutomationElementMock();
@@ -90,7 +90,7 @@ public class PatternTest
         AssertSetNotApplicable(pattern);
     }
 
-    [TestMethod]
+    [TestMethod, TestCategory("Unit")]
     public void ToggleTrySetNotApplicableTest()
     {
         var elementMock = new IUIAutomationElementMock();
