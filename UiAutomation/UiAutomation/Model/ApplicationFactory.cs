@@ -11,35 +11,34 @@
 
 using System.ComponentModel;
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal static class ApplicationFactory
 {
-    internal static class ApplicationFactory
+    public static BaseApplication AttachToProcess(int processId)
     {
-        public static BaseApplication AttachToProcess(int processId)
-        {
-            var process = new ProcessHandler(processId).ProcessObject();
-            if (AppLauncher.IsUwpApp(process.Handle)) return new UwpApplication(process);
-            return new ClassicApplication(process);
-        }
-
-        public static BaseApplication Start(string identifier, string arguments)
-        {
-            const int fileNotFound = 0x02;
-            const int accessDenied = 0x05;
-            try
-            {
-                return new ClassicApplication(identifier, arguments, null);
-            }
-            catch (Win32Exception ex) when (ex.NativeErrorCode == fileNotFound || ex.NativeErrorCode == accessDenied)
-            {
-                var app = new UwpApplication(identifier, arguments);
-                return app.IsActive ? app : null;
-            }
-        }
-
-        public static BaseApplication Start(string identifier, string arguments, string workFolder) =>
-            string.IsNullOrEmpty(workFolder)
-                ? Start(identifier, arguments)
-                : new ClassicApplication(identifier, arguments, workFolder);
+        var process = new ProcessHandler(processId).ProcessObject();
+        if (AppLauncher.IsUwpApp(process.Handle)) return new UwpApplication(process);
+        return new ClassicApplication(process);
     }
+
+    public static BaseApplication Start(string identifier, string arguments)
+    {
+        const int fileNotFound = 0x02;
+        const int accessDenied = 0x05;
+        try
+        {
+            return new ClassicApplication(identifier, arguments, null);
+        }
+        catch (Win32Exception ex) when (ex.NativeErrorCode is fileNotFound or accessDenied)
+        {
+            var app = new UwpApplication(identifier, arguments);
+            return app.IsActive ? app : null;
+        }
+    }
+
+    public static BaseApplication Start(string identifier, string arguments, string workFolder) =>
+        string.IsNullOrEmpty(workFolder)
+            ? Start(identifier, arguments)
+            : new ClassicApplication(identifier, arguments, workFolder);
 }

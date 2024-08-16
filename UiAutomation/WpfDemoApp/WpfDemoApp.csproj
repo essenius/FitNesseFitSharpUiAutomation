@@ -2,15 +2,14 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <LangVersion>8.0</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysysMode>AllEnabledByDefault</AnalysysMode>
     <Version>3.0.0</Version>
     <Authors>Rik Essenius</Authors>
     <Description>WPF Demo Application for UI Automation Fixture</Description>
-    <Copyright>Copyright © Rik Essenius 2013-2021</Copyright>
+    <Copyright>Copyright © Rik Essenius 2013-2024</Copyright>
     <RepositoryUrl>https://github.com/essenius/FitNesseFitSharpUiAutomation</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

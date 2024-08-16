@@ -12,38 +12,37 @@
 using System.Diagnostics;
 using static System.Globalization.CultureInfo;
 
-namespace UiAutomation.Model
-{
-    internal class ClassicApplication : BaseApplication
-    {
-        public ClassicApplication(Process process) : base(process)
-        {
-        }
+namespace UiAutomation.Model;
 
-        public ClassicApplication(string path, string arguments, string workFolder)
+internal class ClassicApplication : BaseApplication
+{
+    public ClassicApplication(Process process) : base(process)
+    {
+    }
+
+    public ClassicApplication(string path, string arguments, string workFolder)
+    {
+        var startInfo = new ProcessStartInfo
         {
-            var startInfo = new ProcessStartInfo
+            WorkingDirectory = workFolder,
+            Arguments = arguments,
+            FileName = path,
+            UseShellExecute = false
+        };
+
+        _process = Process.Start(startInfo);
+    }
+
+    public override string ApplicationType => "Classic";
+
+    public override Control WindowControl =>
+        !IsActive
+            ? null
+            : new Control("ProcessId:" + _process.Id.ToString(InvariantCulture))
             {
-                WorkingDirectory = workFolder,
-                Arguments = arguments,
-                FileName = path,
-                UseShellExecute = false
+                SearchType = SearchType.Shallow,
+                Parent = null
             };
 
-            _process = Process.Start(startInfo);
-        }
-
-        public override string ApplicationType => "Classic";
-
-        public override Control WindowControl =>
-            !IsActive
-                ? null
-                : new Control("ProcessId:" + _process.Id.ToString(InvariantCulture))
-                {
-                    SearchType = SearchType.Shallow,
-                    Parent = null
-                };
-
-        public override bool Exit(bool force) => _process.Exit(force) && _process.WaitForExit(force);
-    }
+    public override bool Exit(bool force) => _process.Exit(force) && _process.WaitForExit(force);
 }

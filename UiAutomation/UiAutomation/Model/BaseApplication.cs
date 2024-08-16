@@ -13,46 +13,46 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal abstract class BaseApplication(Process process)
 {
-    internal abstract class BaseApplication
+    protected Process _process = process;
+
+    protected BaseApplication() : this(null)
     {
-        protected Process _process;
+    }
 
-        protected BaseApplication() => _process = null;
-        protected BaseApplication(Process process) => _process = process;
+    public abstract string ApplicationType { get; }
 
-        public abstract string ApplicationType { get; }
+    public virtual bool IsActive => _process is { HasExited: false };
+    public virtual IntPtr MainWindowHandle => _process.MainWindowHandle;
+    public virtual int ProcessId => _process.Id;
+    public abstract Control WindowControl { get; }
+    public abstract bool Exit(bool force);
 
-        public virtual bool IsActive => _process is { HasExited: false };
-        public virtual IntPtr MainWindowHandle => _process.MainWindowHandle;
-        public virtual int ProcessId => _process.Id;
-        public abstract Control WindowControl { get; }
-        public abstract bool Exit(bool force);
-
-        public virtual void WaitForInputIdle()
+    public virtual void WaitForInputIdle()
+    {
+        try
         {
-            try
-            {
-                if (_process == null) return;
-                _process.WaitForInputIdle();
-            }
-            catch (InvalidOperationException)
-            {
-                //ignore, can happen if the application has no UI
-            }
+            if (_process == null) return;
+            _process.WaitForInputIdle();
+        }
+        catch (InvalidOperationException)
+        {
+            //ignore, can happen if the application has no UI
+        }
+    }
+
+    public virtual bool WaitForMainWindow()
+    {
+        var tries = 0;
+        while (MainWindowHandle == IntPtr.Zero && tries < 20)
+        {
+            Thread.Sleep(100);
+            tries++;
         }
 
-        public virtual bool WaitForMainWindow()
-        {
-            var tries = 0;
-            while (MainWindowHandle == IntPtr.Zero && tries < 20)
-            {
-                Thread.Sleep(100);
-                tries++;
-            }
-
-            return MainWindowHandle != IntPtr.Zero;
-        }
+        return MainWindowHandle != IntPtr.Zero;
     }
 }

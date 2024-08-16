@@ -17,39 +17,36 @@ using interop.UIAutomationCore;
 
 // based on SearchParser in the SeleniumFixture 
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal class LocatorCollection : List<Locator>;
+
+internal class SearchParser
 {
-    internal class LocatorCollection : List<Locator>
+    private const string AndDelimiter = " && ";
+
+    public SearchParser(string searchCriteriaString)
     {
+        if (searchCriteriaString == null) // empty string is allowed, null isn't
+        {
+            throw new ArgumentNullException(nameof(searchCriteriaString), "SearchParser requires non-null search criteria");
+        }
+
+        var searchCriteria = Regex.Split(searchCriteriaString, AndDelimiter);
+        Locators = [];
+        foreach (var locator in searchCriteria)
+        {
+            Locators.Add(new Locator(locator));
+        }
     }
 
-    internal class SearchParser
+    public LocatorCollection Locators { get; }
+
+    public bool IsMainWindowSearch() => Locators.Any(locator => locator.IsMainWindowSearch);
+
+    public bool IsValidProcessCondition()
     {
-        private const string AndDelimiter = " && ";
-
-        public SearchParser(string searchCriteriaString)
-        {
-            if (searchCriteriaString == null) // empty string is allowed, null isn't
-            {
-                throw new ArgumentNullException(nameof(searchCriteriaString), "SearchParser requires non-null search criteria");
-            }
-
-            var searchCriteria = Regex.Split(searchCriteriaString, AndDelimiter);
-            Locators = new LocatorCollection();
-            foreach (var locator in searchCriteria)
-            {
-                Locators.Add(new Locator(locator));
-            }
-        }
-
-        public LocatorCollection Locators { get; }
-
-        public bool IsMainWindowSearch() => Locators.Any(locator => locator.IsMainWindowSearch);
-
-        public bool IsValidProcessCondition()
-        {
-            var validProcessConditions = new List<int> { UIA_PropertyIds.UIA_ProcessIdPropertyId, UIA_PropertyIds.UIA_NamePropertyId };
-            return Locators.Count == 1 && validProcessConditions.Contains(Locators[0].ConditionType);
-        }
+        var validProcessConditions = new List<int> { UIA_PropertyIds.UIA_ProcessIdPropertyId, UIA_PropertyIds.UIA_NamePropertyId };
+        return Locators.Count == 1 && validProcessConditions.Contains(Locators[0].ConditionType);
     }
 }

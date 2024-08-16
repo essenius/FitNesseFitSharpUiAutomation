@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2021 Rik Essenius
+﻿// Copyright 2019-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -13,54 +13,53 @@ using System;
 using System.Globalization;
 using static System.FormattableString;
 
-namespace UiAutomation
+namespace UiAutomation;
+
+/// <summary>Coordinate pair x,y</summary>
+public class Coordinate
 {
-    /// <summary>Coordinate pair x,y</summary>
-    public class Coordinate
+    /// <summary>Initialize coordinates with X and Y parameters</summary>
+    public Coordinate(int x, int y)
     {
-        /// <summary>Initialize coordinates with X and Y parameters</summary>
-        public Coordinate(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        /// <summary>Initialize coordinate with a string to be parsed. If empty string, will become 0,0</summary>
-        public Coordinate(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                X = 0;
-                Y = 0;
-                return;
-            }
-            var list = input.Split(',');
-            if (list.Length != 2) throw new ArgumentException("Could not parse a coordinate as 'int,int'");
-            X = Convert.ToInt32(list[0], CultureInfo.InvariantCulture);
-            Y = Convert.ToInt32(list[1], CultureInfo.InvariantCulture);
-        }
-
-        /// <summary>X-coordinate</summary>
-        public int X { get; }
-
-        /// <summary>Y-coordinate</summary>
-        public int Y { get; }
-
-        /// <summary>Coordinate object is considered equal to another one if the X and Y values are equal.</summary>
-        public override bool Equals(object obj)
-        {
-            if (obj == null || GetType() != obj.GetType()) return false;
-            var p = (Coordinate)obj;
-            return X == p.X && Y == p.Y;
-        }
-
-        /// <summary>Base hash code on the values of X and Y</summary>
-        public override int GetHashCode() => Tuple.Create(X, Y).GetHashCode();
-
-        /// <summary>Enable Coordinates to be used as parameters in fixtures</summary>
-        public static Coordinate Parse(string input) => new Coordinate(input);
-
-        /// <summary>Show X and Y coordinates</summary>
-        public override string ToString() => Invariant($"{X}, {Y}");
+        X = x;
+        Y = y;
     }
+
+    /// <summary>Initialize coordinate with a string to be parsed. If empty string, will become 0,0</summary>
+    public Coordinate(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            X = 0;
+            Y = 0;
+            return;
+        }
+        var list = input.Split(',');
+        if (list.Length != 2) throw new ArgumentException("Could not parse a coordinate as 'int,int'");
+        X = Convert.ToInt32(list[0], CultureInfo.InvariantCulture);
+        Y = Convert.ToInt32(list[1], CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>X-coordinate</summary>
+    public int X { get; }
+
+    /// <summary>Y-coordinate</summary>
+    public int Y { get; }
+
+    /// <summary>Coordinate object is considered equal to another one if the X and Y values are equal.</summary>
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType()) return false;
+        var p = (Coordinate)obj;
+        return X == p.X && Y == p.Y;
+    }
+
+    /// <summary>Base hash code on the values of X and Y</summary>
+    public override int GetHashCode() => Tuple.Create(X, Y).GetHashCode();
+
+    /// <summary>Enable Coordinates to be used as parameters in fixtures</summary>
+    public static Coordinate Parse(string input) => new(input);
+
+    /// <summary>Show X and Y coordinates</summary>
+    public override string ToString() => Invariant($"{X}, {Y}");
 }

@@ -13,23 +13,23 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+[TestClass]
+public class FileSystemTest
 {
-    [TestClass]
-    public class FileSystemTest
+    [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(FileNotFoundException),
+         "Could not find file [calc.exe] in the Environment Path"
+     )]
+    public void FileSystemConstructorTest()
     {
-        [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(FileNotFoundException),
-             "Could not find file [calc.exe] in the Environment Path"
-         )]
-        public void FileSystemConstructorTest()
-        {
             var fileSystem = new FileSystem(null);
             fileSystem.FindExecutable("calc.exe");
         }
 
-        [TestMethod, TestCategory("Unit")]
-        public void FileSystemFindExecutableTest()
-        {
+    [TestMethod, TestCategory("Unit"), DeploymentItem("UiAUtomation.dll")]
+    public void FileSystemFindExecutableTest()
+    {
             var fileSystem = new FileSystem();
             Assert.AreEqual(
                 "C:\\Windows\\System32\\calc.exe",
@@ -44,14 +44,13 @@ namespace UiAutomationTest
             Assert.IsNotNull(fileSystem.FindExecutable("UiAutomation.dll"), "Current folder, not in path, found)");
         }
 
-        [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(FileNotFoundException),
-             "Could not find file with path [System32\\calc.exe]"
-         )]
-        public void FileSystemFindExecutableTrowTest1() => new FileSystem().FindExecutable("System32\\calc.exe");
+    [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(FileNotFoundException),
+         "Could not find file with path [System32\\calc.exe]"
+     )]
+    public void FileSystemFindExecutableTrowTest1() => new FileSystem().FindExecutable("System32\\calc.exe");
 
-        [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(FileNotFoundException),
-             "Could not find file [nonexisting.exe] in the Environment Path"
-         )]
-        public void FileSystemFindExecutableTrowTest2() => new FileSystem().FindExecutable("nonexisting.exe");
-    }
+    [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(FileNotFoundException),
+         "Could not find file [nonexisting.exe] in the Environment Path"
+     )]
+    public void FileSystemFindExecutableTrowTest2() => new FileSystem().FindExecutable("nonexisting.exe");
 }

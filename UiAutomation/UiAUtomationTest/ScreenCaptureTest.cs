@@ -16,27 +16,27 @@ using ImageHandler;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+[TestClass]
+public class ScreenCaptureTest
 {
-    [TestClass]
-    public class ScreenCaptureTest
+    private UiAutomationFixture _fixture;
+
+    [TestCleanup]
+    public void Cleanup() => _fixture.ForcedCloseApplication();
+
+    [TestInitialize]
+    public void Init()
     {
-        private UiAutomationFixture _fixture;
-
-        [TestCleanup]
-        public void Cleanup() => _fixture.ForcedCloseApplication();
-
-        [TestInitialize]
-        public void Init()
-        {
             _fixture = new UiAutomationFixture();
             Assert.IsTrue(_fixture.StartApplication(FixtureTest.WordPadPath), "WordPad started");
             _fixture.WaitForControl(@"controltype:document");
         }
 
-        [TestMethod, TestCategory("DefaultApps")]
-        public void ScreenCaptureTakeTest()
-        {
+    [TestMethod, TestCategory("DefaultApps")]
+    public void ScreenCaptureTakeTest()
+    {
             var image = Snapshot.CaptureScreen(new Rectangle(0, 0, 2, 1));
             Assert.IsTrue(image.ToString().StartsWith("Image", StringComparison.Ordinal));
             Assert.IsTrue(image.ToString().EndsWith("(2 x 1)", StringComparison.Ordinal));
@@ -58,5 +58,4 @@ namespace UiAutomationTest
             );
             Assert.IsTrue(_fixture.ClickControl("Name:Cancel"));
         }
-    }
 }

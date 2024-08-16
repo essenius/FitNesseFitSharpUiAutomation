@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -15,52 +15,49 @@ using System.IO;
 using System.Linq;
 using static System.FormattableString;
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal class FileSystem(string pathList)
 {
-    internal class FileSystem
+    private readonly string[] _pathList = (pathList ?? string.Empty).Split(';');
+
+    public FileSystem() : this(Environment.GetEnvironmentVariable("PATH"))
     {
-        private readonly string[] _pathList;
+    }
 
-        public FileSystem() : this(Environment.GetEnvironmentVariable("PATH"))
+    private static string CanonicalPath(DirectoryInfo dirInfo)
+    {
+        var parentDirInfo = dirInfo.Parent;
+        return null == parentDirInfo
+            ? dirInfo.Name
+            : Path.Combine(CanonicalPath(parentDirInfo), parentDirInfo.GetDirectories(dirInfo.Name)[0].Name);
+    }
+
+    private static string CanonicalPath(string filename)
+    {
+        var fileInfo = new FileInfo(filename);
+        var dirInfo = fileInfo.Directory;
+        Debug.Assert(dirInfo != null, nameof(dirInfo) + " != null");
+        return Path.Combine(CanonicalPath(dirInfo), dirInfo.GetFiles(fileInfo.Name)[0].Name);
+    }
+
+    public string FindExecutable(string path)
+    {
+        var expandedPath = Environment.ExpandEnvironmentVariables(path);
+        if (File.Exists(expandedPath)) return CanonicalPath(expandedPath);
+        if (!string.IsNullOrEmpty(Path.GetDirectoryName(expandedPath)))
         {
+            throw new FileNotFoundException(Invariant($"Could not find file with path [{expandedPath}]"));
         }
 
-        public FileSystem(string pathList) => _pathList = (pathList ?? string.Empty).Split(';');
-
-        private static string CanonicalPath(DirectoryInfo dirInfo)
-        {
-            var parentDirInfo = dirInfo.Parent;
-            return null == parentDirInfo
-                ? dirInfo.Name
-                : Path.Combine(CanonicalPath(parentDirInfo), parentDirInfo.GetDirectories(dirInfo.Name)[0].Name);
-        }
-
-        private static string CanonicalPath(string filename)
-        {
-            var fileInfo = new FileInfo(filename);
-            var dirInfo = fileInfo.Directory;
-            Debug.Assert(dirInfo != null, nameof(dirInfo) + " != null");
-            return Path.Combine(CanonicalPath(dirInfo), dirInfo.GetFiles(fileInfo.Name)[0].Name);
-        }
-
-        public string FindExecutable(string path)
-        {
-            var expandedPath = Environment.ExpandEnvironmentVariables(path);
-            if (File.Exists(expandedPath)) return CanonicalPath(expandedPath);
-            if (!string.IsNullOrEmpty(Path.GetDirectoryName(expandedPath)))
-            {
-                throw new FileNotFoundException(Invariant($"Could not find file with path [{expandedPath}]"));
-            }
-
-            var testPath = string.Empty;
-            if (_pathList.Select(entry => entry.Trim()).Any(trimmedEntry =>
+        var testPath = string.Empty;
+        if (_pathList.Select(entry => entry.Trim()).Any(trimmedEntry =>
                 !string.IsNullOrEmpty(trimmedEntry) &&
                 File.Exists(testPath = Path.Combine(trimmedEntry, expandedPath))))
-            {
-                return CanonicalPath(testPath);
-            }
-
-            throw new FileNotFoundException(Invariant($"Could not find file [{expandedPath}] in the Environment Path"));
+        {
+            return CanonicalPath(testPath);
         }
+
+        throw new FileNotFoundException(Invariant($"Could not find file [{expandedPath}] in the Environment Path"));
     }
 }

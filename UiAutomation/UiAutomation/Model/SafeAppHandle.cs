@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2021 Rik Essenius
+﻿// Copyright 2019-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -12,22 +12,21 @@
 using System;
 using Microsoft.Win32.SafeHandles;
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal class SafeAppHandle : SafeHandleZeroOrMinusOneIsInvalid
 {
-    internal class SafeAppHandle : SafeHandleZeroOrMinusOneIsInvalid
+    private const long Success = 0;
+
+    private SafeAppHandle() : base(true)
     {
-        private const long Success = 0;
+    }
 
-        private SafeAppHandle() : base(true)
-        {
-        }
+    public bool AppExists => handle != IntPtr.Zero;
 
-        public bool AppExists => handle != IntPtr.Zero;
-
-        protected override bool ReleaseHandle()
-        {
-            if (handle == IntPtr.Zero) return true;
-            return NativeMethods.ClosePackageInfo(handle) == Success;
-        }
+    protected override bool ReleaseHandle()
+    {
+        if (handle == IntPtr.Zero) return true;
+        return NativeMethods.ClosePackageInfo(handle) == Success;
     }
 }

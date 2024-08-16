@@ -15,78 +15,77 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal static class ExtensionFunctions
 {
-    internal static class ExtensionFunctions
+    internal static int TimeoutInMilliseconds { get; set; } = 3000;
+
+    internal static bool Exit(this Process process, bool force)
     {
-        internal static int TimeoutInMilliseconds { get; set; } = 3000;
+        if (process == null) return true;
+        process.Refresh();
+        if (process.HasExited) return true;
+        if (process.CloseMainWindow()) return true;
 
-        internal static bool Exit(this Process process, bool force)
+        if (!force) return false;
+        process.Kill();
+
+        return true;
+    }
+
+    public static string StripUnicodeCharacters(this string input) => Encoding.ASCII.GetString(
+        Encoding.Convert(
+            Encoding.UTF8,
+            Encoding.GetEncoding(Encoding.ASCII.EncodingName,
+                new EncoderReplacementFallback(string.Empty),
+                new DecoderExceptionFallback()
+            ),
+            Encoding.UTF8.GetBytes(input)
+        )
+    );
+
+    /// <summary>
+    ///     Unpack a buffer containing potentially multiple zero-terminating strings into a list of strings
+    /// </summary>
+    /// <param name="buffer">the buffer containing the strings</param>
+    /// <returns>the list of strings</returns>
+    public static List<string> Unpack(this char[] buffer)
+    {
+        var result = new List<string>();
+        var bufferIndex = 0;
+        var entry = new StringBuilder();
+        while (bufferIndex < buffer.Length && buffer[bufferIndex] != 0)
         {
-            if (process == null) return true;
-            process.Refresh();
-            if (process.HasExited) return true;
-            if (process.CloseMainWindow()) return true;
-
-            if (!force) return false;
-            process.Kill();
-
-            return true;
+            entry.Append(buffer[bufferIndex++]);
+            if (buffer[bufferIndex] != 0) continue;
+            result.Add(entry.ToString());
+            entry.Clear();
+            bufferIndex++;
         }
 
-        public static string StripUnicodeCharacters(this string input) => Encoding.ASCII.GetString(
-            Encoding.Convert(
-                Encoding.UTF8,
-                Encoding.GetEncoding(Encoding.ASCII.EncodingName,
-                    new EncoderReplacementFallback(string.Empty),
-                    new DecoderExceptionFallback()
-                ),
-                Encoding.UTF8.GetBytes(input)
-            )
-        );
+        return result;
+    }
 
-        /// <summary>
-        ///     Unpack a buffer containing potentially multiple zero-terminating strings into a list of strings
-        /// </summary>
-        /// <param name="buffer">the buffer containing the strings</param>
-        /// <returns>the list of strings</returns>
-        public static List<string> Unpack(this char[] buffer)
+    internal static bool WaitForExit(this Process process, bool force)
+    {
+        if (process.WaitForExit(TimeoutInMilliseconds)) return true;
+        if (!force) return false;
+        process.Kill();
+        return true;
+    }
+
+    internal static bool WaitWithTimeoutTill<T>(this T target, Func<T, bool> conditionFunction)
+    {
+        // use stopwatch to make resilient to slow functions such as FindControl. Use Sleep to make resilient to fast ones.
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+        while (stopwatch.ElapsedMilliseconds < TimeoutInMilliseconds)
         {
-            var result = new List<string>();
-            var bufferIndex = 0;
-            var entry = new StringBuilder();
-            while (bufferIndex < buffer.Length && buffer[bufferIndex] != 0)
-            {
-                entry.Append(buffer[bufferIndex++]);
-                if (buffer[bufferIndex] != 0) continue;
-                result.Add(entry.ToString());
-                entry.Clear();
-                bufferIndex++;
-            }
-
-            return result;
+            if (conditionFunction(target)) return true;
+            Thread.Sleep(100);
         }
 
-        internal static bool WaitForExit(this Process process, bool force)
-        {
-            if (process.WaitForExit(TimeoutInMilliseconds)) return true;
-            if (!force) return false;
-            process.Kill();
-            return true;
-        }
-
-        internal static bool WaitWithTimeoutTill<T>(this T target, Func<T, bool> conditionFunction)
-        {
-            // use stopwatch to make resilient to slow functions such as FindControl. Use Sleep to make resilient to fast ones.
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            while (stopwatch.ElapsedMilliseconds < TimeoutInMilliseconds)
-            {
-                if (conditionFunction(target)) return true;
-                Thread.Sleep(100);
-            }
-
-            return false;
-        }
+        return false;
     }
 }

@@ -13,78 +13,76 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal partial class Locator
 {
-    internal class Locator
+    private const string TypeDelimiter = ":";
+    private static string _defaultMethod = "Name";
+
+    private static readonly ConditionTypeMapper ConditionTypes = [];
+    private static readonly ControlTypeMapper ControlTypes = [];
+
+    public Locator(string locatorString)
     {
-        private const string TypeDelimiter = ":";
-        private static string _defaultMethod = "Name";
-
-        private static readonly ConditionTypeMapper ConditionTypes = new ConditionTypeMapper();
-        private static readonly ControlTypeMapper ControlTypes = new ControlTypeMapper();
-
-        public Locator(string locatorString)
+        string criterion;
+        if (locatorString.Contains(TypeDelimiter))
         {
-            string criterion;
-            if (locatorString.Contains(TypeDelimiter))
-            {
-                Method = locatorString
-                    .Substring(0, locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal))
-                    .Trim();
-                criterion = locatorString
-                    .Substring(locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal) + 1)
-                    .Trim();
-            }
-            else
-            {
-                Method = DefaultConditionType;
-                criterion = locatorString.Trim();
-            }
-
-            // Find non-whitespace, then optional whitespace, and then text between brackets. If it matches, we have a grid item specification
-            var match = Regex.Match(criterion, @"([^\s]*)\s*\[(.*)\]", RegexOptions.IgnoreCase);
-            if (!match.Success)
-            {
-                Criterion = criterion;
-                GridItem = string.Empty;
-                return;
-            }
-
-            Criterion = match.Groups[1].Value;
-            GridItem = match.Groups[2].Value;
+            Method = locatorString[..locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal)].Trim();
+            criterion = locatorString[(locatorString.IndexOf(TypeDelimiter, StringComparison.Ordinal) + 1)..].Trim();
+        }
+        else
+        {
+            Method = DefaultConditionType;
+            criterion = locatorString.Trim();
         }
 
-        public int ConditionType => ConditionTypes.Map(Method);
-
-        public object ConditionValue
+        var match = GridItemSpecRegex().Match(criterion);
+        if (!match.Success)
         {
-            get
-            {
-                if (ConditionTypeMapper.IsControlType(Method)) return ControlType;
-                if (ConditionTypeMapper.IsNumericalType(Method)) return Convert.ToInt32(Criterion, CultureInfo.CurrentCulture);
-                if (ConditionTypeMapper.IsBooleanType(Method)) return bool.Parse(Criterion);
-                return UnescapedCriterion;
-            }
+            Criterion = criterion;
+            GridItem = string.Empty;
+            return;
         }
 
-        private int ControlType => ControlTypes.Map(Criterion);
-        public string Criterion { get; }
-
-        public static string DefaultConditionType
-        {
-            get => _defaultMethod;
-            set
-            {
-                if (ConditionTypes.ContainsKey(value)) _defaultMethod = value;
-            }
-        }
-
-        public string GridItem { get; }
-
-        public bool IsMainWindowSearch => ConditionTypeMapper.IsControlType(Method) && ControlTypeMapper.IsMainWindow(UnescapedCriterion);
-
-        public string Method { get; }
-
-        private string UnescapedCriterion => Regex.Unescape(Criterion);
+        Criterion = match.Groups[1].Value;
+        GridItem = match.Groups[2].Value;
     }
+
+    public int ConditionType => ConditionTypes.Map(Method);
+
+    public object ConditionValue
+    {
+        get
+        {
+            if (ConditionTypeMapper.IsControlType(Method)) return ControlType;
+            if (ConditionTypeMapper.IsNumericalType(Method)) return Convert.ToInt32(Criterion, CultureInfo.CurrentCulture);
+            if (ConditionTypeMapper.IsBooleanType(Method)) return bool.Parse(Criterion);
+            return UnescapedCriterion;
+        }
+    }
+
+    private int ControlType => ControlTypes.Map(Criterion);
+    public string Criterion { get; }
+
+    public static string DefaultConditionType
+    {
+        get => _defaultMethod;
+        set
+        {
+            if (ConditionTypes.ContainsKey(value)) _defaultMethod = value;
+        }
+    }
+
+    public string GridItem { get; }
+
+    public bool IsMainWindowSearch => ConditionTypeMapper.IsControlType(Method) && ControlTypeMapper.IsMainWindow(UnescapedCriterion);
+
+    public string Method { get; }
+
+    private string UnescapedCriterion => Regex.Unescape(Criterion);
+
+    // Find non-whitespace, then optional whitespace, and then text between brackets. If it matches, we have a grid item specification
+    [GeneratedRegex(@"([^\s]*)\s*\[(.*)\]", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex GridItemSpecRegex();
 }

@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2021 Rik Essenius
+﻿// Copyright 2019-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -11,66 +11,57 @@
 
 using interop.UIAutomationCore;
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal class Window(IUIAutomationElement window)
 {
-    internal class Window
+    private readonly IUIAutomationTransformPattern _transformPattern = window?.GetCurrentPattern(UIA_PatternIds.UIA_TransformPatternId) as IUIAutomationTransformPattern;
+    private IUIAutomationWindowPattern _windowPattern;
+
+    private tagRECT BoundingRectangle => window.CurrentBoundingRectangle;
+
+    public Coordinate Size => new(
+        BoundingRectangle.right - BoundingRectangle.left,
+        BoundingRectangle.bottom - BoundingRectangle.top);
+
+    public Coordinate TopLeft => new(BoundingRectangle.left, BoundingRectangle.top);
+
+    public bool IsTopmost()
     {
-        private readonly IUIAutomationTransformPattern _transformPattern;
-        private readonly IUIAutomationElement _window;
-        private IUIAutomationWindowPattern _windowPattern;
-
-        public Window(IUIAutomationElement window)
-        {
-            _window = window;
-            _transformPattern =
-                window?.GetCurrentPattern(UIA_PatternIds.UIA_TransformPatternId) as IUIAutomationTransformPattern;
-        }
-
-        private tagRECT BoundingRectangle => _window.CurrentBoundingRectangle;
-
-        public Coordinate Size => new Coordinate(
-            BoundingRectangle.right - BoundingRectangle.left,
-            BoundingRectangle.bottom - BoundingRectangle.top);
-
-        public Coordinate TopLeft => new Coordinate(BoundingRectangle.left, BoundingRectangle.top);
-
-        public bool IsTopmost()
-        {
-            _windowPattern =
-                _window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
-            if (_windowPattern == null) return false;
-            return _windowPattern.CurrentIsTopmost != 0;
-        }
-
-        public bool Maximize() => SetWindowVisualState(WindowVisualState.WindowVisualState_Maximized);
-        public bool Minimize() => SetWindowVisualState(WindowVisualState.WindowVisualState_Minimized);
-
-        public bool Move(int xCoordinate, int yCoordinate)
-        {
-            if (_transformPattern == null) return false;
-            _transformPattern.Move(xCoordinate, yCoordinate);
-            return true;
-        }
-
-        public bool Normal() => SetWindowVisualState(WindowVisualState.WindowVisualState_Normal);
-
-        public bool Resize(int width, int height)
-        {
-            if (_transformPattern == null) return false;
-            _transformPattern.Resize(width, height);
-            return true;
-        }
-
-        private bool SetWindowVisualState(WindowVisualState state)
-        {
-            _windowPattern =
-                _window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
-            if (_windowPattern == null) return false;
-            _windowPattern.SetWindowVisualState(state);
-            _windowPattern.WaitWithTimeoutTill(x => x.CurrentWindowVisualState == state);
-            return _windowPattern.CurrentWindowVisualState == state;
-        }
-
-        public bool WaitTillOnScreen() => this.WaitWithTimeoutTill(x => x.IsTopmost());
+        _windowPattern =
+            window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
+        if (_windowPattern == null) return false;
+        return _windowPattern.CurrentIsTopmost != 0;
     }
+
+    public bool Maximize() => SetWindowVisualState(WindowVisualState.WindowVisualState_Maximized);
+    public bool Minimize() => SetWindowVisualState(WindowVisualState.WindowVisualState_Minimized);
+
+    public bool Move(int xCoordinate, int yCoordinate)
+    {
+        if (_transformPattern == null) return false;
+        _transformPattern.Move(xCoordinate, yCoordinate);
+        return true;
+    }
+
+    public bool Normal() => SetWindowVisualState(WindowVisualState.WindowVisualState_Normal);
+
+    public bool Resize(int width, int height)
+    {
+        if (_transformPattern == null) return false;
+        _transformPattern.Resize(width, height);
+        return true;
+    }
+
+    private bool SetWindowVisualState(WindowVisualState state)
+    {
+        _windowPattern =
+            window?.GetCurrentPattern(UIA_PatternIds.UIA_WindowPatternId) as IUIAutomationWindowPattern;
+        if (_windowPattern == null) return false;
+        _windowPattern.SetWindowVisualState(state);
+        _windowPattern.WaitWithTimeoutTill(x => x.CurrentWindowVisualState == state);
+        return _windowPattern.CurrentWindowVisualState == state;
+    }
+
+    public bool WaitTillOnScreen() => this.WaitWithTimeoutTill(x => x.IsTopmost());
 }

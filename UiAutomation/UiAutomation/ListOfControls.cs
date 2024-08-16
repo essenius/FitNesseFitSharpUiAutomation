@@ -1,4 +1,4 @@
-﻿// Copyright 2016-2021 Rik Essenius
+﻿// Copyright 2016-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -15,96 +15,86 @@ using System.Linq;
 using UiAutomation.Model;
 using static System.FormattableString;
 
-namespace UiAutomation
+namespace UiAutomation;
+
+internal class ListOfControls(int? processId, string searchCriterion)
 {
-    internal class ListOfControls
+    private Collection<Collection<string>> CreateBaseResult()
     {
-        private readonly int? _processId;
-        private readonly string _searchCriterion;
-
-        public ListOfControls(int? processId, string searchCriterion)
+        List<Control> list;
+        if (processId != null)
         {
-            _processId = processId;
-            _searchCriterion = searchCriterion;
+            var app = ApplicationFactory.AttachToProcess(processId.Value);
+            app.WaitForInputIdle();
+            var control = app.WindowControl;
+            // This is not only necessary to potentially wait, but also to populate the parent property in the control.
+            control.WaitTillFound();
+            list = [.. control.DescendantControls(searchCriterion)];
+        }
+        else
+        {
+            list = [.. Control.RootChildControls(searchCriterion)];
         }
 
-        private Collection<Collection<string>> CreateBaseResult()
+        var rows = new Collection<Collection<string>> { new() { "Automation Id", "Name", "Value", "Location" } };
+        foreach (var entry in list)
         {
-            List<Control> list;
-            if (_processId != null)
-            {
-                var app = ApplicationFactory.AttachToProcess(_processId.Value);
-                app.WaitForInputIdle();
-                var control = app.WindowControl;
-                // This is not only necessary to potentially wait, but also to populate the parent property in the control.
-                control.WaitTillFound();
-                list = control.DescendantControls(_searchCriterion).ToList();
-            }
-            else
-            {
-                list = Control.RootChildControls(_searchCriterion).ToList();
-            }
-
-            var rows = new Collection<Collection<string>> { new Collection<string> { "Automation Id", "Name", "Value", "Location" } };
-            foreach (var entry in list)
-            {
-                var position = Mouse.AbsolutePosition(entry.AutomationElement);
-                var row = new Collection<string> { entry.AutomationId, entry.Name, entry.Value, Invariant($"x:{position.X}, y:{position.Y}") };
-                rows.Add(row);
-            }
-
-            return rows;
+            var position = Mouse.AbsolutePosition(entry.AutomationElement);
+            var row = new Collection<string> { entry.AutomationId, entry.Name, entry.Value, Invariant($"x:{position.X}, y:{position.Y}") };
+            rows.Add(row);
         }
 
-        /// <summary>
-        ///     Table interface, returning the controls meeting the criteria in the provided process (by ID). If that's null,
-        ///     starts
-        ///     form the root element
-        /// </summary>
-        public Collection<object> DoTable()
-        {
-            var result = new Collection<object>();
-            foreach (var row in CreateBaseResult())
-            {
-                var resultRow = new Collection<string>();
-                foreach (var cell in row)
-                {
-                    resultRow.Add(Report(cell));
-                }
-
-                result.Add(resultRow);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        ///     Query interface returning the controls meeting the criteria in the provided process (by ID). If that's null, starts
-        ///     form
-        ///     the root element
-        /// </summary>
-        public Collection<object> Query()
-        {
-            var table = new Collection<object>();
-            var baseResult = CreateBaseResult();
-
-            if (baseResult.Count <= 1) return null;
-            var headerRow = baseResult[0];
-
-            foreach (var entry in baseResult.Skip(1))
-            {
-                var row = new Collection<object>();
-                for (var i = 0; i < headerRow.Count; i++)
-                {
-                    row.Add(new Collection<string> { headerRow[i], entry[i] });
-                }
-
-                table.Add(row);
-            }
-
-            return table;
-        }
-
-        private static string Report(object message) => "report:" + message;
+        return rows;
     }
+
+    /// <summary>
+    ///     Table interface, returning the controls meeting the criteria in the provided process (by ID). If that's null,
+    ///     starts
+    ///     form the root element
+    /// </summary>
+    public Collection<object> DoTable()
+    {
+        var result = new Collection<object>();
+        foreach (var row in CreateBaseResult())
+        {
+            var resultRow = new Collection<string>();
+            foreach (var cell in row)
+            {
+                resultRow.Add(Report(cell));
+            }
+
+            result.Add(resultRow);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///     Query interface returning the controls meeting the criteria in the provided process (by ID). If that's null, starts
+    ///     form
+    ///     the root element
+    /// </summary>
+    public Collection<object> Query()
+    {
+        var table = new Collection<object>();
+        var baseResult = CreateBaseResult();
+
+        if (baseResult.Count <= 1) return null;
+        var headerRow = baseResult[0];
+
+        foreach (var entry in baseResult.Skip(1))
+        {
+            var row = new Collection<object>();
+            for (var i = 0; i < headerRow.Count; i++)
+            {
+                row.Add(new Collection<string> { headerRow[i], entry[i] });
+            }
+
+            table.Add(row);
+        }
+
+        return table;
+    }
+
+    private static string Report(object message) => "report:" + message;
 }

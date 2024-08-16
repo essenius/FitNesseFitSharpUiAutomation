@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -11,35 +11,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
-namespace UiAutomation.Model
+namespace UiAutomation.Model;
+
+internal class Mapping<T>(string newName) : Dictionary<string, T>(StringComparer.OrdinalIgnoreCase)
 {
-    [Serializable]
-    internal class Mapping<T> : Dictionary<string, T>
+    public T Map(string keyToFind)
     {
-        private readonly string _name;
-
-        public Mapping(string newName) : base(StringComparer.OrdinalIgnoreCase) => _name = newName;
-
-        protected Mapping(SerializationInfo info, StreamingContext context) : base(info, context) =>
-            _name = (string)info.GetValue("MappingName", typeof(string));
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
-
-            info.AddValue("MappingName", _name);
-            base.GetObjectData(info, context);
-        }
-
-        public T Map(string keyToFind)
-        {
-            if (TryGetValue(keyToFind.Replace(" ", string.Empty), out var returnValue)) return returnValue;
-            throw new ArgumentException(keyToFind + " is an unrecognized " + _name);
-        }
+        if (TryGetValue(keyToFind.Replace(" ", string.Empty), out var returnValue)) return returnValue;
+        throw new ArgumentException(keyToFind + " is an unrecognized " + newName);
     }
 }

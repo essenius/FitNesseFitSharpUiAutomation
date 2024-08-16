@@ -12,14 +12,14 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+[TestClass]
+public class WindowTest
 {
-    [TestClass]
-    public class WindowTest
+    [TestMethod, TestCategory("Unit")]
+    public void WindowTestNull()
     {
-        [TestMethod, TestCategory("Unit")]
-        public void WindowTestNull()
-        {
             var window = new Window(null);
             Assert.IsFalse(window.Maximize());
             Assert.IsFalse(window.Minimize());
@@ -27,5 +27,4 @@ namespace UiAutomationTest
             Assert.IsFalse(window.Resize(100, 100));
             Assert.IsFalse(window.IsTopmost());
         }
-    }
 }

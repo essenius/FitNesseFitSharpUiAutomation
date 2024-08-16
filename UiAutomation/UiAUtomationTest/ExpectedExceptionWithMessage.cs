@@ -12,38 +12,31 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+public class ExpectedExceptionWithMessageAttribute(Type exceptionType, string expectedMessage) : ExpectedExceptionBaseAttribute
 {
-    public class ExpectedExceptionWithMessageAttribute : ExpectedExceptionBaseAttribute
+    private Type ExceptionType { get; } = exceptionType;
+
+    private string ExpectedMessage { get; } = expectedMessage;
+
+    protected override void Verify(Exception e)
     {
-        public ExpectedExceptionWithMessageAttribute(Type exceptionType, string expectedMessage)
+        if (e.GetType() != ExceptionType)
         {
-            ExceptionType = exceptionType;
-            ExpectedMessage = expectedMessage;
+            Assert.Fail(
+                $"ExpectedExceptionWithMessageAttribute failed. Expected exception type: {ExceptionType.FullName}. " +
+                $"Actual exception type: {e.GetType().FullName}. Exception message: {e.Message}"
+            );
         }
 
-        private Type ExceptionType { get; }
+        var actualMessage = e.Message.Trim();
 
-        private string ExpectedMessage { get; }
-
-        protected override void Verify(Exception e)
+        if (ExpectedMessage != null)
         {
-            if (e?.GetType() != ExceptionType)
-            {
-                Assert.Fail(
-                    $"ExpectedExceptionWithMessageAttribute failed. Expected exception type: {ExceptionType.FullName}. " +
-                    $"Actual exception type: {e?.GetType().FullName}. Exception message: {e?.Message}"
-                );
-            }
-
-            var actualMessage = e?.Message.Trim();
-
-            if (ExpectedMessage != null)
-            {
-                // We need this trick since there are some differences in the error messages between .NET 5.0+ and .NET 4.8
-                // specifically, .NET 5.0+ use dots at the end of a message, .NET 4.8 doesn't.
-                Assert.IsTrue(actualMessage?.Contains(ExpectedMessage));
-            }
+            // We need this trick since there are some differences in the error messages between .NET 5.0+ and .NET 4.8
+            // specifically, .NET 5.0+ use dots at the end of a message, .NET 4.8 doesn't.
+            Assert.IsTrue(actualMessage.Contains(ExpectedMessage));
         }
     }
 }

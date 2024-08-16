@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -12,27 +12,22 @@
 using System;
 using interop.UIAutomationCore;
 
-namespace UiAutomation.Patterns
+namespace UiAutomation.Patterns;
+
+internal class TogglePattern(IUIAutomationElement element) : IPattern
 {
-    internal class TogglePattern : IPattern
+    private readonly IUIAutomationTogglePattern _togglePattern = element.GetCurrentPattern(UIA_PatternIds.UIA_TogglePatternId) as IUIAutomationTogglePattern;
+
+    public bool TryGet(out string returnValue)
     {
-        private readonly IUIAutomationTogglePattern _togglePattern;
-
-        public TogglePattern(IUIAutomationElement element) =>
-            _togglePattern = element.GetCurrentPattern(UIA_PatternIds.UIA_TogglePatternId) as
-                IUIAutomationTogglePattern;
-
-        public bool TryGet(out string returnValue)
-        {
-            returnValue = string.Empty;
-            if (!DoesApply()) return false;
-            var stringResult = _togglePattern.CurrentToggleState.ToString();
-            returnValue = stringResult.Substring(stringResult.IndexOf("_", StringComparison.Ordinal) + 1);
-            return true;
-        }
-
-        public SetResult TrySet(string value) => throw new NotImplementedException();
-
-        private bool DoesApply() => _togglePattern != null;
+        returnValue = string.Empty;
+        if (!DoesApply()) return false;
+        var stringResult = _togglePattern.CurrentToggleState.ToString();
+        returnValue = stringResult[(stringResult.IndexOf("_", StringComparison.Ordinal) + 1)..];
+        return true;
     }
+
+    public SetResult TrySet(string value) => SetResult.NotApplicable;
+
+    private bool DoesApply() => _togglePattern != null;
 }

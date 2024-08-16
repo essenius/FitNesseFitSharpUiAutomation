@@ -10,35 +10,50 @@
 //   See the License for the specific language governing permissions and limitations under the License.
 
 using System;
+using System.Reflection;
+using interop.UIAutomationCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 using UiAutomation.Model;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+[TestClass]
+public class ControlTest
 {
-    [TestClass]
-    public class ControlTest
+    [TestMethod, TestCategory("Unit")]
+    public void ControlCommandsWithoutApplicationHandledOk()
     {
-        [TestMethod, TestCategory("Unit")]
-        public void ControlCommandsWithoutApplicationHandledOk()
-        {
-            var control = Control.Parse("id:non-existing element");
-            Assert.AreEqual(SearchType.Deep, control.SearchType, "SearchType is deep");
-            Assert.IsFalse(control.Collapse(), "Collapse fails");
-            Assert.IsFalse(control.Expand(), "Expand fails");
-            Assert.IsFalse(control.DoubleClick(), "DoubleClick fails");
-            Assert.IsFalse(control.FindGridItem(new GridItem("1,2")), "FindGridItem fails");
-            Assert.IsNull(control.FirstTextUnder(), "FirstTextUnder fails");
+        var control = Control.Parse("id:non-existing element");
+        Assert.AreEqual(SearchType.Deep, control.SearchType, "SearchType is deep");
+        Assert.IsFalse(control.Collapse(), "Collapse fails");
+        Assert.IsFalse(control.Expand(), "Expand fails");
+        Assert.IsFalse(control.DoubleClick(), "DoubleClick fails");
+        Assert.IsFalse(control.FindGridItem(new GridItem("1,2")), "FindGridItem fails");
+        Assert.IsNull(control.FirstTextUnder(), "FirstTextUnder fails");
 
-            Assert.IsTrue(string.IsNullOrEmpty(control.AutomationId), "Automation ID is empty");
-            Assert.IsTrue(string.IsNullOrEmpty(control.Name), "Name is empty");
-            Assert.AreEqual(0, control.ColumnCount, "Column Count = 0");
-            Assert.AreEqual(0, control.RowCount, "RowCount = 0");
-            Assert.IsNull(control.SelectedCell());
+        Assert.IsTrue(string.IsNullOrEmpty(control.AutomationId), "Automation ID is empty");
+        Assert.IsTrue(string.IsNullOrEmpty(control.Name), "Name is empty");
+        Assert.AreEqual(0, control.ColumnCount, "Column Count = 0");
+        Assert.AreEqual(0, control.RowCount, "RowCount = 0");
+        Assert.IsNull(control.SelectedCell());
 
-            Assert.IsFalse(control.IsEnabled(), "control is not enabled");
-            Assert.IsFalse(control.IsVisible(), "control is not visible");
-            Assert.AreEqual(IntPtr.Zero, control.WindowHandle, "window handle is IntPtr.Zero");
-        }
+        Assert.IsFalse(control.IsEnabled(), "control is not enabled");
+        Assert.IsFalse(control.IsVisible(), "control is not visible");
+        Assert.AreEqual(IntPtr.Zero, control.WindowHandle, "window handle is IntPtr.Zero");
+    }
+
+    [TestMethod, TestCategory("Unit")]
+    public void CreateConditionWithEmptyLocatorsTest()
+    {
+        // CreateCondition is a private (static) method, so we use reflection
+        var controlType = typeof(Control);
+        var createConditionMethod = controlType.GetMethod("CreateCondition", BindingFlags.NonPublic | BindingFlags.Static);
+        Assert.IsNotNull(createConditionMethod, "CreateCondition method exists");
+        var locators = new LocatorCollection();
+        // when called with empty locators, it should return a TrueCondition
+        var condition = createConditionMethod.Invoke(null, [locators]) as IUIAutomationBoolCondition;
+        Assert.IsNotNull(condition, "Condition is a boolean condition");
+        Assert.AreEqual(1, condition.BooleanValue, "this is a TrueCondition");
     }
 }

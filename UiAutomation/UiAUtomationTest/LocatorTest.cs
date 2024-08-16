@@ -13,117 +13,116 @@ using interop.UIAutomationCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+[TestClass]
+public class LocatorTest
 {
-    [TestClass]
-    public class LocatorTest
+    [TestMethod, TestCategory("Unit")]
+    public void LocatorByFunctionTest()
     {
-        [TestMethod, TestCategory("Unit")]
-        public void LocatorByFunctionTest()
+        var conditionTypeList = new[] { "Name", "id", "ControlType", "CAPTION", "PrOcEsSiD" };
+        foreach (var conditionType in conditionTypeList)
         {
-            var conditionTypeList = new[] { "Name", "id", "ControlType", "CAPTION", "PrOcEsSiD" };
-            foreach (var conditionType in conditionTypeList)
-            {
-                var locator = new Locator(conditionType + ":abc");
-                Assert.AreEqual(locator.Method, conditionType);
-            }
+            var locator = new Locator(conditionType + ":abc");
+            Assert.AreEqual(locator.Method, conditionType);
+        }
+    }
+
+    [TestMethod, TestCategory("Unit")]
+    public void LocatorConditionTypeTest()
+    {
+        var locator = new Locator("Id:MyId");
+        Assert.AreEqual(
+            UIA_PropertyIds.UIA_AutomationIdPropertyId,
+            locator.ConditionType,
+            "ConditionType match for Id"
+        );
+        Assert.AreEqual("MyId", locator.ConditionValue, "ConditionValue match for Id");
+        locator = new Locator("ControlType:RadioButton");
+        Assert.AreEqual(
+            UIA_PropertyIds.UIA_ControlTypePropertyId,
+            locator.ConditionType,
+            "ConditionType match for ControlType"
+        );
+        Assert.AreEqual(
+            UIA_ControlTypeIds.UIA_RadioButtonControlTypeId,
+            locator.ConditionValue,
+            "ConditionValue match for ControlType"
+        );
+        locator = new Locator("IsEnabled:false");
+        Assert.AreEqual(
+            UIA_PropertyIds.UIA_IsEnabledPropertyId,
+            locator.ConditionType,
+            "ConditionType match for IsEnabled"
+        );
+        Assert.AreEqual(false, locator.ConditionValue, "ConditionValue match for IsEnabled");
+        locator = new Locator("ProcessId:123");
+        Assert.AreEqual(
+            UIA_PropertyIds.UIA_ProcessIdPropertyId,
+            locator.ConditionType,
+            "ConditionType match for ProcessId"
+        );
+        Assert.AreEqual(123, locator.ConditionValue, "ConditionValue match for ProcessId");
+    }
+
+    [DataTestMethod, TestCategory("Unit"), DataRow("abc:def [1,2]", "abc", "def", "1,2"), DataRow("abc: def", "abc", "def", ""),
+     DataRow("def", "Name", "def", ""), DataRow("def [ 1 ]", "Name", "def", " 1 ")]
+    public void LocatorConstructorTest(string input, string method, string criterion, string gridItem)
+    {
+        var locator = new Locator(input);
+        Assert.AreEqual(method, locator.Method, "Method OK");
+        Assert.AreEqual(criterion, locator.Criterion, "Locator OK");
+        Assert.AreEqual(gridItem, locator.GridItem);
+    }
+
+    [TestMethod, TestCategory("Unit")]
+    public void LocatorGridSpecTest()
+    {
+        Assert.AreEqual("Name", Locator.DefaultConditionType, "Default is Name");
+
+        var conditionList = new[] { "Name", "Id", "ControlType", "Caption", "ProcessId" };
+        foreach (var condition in conditionList)
+        {
+            Locator.DefaultConditionType = condition;
+            Assert.AreEqual(condition, Locator.DefaultConditionType, "Setting to {0}", condition);
         }
 
-        [TestMethod, TestCategory("Unit")]
-        public void LocatorConditionTypeTest()
+        Locator.DefaultConditionType = "bogusValue";
+        Assert.AreNotEqual("bogusValue", Locator.DefaultConditionType);
+    }
+
+    [TestInitialize]
+    public void LocatorInitialize() => Locator.DefaultConditionType = "Name";
+
+    [TestMethod, TestCategory("Unit")]
+    public void LocatorIsWindowTest()
+    {
+        var locator = new Locator("Id:MyId");
+        Assert.IsFalse(locator.IsMainWindowSearch, "Id");
+        locator = new Locator("ControlType:MainWindow");
+        Assert.IsTrue(locator.IsMainWindowSearch, "ControlType MainWindow");
+        locator = new Locator("ControlType:Window");
+        Assert.IsFalse(locator.IsMainWindowSearch, "ControlType MainWindow");
+        locator = new Locator("ControlType:Text");
+        Assert.IsFalse(locator.IsMainWindowSearch, "ControlType Text");
+        locator = new Locator("Id:Window");
+        Assert.IsFalse(locator.IsMainWindowSearch, "Id Window");
+    }
+
+    [TestMethod, TestCategory("Unit")]
+    public void LocatorSetDefaultConditionTypeTest()
+    {
+        Assert.AreEqual("Name", Locator.DefaultConditionType, "Default is Name");
+
+        var conditionList = new[] { "Name", "Id", "ControlType", "Caption", "ProcessId" };
+        foreach (var condition in conditionList)
         {
-            var locator = new Locator("Id:MyId");
-            Assert.AreEqual(
-                UIA_PropertyIds.UIA_AutomationIdPropertyId,
-                locator.ConditionType,
-                "ConditionType match for Id"
-            );
-            Assert.AreEqual("MyId", locator.ConditionValue, "ConditionValue match for Id");
-            locator = new Locator("ControlType:RadioButton");
-            Assert.AreEqual(
-                UIA_PropertyIds.UIA_ControlTypePropertyId,
-                locator.ConditionType,
-                "ConditionType match for ControlType"
-            );
-            Assert.AreEqual(
-                UIA_ControlTypeIds.UIA_RadioButtonControlTypeId,
-                locator.ConditionValue,
-                "ConditionValue match for ControlType"
-            );
-            locator = new Locator("IsEnabled:false");
-            Assert.AreEqual(
-                UIA_PropertyIds.UIA_IsEnabledPropertyId,
-                locator.ConditionType,
-                "ConditionType match for IsEnabled"
-            );
-            Assert.AreEqual(false, locator.ConditionValue, "ConditionValue match for IsEnabled");
-            locator = new Locator("ProcessId:123");
-            Assert.AreEqual(
-                UIA_PropertyIds.UIA_ProcessIdPropertyId,
-                locator.ConditionType,
-                "ConditionType match for ProcessId"
-            );
-            Assert.AreEqual(123, locator.ConditionValue, "ConditionValue match for ProcessId");
+            Locator.DefaultConditionType = condition;
+            Assert.AreEqual(condition, Locator.DefaultConditionType, "Setting to {0}", condition);
         }
 
-        [DataTestMethod, TestCategory("Unit"), DataRow("abc:def [1,2]", "abc", "def", "1,2"), DataRow("abc: def", "abc", "def", ""),
-         DataRow("def", "Name", "def", ""), DataRow("def [ 1 ]", "Name", "def", " 1 ")]
-        public void LocatorConstructorTest(string input, string method, string criterion, string gridItem)
-        {
-            var locator = new Locator(input);
-            Assert.AreEqual(method, locator.Method, "Method OK");
-            Assert.AreEqual(criterion, locator.Criterion, "Locator OK");
-            Assert.AreEqual(gridItem, locator.GridItem);
-        }
-
-        [TestMethod, TestCategory("Unit")]
-        public void LocatorGridSpecTest()
-        {
-            Assert.AreEqual("Name", Locator.DefaultConditionType, "Default is Name");
-
-            var conditionList = new[] { "Name", "Id", "ControlType", "Caption", "ProcessId" };
-            foreach (var condition in conditionList)
-            {
-                Locator.DefaultConditionType = condition;
-                Assert.AreEqual(condition, Locator.DefaultConditionType, "Setting to {0}", condition);
-            }
-
-            Locator.DefaultConditionType = "bogusValue";
-            Assert.AreNotEqual("bogusValue", Locator.DefaultConditionType);
-        }
-
-        [TestInitialize]
-        public void LocatorInitialize() => Locator.DefaultConditionType = "Name";
-
-        [TestMethod, TestCategory("Unit")]
-        public void LocatorIsWindowTest()
-        {
-            var locator = new Locator("Id:MyId");
-            Assert.IsFalse(locator.IsMainWindowSearch, "Id");
-            locator = new Locator("ControlType:MainWindow");
-            Assert.IsTrue(locator.IsMainWindowSearch, "ControlType MainWindow");
-            locator = new Locator("ControlType:Window");
-            Assert.IsFalse(locator.IsMainWindowSearch, "ControlType MainWindow");
-            locator = new Locator("ControlType:Text");
-            Assert.IsFalse(locator.IsMainWindowSearch, "ControlType Text");
-            locator = new Locator("Id:Window");
-            Assert.IsFalse(locator.IsMainWindowSearch, "Id Window");
-        }
-
-        [TestMethod, TestCategory("Unit")]
-        public void LocatorSetDefaultConditionTypeTest()
-        {
-            Assert.AreEqual("Name", Locator.DefaultConditionType, "Default is Name");
-
-            var conditionList = new[] { "Name", "Id", "ControlType", "Caption", "ProcessId" };
-            foreach (var condition in conditionList)
-            {
-                Locator.DefaultConditionType = condition;
-                Assert.AreEqual(condition, Locator.DefaultConditionType, "Setting to {0}", condition);
-            }
-
-            Locator.DefaultConditionType = "bogusValue";
-            Assert.AreNotEqual("bogusValue", Locator.DefaultConditionType);
-        }
+        Locator.DefaultConditionType = "bogusValue";
+        Assert.AreNotEqual("bogusValue", Locator.DefaultConditionType);
     }
 }

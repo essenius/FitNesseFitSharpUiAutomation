@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2021 Rik Essenius
+﻿// Copyright 2013-2024 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -12,44 +12,40 @@
 using System;
 using interop.UIAutomationCore;
 
-namespace UiAutomation.Patterns
+namespace UiAutomation.Patterns;
+
+internal class LegacyIAccessiblePattern(IUIAutomationElement element) : IPattern
 {
-    internal class LegacyIAccessiblePattern : IPattern
+    private readonly IUIAutomationLegacyIAccessiblePattern _legacyIAccessiblePattern = element.GetCurrentPattern(UIA_PatternIds.UIA_LegacyIAccessiblePatternId) as
+        IUIAutomationLegacyIAccessiblePattern;
+
+    public bool TryGet(out string returnValue)
     {
-        private readonly IUIAutomationLegacyIAccessiblePattern _legacyIAccessiblePattern;
-
-        public LegacyIAccessiblePattern(IUIAutomationElement element) =>
-            _legacyIAccessiblePattern = element.GetCurrentPattern(UIA_PatternIds.UIA_LegacyIAccessiblePatternId) as
-                IUIAutomationLegacyIAccessiblePattern;
-
-        public bool TryGet(out string returnValue)
+        if (!DoesApply())
         {
-            if (!DoesApply())
-            {
-                returnValue = null;
-                return false;
-            }
-            returnValue = _legacyIAccessiblePattern.CurrentValue;
-            return true;
+            returnValue = null;
+            return false;
         }
-
-        public SetResult TrySet(string value)
-        {
-            if (!DoesApply()) return SetResult.NotApplicable;
-            try
-            {
-                _legacyIAccessiblePattern.SetValue(value);
-                // legacy IAccessible pattern sometimes claims to succeed without doing anything, so check for that.
-                if (_legacyIAccessiblePattern.CurrentValue == value) return SetResult.Success;
-            }
-            catch (NotImplementedException)
-            {
-                // ignore, report that it didn't succeed
-            }
-
-            return SetResult.NotApplicable;
-        }
-
-        private bool DoesApply() => _legacyIAccessiblePattern != null;
+        returnValue = _legacyIAccessiblePattern.CurrentValue;
+        return true;
     }
+
+    public SetResult TrySet(string value)
+    {
+        if (!DoesApply()) return SetResult.NotApplicable;
+        try
+        {
+            _legacyIAccessiblePattern.SetValue(value);
+            // legacy IAccessible pattern sometimes claims to succeed without doing anything, so check for that.
+            if (_legacyIAccessiblePattern.CurrentValue == value) return SetResult.Success;
+        }
+        catch (NotImplementedException)
+        {
+            // ignore, report that it didn't succeed
+        }
+
+        return SetResult.NotApplicable;
+    }
+
+    private bool DoesApply() => _legacyIAccessiblePattern != null;
 }

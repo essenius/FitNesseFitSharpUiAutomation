@@ -12,16 +12,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+[TestClass]
+public class ExtractGridTest
 {
-    [TestClass]
-    public class ExtractGridTest
+    [TestMethod, TestCategory("Unit")]
+    public void ExtractGridNotfoundTest()
     {
-        [TestMethod, TestCategory("Unit")]
-        public void ExtractGridNotfoundTest()
-        {
-            var fixture = new ExtractGrid("dummy");
-            Assert.IsNull(fixture.Query());
-        }
+        var fixture = new ExtractGrid("dummy");
+        Assert.IsNull(fixture.Query());
     }
 }
