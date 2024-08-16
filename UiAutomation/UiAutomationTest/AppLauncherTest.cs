@@ -14,64 +14,58 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 using UiAutomation.Model;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+[TestClass]
+public class AppLauncherTest
 {
-    [TestClass]
-    public class AppLauncherTest
+    // Can't test everything without mocking NativeMethods, so decided to leave the Win32Exceptions uncovered.
+    // Also, can't test EntryPointNotFoundException as it is thrown by the DllImport, and can't be caught.
+
+    [TestMethod, TestCategory("DefaultApps")]
+    public void AppLauncherResolveTest()
     {
-        [TestMethod, TestCategory("DefaultApps")]
-        public void AppLauncherResolveTest()
+        using (var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe"))
         {
-            using (var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe"))
-            {
-                Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
-            }
-
-            using var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy");
-            Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
+            Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
         }
 
-        [TestMethod, TestCategory("Unit")]
-        public void AppLauncherInvalidAppTest()
-        {
-            using var launcher = new AppLauncher("bogus");
-            Assert.IsFalse(launcher.Exists);
-        }
+        using var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy");
+        Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
+    }
 
-        [TestMethod, TestCategory("DefaultApps")]
-        public void AppLauncherUwpAppTest()
-        {
-            var fixture = new UiAutomationFixture();
-            UiAutomationFixture.TimeoutSeconds = 2;
-            Assert.IsTrue(
-                fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null), "App started"
-            );
-            Assert.IsTrue(fixture.IsUwpApp(), "Is UWP App");
-            // Switch to parent as that contains the close button. Elements on child windows are found too.
-            // UWP apps have a container called Application Frame Host.
-            // So they are not direct children of the desktop, unlike "normal" applications. 
-            // That means that you need to use "descendants" rather than "children" in findfirst,
-            // which is slow especially if a control is not found
+    [TestMethod, TestCategory("Unit")]
+    public void AppLauncherInvalidAppTest()
+    {
+        using var launcher = new AppLauncher("bogus");
+        Assert.IsFalse(launcher.Exists);
+    }
 
-            // TODO: You need to be very careful here. Sometimes the wrong close button gets pushed.
-            // e.g. once I had an existing Calculator instance running, and the process closed 
-            // Edge instead of the new calculator window. Still need to find out how to prevent that.
-            // For now the workaround is ensuring that there are no other instances of your app running.
+    [TestMethod, TestCategory("DefaultApps")]
+    public void AppLauncherUwpAppTest()
+    {
+        var fixture = new UiAutomationFixture();
+        UiAutomationFixture.TimeoutSeconds = 2;
+        Assert.IsTrue(
+            fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null), "App started"
+        );
+        Assert.IsTrue(fixture.IsUwpApp(), "Is UWP App");
+        // UWP apps have a container window under the main window. Switch to parent as that contains the close button.
+        // Elements on child windows are found too. Those are not direct children of the desktop, unlike "normal" applications.
+        // That means that you need to use "descendants" rather than "children", which is slow especially if a control is not found.
 
-            Assert.IsTrue(fixture.SwitchToParentWindow(), "Switch to parent.");
-
-            Assert.IsTrue(fixture.ClickControl("ControlType:ListItem && name:System"), "click system");
-            Assert.IsTrue(fixture.WaitForControl("id:settingPagesList"), "Wait for SettingPagesList");
-            fixture.SetValueOfControlTo("id:TextBox", "ab");
-            Assert.IsTrue(fixture.WaitForControlAndClick("Name:About your PC"), "Click About your PC");
-            // This is needed. If you don't do it, the process gets into a locked state.
-            Assert.IsTrue(fixture.WaitForControl("ControlType:Text && name:About"), "Wait for About text");
-            // The About title comes earlier than the rest of the page, so wait for the control we want to examine
-            Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_ProcessorStatus_DescriptionTextBlock"), "Wait for processor");
-            var version = fixture.ValueOfControl("id:SystemSettings_PCSystem_ProcessorStatus_ValueTextBlock");
-            Debug.Print("Processor from settings: " + version);
-            Assert.IsFalse(string.IsNullOrEmpty(version), "Processor is not empty");
-            Assert.IsTrue(fixture.ClickControl("name:Close Settings"), "Press Close Settings");
-        }
+        Assert.IsTrue(fixture.SwitchToParentWindow(), "Switch to parent.");
+        Assert.IsTrue(fixture.ClickControl("ControlType:ListItem && name:System"), "click system");
+        Assert.IsTrue(fixture.WaitForControl("id:settingPagesList"), "Wait for SettingPagesList");
+        fixture.SetValueOfControlTo("id:TextBox", "ab");
+        Assert.IsTrue(fixture.WaitForControlAndClick("Name:About your PC"), "Click About your PC");
+        // This is needed. If you don't do it, the process gets into a locked state.
+        Assert.IsTrue(fixture.WaitForControl("ControlType:Text && name:About"), "Wait for About text");
+        // The About title comes earlier than the rest of the page, so wait for the control we want to examine
+        Assert.IsTrue(fixture.WaitForControl("id:SystemSettings_PCSystem_ProcessorStatus_DescriptionTextBlock"), "Wait for processor");
+        var version = fixture.ValueOfControl("id:SystemSettings_PCSystem_ProcessorStatus_ValueTextBlock");
+        Debug.Print("Processor from settings: " + version);
+        Assert.IsFalse(string.IsNullOrEmpty(version), "Processor is not empty");
+        Assert.IsTrue(fixture.ClickControl("name:Close Settings"), "Press Close Settings");
     }
 }

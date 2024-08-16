@@ -13,27 +13,26 @@ using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation.Model;
 
-namespace UiAutomationTest
-{
-    [TestClass]
-    public class ClassicApplicationTest
-    {
-        [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(Win32Exception), "The system cannot find the file specified")]
-        public void ClassicApplicationConstructorNonexistingFileRaisesException()
-        {
-            _ = new ClassicApplication("nonexisting.exe", null, null);
-        }
+namespace UiAutomationTest;
 
-        [TestMethod, TestCategory("DemoApp"), DeploymentItem("WpfDemoApp.exe"), DeploymentItem("WpfDemoApp.exe.config")]
-        public void ClassicApplicationConstructorTest1()
-        {
-            var app = new ClassicApplication("WpfDemoApp.exe", null, null);
-            app.WaitForInputIdle();
-            Assert.IsTrue(app.WaitForMainWindow());
-            Assert.IsTrue(app.IsActive, "App is active");
-            Assert.IsNotNull(app.MainWindowHandle, "Handle not null");
-            ExtensionFunctions.TimeoutInMilliseconds = 2000;
-            Assert.IsTrue(app.Exit(false), "Exit");
-        }
+[TestClass]
+public class ClassicApplicationTest
+{
+    [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(Win32Exception), "The system cannot find the file specified")]
+    public void ClassicApplicationConstructorNonexistingFileRaisesException()
+    {
+        _ = new ClassicApplication("nonexisting.exe", null, null);
+    }
+
+    [TestMethod, TestCategory("DemoApp"), DeploymentItem("WpfDemoApp.exe"), DeploymentItem("WpfDemoApp.exe.config")]
+    public void ClassicApplicationConstructorTest1()
+    {
+        var app = new ClassicApplication("WpfDemoApp.exe", null, null);
+        app.WaitForInputIdle();
+        Assert.IsTrue(app.WaitForMainWindow());
+        Assert.IsTrue(app.IsActive, "App is active");
+        Assert.IsNotNull(app.MainWindowHandle, "Handle not null");
+        ExtensionFunctions.TimeoutInMilliseconds = 2000;
+        Assert.IsTrue(app.Exit(false), "Exit");
     }
 }

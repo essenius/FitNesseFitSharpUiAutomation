@@ -13,35 +13,34 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 
-namespace UiAutomationTest
+namespace UiAutomationTest;
+
+[TestClass]
+public class GridITemTest
 {
-    [TestClass]
-    public class GridITemTest
+    [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
+    public void GridItemNoColumnMatchTest()
     {
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
-        public void GridItemNoColumnMatchTest()
-        {
-            _ = new GridItem("col x");
-        }
+        _ = new GridItem("col x");
+    }
 
-        [DataTestMethod, TestCategory("Unit"), DataRow(" row 10 , column   20 ", "row 10, column 20"), DataRow("12,34", "row 12, column 34"),
-         DataRow("  56 , 7  ", "row 56, column 7"), DataRow("row 8", "row 8"), DataRow("col9", "column 9"), DataRow("column30, row40", "row 40, column 30")]
-        public void GridItemParseTest(string input, string output)
-        {
-            var item = GridItem.Parse(input);
-            Assert.AreEqual(output, item.ToString());
-        }
+    [DataTestMethod, TestCategory("Unit"), DataRow(" row 10 , column   20 ", "row 10, column 20"), DataRow("12,34", "row 12, column 34"),
+     DataRow("  56 , 7  ", "row 56, column 7"), DataRow("row 8", "row 8"), DataRow("col9", "column 9"), DataRow("column30, row40", "row 40, column 30")]
+    public void GridItemParseTest(string input, string output)
+    {
+        var item = GridItem.Parse(input);
+        Assert.AreEqual(output, item.ToString());
+    }
 
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
-        public void GridItemWrongArgumentTest()
-        {
-            _ = new GridItem("bogus");
-        }
+    [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
+    public void GridItemWrongArgumentTest()
+    {
+        _ = new GridItem("bogus");
+    }
 
-        [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
-        public void GridItemNullArgumentTest()
-        {
-            _ = new GridItem(null);
-        }
+    [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
+    public void GridItemNullArgumentTest()
+    {
+        _ = new GridItem(null);
     }
 }
