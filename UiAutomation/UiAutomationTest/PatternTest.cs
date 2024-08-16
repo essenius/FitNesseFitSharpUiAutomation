@@ -36,7 +36,6 @@ public class PatternTest
                 Assert.IsTrue(fixture.IsUwpApp(), "Is UWP App");
             }
 
-            // Assert.IsTrue(fixture.SwitchToParentWindow(), "Switch to parent.");
             fixture.PressKey("^n");
             fixture.WaitForControl("Untitled");
             var control = fixture.GetControl("classname:RichEditD2DPT");
