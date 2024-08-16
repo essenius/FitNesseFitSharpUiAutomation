@@ -175,7 +175,7 @@ internal class Control
 
     /// <summary>
     ///     Search all windows directly under the root element for an window with a specific process ID.
-    ///     Can also be the window itself.
+    ///     Can also be the window itself. If it isn't, it might have a different process ID.
     /// </summary>
     /// <param name="processId">the process ID to search for</param>
     /// <returns>the found window control</returns>
