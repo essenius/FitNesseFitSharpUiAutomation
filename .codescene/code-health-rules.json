@@ -6,7 +6,8 @@
                     "name": "Large Assertion Blocks",
                     "weight": 0.0
                 }
-            ]
+            ],
+            "matching_content_path": "**/*"
        }
     ]
 }
