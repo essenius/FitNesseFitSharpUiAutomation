@@ -161,7 +161,7 @@ internal class Control
 
     private static IUIAutomationCondition CreateCondition(LocatorCollection locators)
     {
-        if (!locators.Any() || (locators.Count == 1 && string.IsNullOrEmpty(locators[0].Method) && string.IsNullOrEmpty(locators[0].Criterion)))
+        if (locators.IsEmpty())
         {
             return Automation.CreateTrueCondition();
         }

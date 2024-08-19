@@ -19,7 +19,13 @@ using interop.UIAutomationCore;
 
 namespace UiAutomation.Model;
 
-internal class LocatorCollection : List<Locator>;
+internal class LocatorCollection : List<Locator>
+{
+    public bool IsEmpty()
+    {
+        return !this.Any() || (Count == 1 && string.IsNullOrEmpty(this[0].Method) && string.IsNullOrEmpty(this[0].Criterion));
+    }
+}
 
 internal class SearchParser
 {

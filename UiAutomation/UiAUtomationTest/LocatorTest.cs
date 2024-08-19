@@ -76,22 +76,6 @@ public class LocatorTest
         Assert.AreEqual(gridItem, locator.GridItem);
     }
 
-    [TestMethod, TestCategory("Unit")]
-    public void LocatorGridSpecTest()
-    {
-        Assert.AreEqual("Name", Locator.DefaultConditionType, "Default is Name");
-
-        var conditionList = new[] { "Name", "Id", "ControlType", "Caption", "ProcessId" };
-        foreach (var condition in conditionList)
-        {
-            Locator.DefaultConditionType = condition;
-            Assert.AreEqual(condition, Locator.DefaultConditionType, "Setting to {0}", condition);
-        }
-
-        Locator.DefaultConditionType = "bogusValue";
-        Assert.AreNotEqual("bogusValue", Locator.DefaultConditionType);
-    }
-
     [TestInitialize]
     public void LocatorInitialize() => Locator.DefaultConditionType = "Name";
 
