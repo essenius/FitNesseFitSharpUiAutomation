@@ -11,12 +11,12 @@ Differences are:
 * Download the repo code as a zip file and extract the contents of the folder `FitNesseFitSharpUiAutomation-master` into `%LOCALAPPDATA%\FitNesse`. 
 
 * Go to the solution folder: `cd /D %LOCALAPPDATA%\FitNesse\UiAutomation`
-* If you have .NET 5 SDK installed:
+* If you have .NET 8 SDK installed:
     * Build solution: `dotnet build --configuration release UiAutomation.sln`
     * Go to fixture folder: `cd UiAutomation`
-    * Publish, including selecting the right runtime:<br/> `dotnet publish -o bin\Deploy\net5.0-windows -f net5.0-windows -c release -r win-x64 UiAutomation.csproj`
+    * Publish, including selecting the right runtime:<br/> `dotnet publish -o bin\Deploy\net8.0-windows -f net8.0-windows -c release -r win-x64 UiAutomation.csproj`
 * If you don't have .NET 5 SDK installed: `download UiAutomation.zip` from the latest [release](../../releases) and extract it into `UiAutomation/UiAutomation`
-* Go to the assemby folder `UiAutomation\UiAutomation\bin\Deploy\net5.0-windows`.
+* Go to the assemby folder `UiAutomation\UiAutomation\bin\Deploy\net8.0-windows`.
 * Edit `config.xml` and validate that it points to an existing `System.Windows.Forms.dll`. <br/>You can find out the right version via the command `dotnet --list-runtimes | find "Desktop.App 5"`
 * Run FitNesse
 * Run the suite: Open a browser and enter the URL http://localhost:8080/FitSharpDemos.UiAutomationSuite?suite
