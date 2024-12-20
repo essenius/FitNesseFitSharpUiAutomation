@@ -11,6 +11,7 @@
 
 using System;
 using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
 using ImageHandler;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -30,8 +31,8 @@ public class ScreenCaptureTest
     public void Init()
     {
             _fixture = new UiAutomationFixture();
-            Assert.IsTrue(_fixture.StartApplication(FixtureTest.WordPadPath), "WordPad started");
-            _fixture.WaitForControl(@"controltype:document");
+            Assert.IsTrue(_fixture.StartApplication(FixtureTest.SystemInfoApp), "System Info started");
+            Assert.IsTrue(_fixture.WaitForControl(@"System Summary"), "Found system summary");
         }
 
     [TestMethod, TestCategory("DefaultApps")]
@@ -41,21 +42,16 @@ public class ScreenCaptureTest
             Assert.IsTrue(image.ToString().StartsWith("Image", StringComparison.Ordinal));
             Assert.IsTrue(image.ToString().EndsWith("(2 x 1)", StringComparison.Ordinal));
             Assert.AreEqual("image/jpeg", image.MimeType);
-
-            _fixture.SetValueOfControlTo(
-                @"controltype:document",
-                "The quick brown fox jumps over the lazy dog.\r\nShe sells sea shells on the sea shore"
-            );
-            _fixture.ClickControl("Name:Date and time");
-            _fixture.WaitForControl("Name:Available formats");
-            var screenshot = _fixture.SnapshotObjectOfControl("Name:Date and Time && ControlType:Window");
+            Assert.IsTrue(_fixture.ClickControl("Help"));
+            Assert.IsTrue(_fixture.WaitForControlAndClick("About System Info..."));
+            _fixture.WaitForControl("Name:About System Information && ControlType:Window");
+            var screenshot = _fixture.SnapshotObjectOfControl("Name:About System Information && ControlType:Window");
             Assert.IsTrue(screenshot.ToString().StartsWith("Image", StringComparison.Ordinal), "Starts With Image");
             Assert.IsTrue(Regex.IsMatch(screenshot.ToString(), @".+\(\d+ x \d+\)$"), "Ends With (n x m)");
-            var screenshotRendering = _fixture.SnapshotOfControl("Name:Date and Time && ControlType:Window");
+            var screenshotRendering = _fixture.SnapshotOfControl("Name:About System Information && ControlType:Window");
             Assert.IsTrue(
-                screenshotRendering.StartsWith("<img src=\"data:image/jpeg;base64,", StringComparison.Ordinal),
-                "starts with <img src"
+                screenshotRendering.StartsWith("<img src=\"data:image/jpeg;base64,", StringComparison.Ordinal), "starts with <img src"
             );
-            Assert.IsTrue(_fixture.ClickControl("Name:Cancel"));
+            Assert.IsTrue(_fixture.ClickControl("Name:OK"));
         }
 }

@@ -49,14 +49,14 @@ public class ListOfControlsTest
     public void ListOfControlsTableTest()
     {
         var fixture = new UiAutomationFixture();
-        Assert.IsTrue(fixture.StartApplication(FixtureTest.WordPadPath), "Started application");
+        Assert.IsTrue(fixture.StartApplication(FixtureTest.SystemInfoApp), "Started application");
             
         var processId = fixture.ApplicationProcessId;
         var listOfControls = new ListOfControls(processId, "ProcessId:" + processId);
         var result = listOfControls.DoTable();
         var headerRow = result[0] as Collection<string>;
         Assert.IsNotNull(headerRow);
-        Assert.AreEqual("report:Name", headerRow[1], "heaaderRow[1] accurate");
+        Assert.AreEqual("report:Name", headerRow[1], "headerRow[1] accurate");
         var controls = result.Skip(1).ToList();
         Assert.IsTrue(controls.Any());
         foreach (Collection<string> row in controls)

@@ -21,7 +21,7 @@ public class ApplicationFactoryTest
     [TestMethod, TestCategory("DefaultApps")]
     public void ApplicationFactoryStartClassicTest()
     {
-        var app = ApplicationFactory.Start(FixtureTest.WordPadPath, null);
+        var app = ApplicationFactory.Start("winver.exe", null);
         app.WaitForInputIdle();
         Assert.IsInstanceOfType(app, typeof(ClassicApplication), "app is classic");
         var app1 = ApplicationFactory.AttachToProcess(app.ProcessId);

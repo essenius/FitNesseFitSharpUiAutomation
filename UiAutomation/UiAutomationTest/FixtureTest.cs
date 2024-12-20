@@ -12,9 +12,11 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Automation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 using UiAutomation.Model;
+using static System.Windows.Forms.AxHost;
 
 namespace UiAutomationTest;
 
@@ -23,8 +25,9 @@ public class FixtureTest
 {
     private const string WordPath = @"C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE";
 
-    // we need an classic Windows app for this test. Notepad is now UWP. Wordpad is a good alternative.
-    public const string WordPadPath = @"C:\Program Files\Windows NT\Accessories\wordpad.exe";
+    // we need a classic Windows app for this test. Notepad is now UWP, and Wordpad disappeared in Win 11 2024H2. Winver is still there.
+    public const string WinVerPath = @"C:\Windows\System32\winver.exe";
+    public const string SystemInfoApp = "msinfo32.exe";
     private UiAutomationFixture _fixture;
 
     [TestMethod, TestCategory("Unit")]
@@ -36,17 +39,17 @@ public class FixtureTest
         Assert.IsFalse(fixture.SwitchToParentWindow(), "cannot switch to parent if no app launched");
         Assert.IsFalse(fixture.IsUwpApp(), "IsUwpApp returns false if no app started");
         Assert.IsFalse(fixture.SwitchToProcess("irrelevant"));
-        Assert.IsFalse(fixture.MaximizeWindow(), "Can't maximize nonexisting window");
-        Assert.IsFalse(fixture.MinimizeWindow(), "Can't minimize nonexisting window");
-        Assert.IsFalse(fixture.MoveWindowTo(new Coordinate(10, 10)), "Can't move nonexisting window");
-        Assert.IsFalse(fixture.NormalWindow(), "Can't restore nonexisting window");
-        Assert.IsFalse(fixture.ResizeWindowTo(new Coordinate(100, 100)), "Can't resize nonexisting window");
+        Assert.IsFalse(fixture.MaximizeWindow(), "Can't maximize non-existing window");
+        Assert.IsFalse(fixture.MinimizeWindow(), "Can't minimize non-existing window");
+        Assert.IsFalse(fixture.MoveWindowTo(new Coordinate(10, 10)), "Can't move non-existing window");
+        Assert.IsFalse(fixture.NormalWindow(), "Can't restore non-existing window");
+        Assert.IsFalse(fixture.ResizeWindowTo(new Coordinate(100, 100)), "Can't resize non-existing window");
         var topleft = fixture.WindowTopLeft;
         var size = fixture.WindowSize;
-        Assert.AreEqual(0, size.X, "Width of nonexisting window is 0");
-        Assert.AreEqual(0, size.Y, "height of nonexisting window is 0");
-        Assert.AreEqual(0, topleft.X, "Row of nonexisting window is 0");
-        Assert.AreEqual(0, topleft.Y, "Column of nonexisting window is 0");
+        Assert.AreEqual(0, size.X, "Width of non-existing window is 0");
+        Assert.AreEqual(0, size.Y, "height of non-existing window is 0");
+        Assert.AreEqual(0, topleft.X, "Row of non-existing window is 0");
+        Assert.AreEqual(0, topleft.Y, "Column of non-existing window is 0");
     }
 
     [TestMethod, TestCategory("Cmd"), DeploymentItem(@"UiAutomationTest\test.cmd")]
@@ -109,7 +112,7 @@ public class FixtureTest
             UiAutomationFixture.SearchBy("Name");
             Assert.IsTrue(_fixture.CloseApplication(), "Stopping an app before it started should succeed");
             Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced stopping an app before it started should succeed");
-            Assert.IsTrue(_fixture.StartApplication("msinfo32.exe"), "msinfo32 started");
+            Assert.IsTrue(_fixture.StartApplication(SystemInfoApp), "msinfo32 started");
             Assert.IsTrue(_fixture.WaitForControl("name:OS Name"));
             Assert.IsTrue(_fixture.SetValueOfControlTo("classname:edit", "OS"), "Set Text in Find What");
             Assert.IsTrue(_fixture.ClickControl("classname:edit"));
@@ -210,30 +213,26 @@ public class FixtureTest
     [TestMethod, TestCategory("DefaultApps")]
     public void FixtureTestCloseAfterWait()
     {
-        Assert.IsTrue(_fixture.StartApplication(WordPadPath), "Wordpad started");
-        Assert.IsTrue(_fixture.PressKeys("abc"));
+        UiAutomationFixture.SearchBy("Name");
+        Assert.IsTrue(_fixture.StartApplication(SystemInfoApp), "System Info started");
+        Assert.IsTrue(_fixture.PressKeys("^o"));
+        Assert.IsTrue(_fixture.WaitForControl("Open && ControlType:Window"), "Wait for Open dialog");
+
         Assert.IsFalse(_fixture.CloseApplication(), "Closing an application showing a dialog should fail");
-        Assert.IsTrue(_fixture.ClickControl("Caption:Don't Save"), "Click [Don't Save] button");
+        Assert.IsTrue(_fixture.ClickControl("Caption:Cancel"), "Click [Cancel] button");
+        Assert.IsTrue(_fixture.WaitForControl("File && ControlType:MenuItem"), "Wait for File menu");
+        Assert.IsTrue(_fixture.CloseApplication(), "Closing an application normally should succeed");
+
     }
 
     [TestMethod, TestCategory("DefaultApps")]
     public void FixtureTestCloseByKillAfterWait()
     {
-        Assert.IsTrue(_fixture.StartApplication(WordPadPath), "Wordpad started");
-        Assert.IsTrue(_fixture.PressKeys("abc"));
-        Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced closing an application showing a dialog should succeed");
-    }
-
-    [TestMethod, TestCategory("DefaultApps")]
-    public void FixtureTestCloseDuringModalDialog()
-    {
-        UiAutomationFixture.SearchBy("Name");
-        Assert.IsTrue(_fixture.StartApplication(WordPadPath), "Wordpad started");
-        Assert.IsTrue(_fixture.ClickControl("File tab"), "Click File Menu");
-        Assert.IsTrue(_fixture.WaitForControlAndClick("Open && ControlType:MenuItem"), "Click Open menu");
+        Assert.IsTrue(_fixture.StartApplication(SystemInfoApp), "System Info started");
+        Assert.IsTrue(_fixture.PressKeys("^o"));
         Assert.IsTrue(_fixture.WaitForControl("Open && ControlType:Window"), "Wait for Open dialog");
-        Assert.IsFalse(_fixture.CloseApplication(), "Closing application with a modal dialog open should fail");
-        Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced closing application with a modal dialog open should succeed");
+        Assert.IsFalse(_fixture.CloseApplication(), "Closing an application showing a dialog should fail");
+        Assert.IsTrue(_fixture.ForcedCloseApplication(), "Forced closing an application showing a dialog should succeed");
     }
 
     [TestMethod, TestCategory("Unit")]
@@ -259,8 +258,8 @@ public class FixtureTest
     [TestMethod, TestCategory("DefaultApps")]
     public void FixtureTestRowCountOnNonGridApplication()
     {
-        Assert.IsTrue(_fixture.StartApplication(WordPadPath), "Wordpad started");
-        Assert.IsNull(_fixture.CellInControlContaining("Name:Bold", "nothing"), "asking row number on non-grid returns none");
+        Assert.IsTrue(_fixture.StartApplication(SystemInfoApp), "System Info started");
+        Assert.IsNull(_fixture.CellInControlContaining("Name:Help", "nothing"), "asking row number on non-grid returns none");
         Assert.IsTrue(_fixture.ForcedCloseApplication(), "Close application");
     }
 
