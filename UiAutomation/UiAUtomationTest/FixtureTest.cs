@@ -146,11 +146,11 @@ public class FixtureTest
     [TestMethod, TestCategory("Cmd")]
     public void FixtureNonExistingCmdTest()
     {
-        Assert.IsFalse(_fixture.StartApplication("nonexisting.cmd"), @"nonexisting cmd file");
+        Assert.IsFalse(_fixture.StartApplication(@"nonexisting.cmd"), @"nonexisting cmd file");
         Assert.IsNull(_fixture.ApplicationProcessId);
     }
 
-    [TestMethod, TestCategory("Office")]
+    // Disabling this test as not everyone has Word [TestMethod, TestCategory("Office")]
     public void FixtureRunWord()
     {
         // Word doesn't always start a new process, but will re-use an existing process if that was already running.
@@ -182,7 +182,7 @@ public class FixtureTest
         fixture.SetAutomaticSwitchToStartedApplication();
     }
 
-    [TestMethod, TestCategory("Office")]
+    // Disabling this test as not everyone has Word [TestMethod, TestCategory("Office")]
     public void FixtureStartAndSwitchTestOnWord2016()
     {
         UiAutomationFixture.TimeoutSeconds = 3;

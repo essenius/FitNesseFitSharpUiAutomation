@@ -166,7 +166,7 @@ public class CalcTest
             _fixture.PressKeys("{PgUp}{PgUp}{PgUp}"),
             "Press Page Up three times to get Liters in display"
         );
-        Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Liters"), "Set Output to Liters");
+        Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Litres"), "Set Output to Litres");
         Assert.IsTrue(_fixture.WaitForControlAndClick(Fields.InputUnit), "Wait for Input Unit and click it");
         Assert.IsTrue(_fixture.PressKeys("{PgDn}{PgDn}"), "Press Page Down twice to get Gallons (US) in display");
         Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.InputUnit, "Gallons (US)"), "Select Gallons");
@@ -175,7 +175,7 @@ public class CalcTest
         Assert.IsTrue(_fixture.PressKeys("10"));
         Assert.AreEqual("10", _fixture.ValueOfControl(Fields.Input), "Input OK");
         Assert.AreEqual("37.85412", _fixture.ValueOfControl(Fields.Output), "Output OK");
-        Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Milliliters"), "Set Output to Milliliters");
+        Assert.IsTrue(_fixture.SetValueOfControlTo(Fields.OutputUnit, "Millilitres"), "Set Output to Millilitres");
     }
 
     [ClassCleanup]

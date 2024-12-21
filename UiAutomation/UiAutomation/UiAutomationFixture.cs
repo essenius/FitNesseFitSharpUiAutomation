@@ -317,8 +317,13 @@ public class UiAutomationFixture
         _sut = app;
         //The app level wait should already cover exceptions, so no need to check them here
         app.WaitForInputIdle();
-        app.WaitForMainWindow();
-        _window = app.WindowControl;
+        if (!app.WaitForMainWindow()) return false;
+        // it may take a while till the window is fully loaded
+        _ = false.WaitWithTimeoutTill(_ =>
+        {
+            _window = app.WindowControl;
+            return _window != null;
+        });
         // WaitTillFound is needed to populate the control's AutomationElement
         return _window != null && _window.WaitTillFound();
     }
