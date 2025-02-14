@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2024 Rik Essenius
+﻿// Copyright 2013-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -18,7 +18,7 @@ namespace UiAutomationTest;
 public class ExtractGridTest
 {
     [TestMethod, TestCategory("Unit")]
-    public void ExtractGridNotfoundTest()
+    public void ExtractGridNotFoundTest()
     {
         var fixture = new ExtractGrid("dummy");
         Assert.IsNull(fixture.Query());

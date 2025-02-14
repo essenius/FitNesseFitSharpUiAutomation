@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2024 Rik Essenius
+﻿// Copyright 2013-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -103,7 +103,7 @@ internal class Control
 
     public IntPtr WindowHandle
     {
-        // if the handle is 0, then it's not a visible window and we need to go up in the tree
+        // if the handle is 0, then it's not a visible window, and we need to go up in the tree
         get
         {
             var currentElement = AutomationElement;
@@ -174,7 +174,7 @@ internal class Control
     }
 
     /// <summary>
-    ///     Search all windows directly under the root element for an window with a specific process ID.
+    ///     Search all windows directly under the root element for a window with a specific process ID.
     ///     Can also be the window itself. If it isn't, it might have a different process ID.
     /// </summary>
     /// <param name="processId">the process ID to search for</param>

@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2024 Rik Essenius
+﻿// Copyright 2019-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -30,7 +30,7 @@ internal class UwpApplication : BaseApplication
     public override string ApplicationType => "UWP";
 
     public override Control WindowControl =>
-        // UWP application windows can run in subwindows, and not directly under the desktop.
+        // UWP application windows can run in sub windows, and not directly under the desktop.
         // So we create a 'contained control'.
         !IsActive ? null : Control.CreateContainedWindowControl(_process.Id);
 

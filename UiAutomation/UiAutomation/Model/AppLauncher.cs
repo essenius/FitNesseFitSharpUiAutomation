@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2024 Rik Essenius
+﻿// Copyright 2017-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -23,7 +23,7 @@ namespace UiAutomation.Model;
 internal enum ActivateOptions
 {
     None = 0x00000000,
-    DesignMode = 0x00000001, // For for design mode
+    DesignMode = 0x00000001, // For design mode
     NoErrorUi = 0x00000002, // No error dialog if the app fails to activate                                
     NoSplashScreen = 0x00000004 // No splash screen when activating the app
 }

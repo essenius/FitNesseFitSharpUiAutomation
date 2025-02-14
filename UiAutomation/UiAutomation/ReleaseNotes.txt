@@ -39,3 +39,4 @@
 3.5.1 Wordpad references removed as it is no longer part of Windows 11
 3.5.2 Fixed defect in Control.FindControl with main window, fixed Calculator liters->litres. Snapshot still failing.
 3.6.0 Updated ImageHandler to 4.0.0, fixed delay in capturing snapshots, made some tests more robust, introduced BringWindowToTop,  reverted Calculator litres->liters
+3.6.1 Fixed static analysis findings

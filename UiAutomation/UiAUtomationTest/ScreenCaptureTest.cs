@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2024 Rik Essenius
+﻿// Copyright 2013-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,6 @@
 
 using System;
 using System.Drawing;
-using System.IO;
 using System.Text.RegularExpressions;
 using ImageHandler;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

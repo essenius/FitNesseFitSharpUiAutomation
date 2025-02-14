@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2024 Rik Essenius
+﻿// Copyright 2013-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -119,7 +119,7 @@ public class UiAutomationFixture
     /// <summary>Returns whether a certain control is visible</summary>
     public bool ControlIsVisible(string searchCriterion) => ApplyMethodToControl(x => x.IsVisible(), searchCriterion);
 
-    /// <summary>Double click a control</summary>
+    /// <summary>Double-click a control</summary>
     public bool DoubleClickControl(string searchCriterion) => ApplyMethodToControl(x => x.DoubleClick(), searchCriterion);
 
     /// <summary>Drag the mouse from a control. Use together with Drop On Control</summary>
@@ -165,7 +165,7 @@ public class UiAutomationFixture
         return control;
     }
 
-    /// <summary>Returns whether the current application is an UWP app</summary>
+    /// <summary>Returns whether the current application is a UWP app</summary>
     public bool IsUwpApp() => _sut is { ApplicationType: "UWP" };
 
     /// <summary>Maximize the window of the system under test</summary>
@@ -365,10 +365,10 @@ public class UiAutomationFixture
     /// <summary>Waits for a control to appear, and then click it</summary>
     public bool WaitForControlAndClick(string searchCriterion) => WaitForControl(searchCriterion) && ClickControl(searchCriterion);
 
-    private static bool WaitForProcess(string searchCriterion, bool shouldbeAlive) => searchCriterion.WaitWithTimeoutTill(_ =>
+    private static bool WaitForProcess(string searchCriterion, bool shouldBeAlive) => searchCriterion.WaitWithTimeoutTill(_ =>
         {
             var processId = new ProcessHandler(searchCriterion).Id();
-            return shouldbeAlive ? processId != null : processId == null;
+            return shouldBeAlive ? processId != null : processId == null;
         }
     );
 

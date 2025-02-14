@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2024 Rik Essenius
+﻿// Copyright 2013-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -182,7 +182,7 @@ public class WpfDemoAppTests
         Assert.IsTrue(_fixture.SelectItem("Caption:Usual Controls"), "Select 'Usual Controls' tab");
         Assert.IsTrue(_fixture.ClickControl("id:Button1"));
         Assert.AreEqual("Clicked Button1", _fixture.ValueOfControl("id:TextBlock1"));
-        Assert.IsFalse(_fixture.ClickControl("id:nonexisting"));
+        Assert.IsFalse(_fixture.ClickControl(@"id:nonexisting"));
     }
 
     [TestMethod, TestCategory("DemoApp")]
@@ -601,7 +601,7 @@ public class WpfDemoAppTests
             "Found right three state checkbox"
         );
         var control3 = _fixture.GetControl("HelpText:");
-        Assert.IsNotNull(control3.AutomationElement, "Found a control without helptext");
+        Assert.IsNotNull(control3.AutomationElement, "Found a control without help text");
         Assert.IsFalse(
             string.IsNullOrEmpty(control3.AutomationElement.CurrentClassName),
             "ClassName is not null or empty"

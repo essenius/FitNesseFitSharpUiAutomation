@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2024 Rik Essenius
+﻿// Copyright 2013-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -27,7 +27,7 @@ public class FileSystemTest
             fileSystem.FindExecutable("calc.exe");
         }
 
-    [TestMethod, TestCategory("Unit"), DeploymentItem("UiAUtomation.dll")]
+    [TestMethod, TestCategory("Unit"), DeploymentItem("UiAutomation.dll")]
     public void FileSystemFindExecutableTest()
     {
             var fileSystem = new FileSystem();
@@ -38,7 +38,7 @@ public class FileSystemTest
             );
             Assert.AreEqual(
                 "C:\\Windows\\System32\\calc.exe",
-                fileSystem.FindExecutable("%windir%\\System32\\Calc.exe"),
+                fileSystem.FindExecutable(@"%windir%\System32\Calc.exe"),
                 "Path with variable, found"
             );
             Assert.IsNotNull(fileSystem.FindExecutable("UiAutomation.dll"), "Current folder, not in path, found)");
@@ -50,7 +50,7 @@ public class FileSystemTest
     public void FileSystemFindExecutableTrowTest1() => new FileSystem().FindExecutable("System32\\calc.exe");
 
     [TestMethod, TestCategory("Unit"), ExpectedExceptionWithMessage(typeof(FileNotFoundException),
-         "Could not find file [nonexisting.exe] in the Environment Path"
+         @"Could not find file [nonexisting.exe] in the Environment Path"
      )]
-    public void FileSystemFindExecutableTrowTest2() => new FileSystem().FindExecutable("nonexisting.exe");
+    public void FileSystemFindExecutableTrowTest2() => new FileSystem().FindExecutable(@"nonexisting.exe");
 }
