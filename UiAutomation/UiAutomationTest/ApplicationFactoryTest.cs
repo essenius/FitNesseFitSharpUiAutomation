@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2024 Rik Essenius
+﻿// Copyright 2017-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -21,7 +21,10 @@ public class ApplicationFactoryTest
     [TestMethod, TestCategory("DefaultApps")]
     public void ApplicationFactoryStartClassicTest()
     {
-        var app = ApplicationFactory.Start("winver.exe", null);
+        // we need a classic Windows app for this test. Notepad is now UWP, and Wordpad disappeared in Win 11 2024H2. Winver is still there.
+        const string winVerApp = @"winver.exe";
+
+    var app = ApplicationFactory.Start(winVerApp, null);
         app.WaitForInputIdle();
         Assert.IsInstanceOfType(app, typeof(ClassicApplication), "app is classic");
         var app1 = ApplicationFactory.AttachToProcess(app.ProcessId);
@@ -34,9 +37,9 @@ public class ApplicationFactoryTest
     }
 
     [TestMethod, TestCategory("DefaultApps")]
-    public void ApplicationFactoryStartNonexistingAppTest()
+    public void ApplicationFactoryStartNonExistingAppTest()
     {
-        var app = ApplicationFactory.Start("nonexisting", null);
+        var app = ApplicationFactory.Start(@"nonexisting", null);
         Assert.IsNull(app);
     }
 
@@ -60,9 +63,9 @@ public class ApplicationFactoryTest
     }
 
     [TestMethod, TestCategory("Unit")]
-    public void UwpApplicationStartNonexistingAppTest()
+    public void UwpApplicationStartNonExistingAppTest()
     {
-        var app = new UwpApplication("nonexisting", string.Empty);
+        var app = new UwpApplication(@"nonexisting", string.Empty);
         Assert.IsFalse(app.IsActive, "Non-started app is not active");
         app.WaitForInputIdle(); // should succeed
         ExtensionFunctions.TimeoutInMilliseconds = 1000;

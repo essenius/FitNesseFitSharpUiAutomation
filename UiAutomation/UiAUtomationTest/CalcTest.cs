@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2024 Rik Essenius
+﻿// Copyright 2013-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -49,7 +49,7 @@ public class CalcTest
     }
 
     [TestMethod, TestCategory("Calc")]
-    public void CalcCheckGracefulHandlingOfNonexistingControl()
+    public void CalcCheckGracefulHandlingOfNonExistingControl()
     {
         UiAutomationFixture.TimeoutSeconds = 1;
         Assert.IsFalse(_fixture.ClickControl(Fields.NonExisting), "Click non-existing Control");
@@ -78,9 +78,9 @@ public class CalcTest
     public void CalcCheckKeyPresses()
     {
         UiAutomationFixture.TimeoutSeconds = 1;
-        Assert.IsTrue(_fixture.PressKey(Win10AppKeys.ScientificMode), "Press " + Win10AppKeys.ScientificMode);
+        Assert.IsTrue(_fixture.PressKey(AppKeys.ScientificMode), "Press " + AppKeys.ScientificMode);
         Assert.IsTrue(_fixture.WaitForControl(Fields.Pi), "Wait for Pi");
-        Assert.IsTrue(_fixture.PressKey(Win10AppKeys.StandardMode), "Press " + Win10AppKeys.StandardMode);
+        Assert.IsTrue(_fixture.PressKey(AppKeys.StandardMode), "Press " + AppKeys.StandardMode);
         Assert.IsFalse(_fixture.WaitForControl(Fields.Pi), "Wait for Pi fails");
     }
 
@@ -192,7 +192,7 @@ public class CalcTest
             return;
         }
         _fixture.SetAutomaticSwitchToStartedApplication();
-        Assert.IsTrue(_fixture.StartApplication("Microsoft.WindowsCalculator_8wekyb3d8bbwe"), "Calc started");
+        Assert.IsTrue(_fixture.StartApplication(@"Microsoft.WindowsCalculator_8wekyb3d8bbwe"), "Calc started");
         _fixture.BringWindowToTop();
     }
 
@@ -201,8 +201,8 @@ public class CalcTest
     {
         Debug.Print("Test #" + ++_testCounter);
         Assert.IsTrue(UiAutomationFixture.SearchBy("name"));
-        Assert.IsTrue(_fixture.PressKey(Win10AppKeys.StandardMode), "Switch to standard mode");
-        Assert.IsTrue(_fixture.PressKey(Win10AppKeys.ClearAllInput));
+        Assert.IsTrue(_fixture.PressKey(AppKeys.StandardMode), "Switch to standard mode");
+        Assert.IsTrue(_fixture.PressKey(AppKeys.ClearAllInput));
     }
 
     private static class Fields
@@ -238,7 +238,7 @@ public class CalcTest
         public static string Volume => "name:Volume Converter";
     }
 
-    private static class Win10AppKeys
+    private static class AppKeys
     {
         public static string A => "a";
         public static string AddToMemory => "^p";
@@ -287,7 +287,7 @@ public class CalcTest
         public static string Qword => "{F12}";
         public static string Radians => "{F4}";
         public static string RecallFromMemory => "^r";
-        public static string Reciprical => "r";
+        public static string Reciprocal => "r";
         public static string RoL => "j";
         public static string RoR => "k";
         public static string Rsh => ">";

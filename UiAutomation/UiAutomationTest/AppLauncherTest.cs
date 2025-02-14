@@ -1,4 +1,4 @@
-﻿// Copyright 2017-2024 Rik Essenius
+﻿// Copyright 2017-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -25,12 +25,12 @@ public class AppLauncherTest
     [TestMethod, TestCategory("DefaultApps")]
     public void AppLauncherResolveTest()
     {
-        using (var launcher1 = new AppLauncher("Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe"))
+        using (var launcher1 = new AppLauncher(@"Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe"))
         {
             Assert.IsTrue(launcher1.FullName.Contains("_x64__"));
         }
 
-        using var launcher2 = new AppLauncher("Windows.PrintDialog_cw5n1h2txyewy");
+        using var launcher2 = new AppLauncher(@"Windows.PrintDialog_cw5n1h2txyewy");
         Assert.IsTrue(launcher2.FullName.Contains("_neutral_neutral_"));
     }
 

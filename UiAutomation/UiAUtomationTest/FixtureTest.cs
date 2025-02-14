@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2024 Rik Essenius
+﻿// Copyright 2013-2025 Rik Essenius
 //
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file 
 //   except in compliance with the License. You may obtain a copy of the License at
@@ -12,11 +12,9 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows.Automation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UiAutomation;
 using UiAutomation.Model;
-using static System.Windows.Forms.AxHost;
 
 namespace UiAutomationTest;
 
@@ -25,8 +23,6 @@ public class FixtureTest
 {
     private const string WordPath = @"C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE";
 
-    // we need a classic Windows app for this test. Notepad is now UWP, and Wordpad disappeared in Win 11 2024H2. Winver is still there.
-    public const string WinVerPath = @"C:\Windows\System32\winver.exe";
     public const string SystemInfoApp = "msinfo32.exe";
     private UiAutomationFixture _fixture;
 
@@ -44,12 +40,12 @@ public class FixtureTest
         Assert.IsFalse(fixture.MoveWindowTo(new Coordinate(10, 10)), "Can't move non-existing window");
         Assert.IsFalse(fixture.NormalWindow(), "Can't restore non-existing window");
         Assert.IsFalse(fixture.ResizeWindowTo(new Coordinate(100, 100)), "Can't resize non-existing window");
-        var topleft = fixture.WindowTopLeft;
+        var topLeft = fixture.WindowTopLeft;
         var size = fixture.WindowSize;
         Assert.AreEqual(0, size.X, "Width of non-existing window is 0");
         Assert.AreEqual(0, size.Y, "height of non-existing window is 0");
-        Assert.AreEqual(0, topleft.X, "Row of non-existing window is 0");
-        Assert.AreEqual(0, topleft.Y, "Column of non-existing window is 0");
+        Assert.AreEqual(0, topLeft.X, "Row of non-existing window is 0");
+        Assert.AreEqual(0, topLeft.Y, "Column of non-existing window is 0");
     }
 
     [TestMethod, TestCategory("Cmd"), DeploymentItem(@"UiAutomationTest\test.cmd")]
@@ -81,11 +77,11 @@ public class FixtureTest
     public void FixtureIsUwpTest()
     {
         var fixture = new UiAutomationFixture();
-        fixture.StartApplication("charmap");
+        fixture.StartApplication(@"charmap");
         Assert.IsNotNull(fixture.ApplicationProcessId);
         var process = Process.GetProcessById(fixture.ApplicationProcessId.Value);
-        Assert.IsFalse(AppLauncher.IsUwpApp(process.Handle), "Charmap is not UWP");
-        Assert.IsTrue(fixture.CloseApplication(), "Close Charmap");
+        Assert.IsFalse(AppLauncher.IsUwpApp(process.Handle), @"Charmap is not UWP");
+        Assert.IsTrue(fixture.CloseApplication(), @"Close Charmap");
 
 
         fixture.StartApplicationWithArguments(@"windows.immersivecontrolpanel_cw5n1h2txyewy", null);
@@ -213,7 +209,7 @@ public class FixtureTest
     public void FixtureSwitchToInvalidWindowFails()
     {
         UiAutomationFixture.TimeoutSeconds = 0.7;
-        Assert.IsFalse(_fixture.SwitchToProcess(@"name:nonexistingwindow"), "Switch to nonexisting process fails");
+        Assert.IsFalse(_fixture.SwitchToProcess(@"name:nonexistingwindow"), "Switch to non-existing process fails");
     }
 
     [TestMethod, TestCategory("DefaultApps")]
@@ -277,7 +273,7 @@ public class FixtureTest
 
     [TestMethod, TestCategory("Unit")]
     public void FixtureTestStartInvalidApplication() =>
-        Assert.IsFalse(_fixture.StartApplication("c:\\nonexisting.exe"), "Running nonexisting executable");
+        Assert.IsFalse(_fixture.StartApplication(@"c:\nonexisting.exe"), "Running non-existing executable");
 
     [TestMethod, TestCategory("Unit"), ExpectedException(typeof(ArgumentException))]
     public void FixtureTestUnrecognizedConditionType() =>
