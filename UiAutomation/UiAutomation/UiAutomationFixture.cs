@@ -87,6 +87,9 @@ public class UiAutomationFixture
         return methodToApply(control);
     }
 
+    /// <summary>Bring the window of the system under test to the top</summary>
+    public bool BringWindowToTop() => new Window(_window?.AutomationElement).BringToTop();
+
     /// <summary>Get the row and column of the first cell in a grid that contains the value</summary>
     public GridItem CellInControlContaining(string searchCriterion, string value) =>
         ApplyMethodToControl(x => x.CellContaining(value), searchCriterion);
@@ -394,7 +397,9 @@ public class UiAutomationFixture
     public Snapshot WindowSnapshotObjectMinusOuterPixels(int border)
     {
         NativeMethods.SetForegroundWindow(_window.WindowHandle);
-        new Window(_window.AutomationElement).WaitTillOnScreen();
+        var window = new Window(_window.AutomationElement);
+        window.BringToTop();
+        window.WaitTillOnScreen();
         return _window.AutomationElement.Capture(border);
     }
 }

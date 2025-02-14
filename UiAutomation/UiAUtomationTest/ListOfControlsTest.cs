@@ -50,7 +50,9 @@ public class ListOfControlsTest
     {
         var fixture = new UiAutomationFixture();
         Assert.IsTrue(fixture.StartApplication(FixtureTest.SystemInfoApp), "Started application");
-            
+        Assert.IsTrue(fixture.ResizeWindowTo(new Coordinate(1024, 768)), "Resize to 1024x768");
+
+
         var processId = fixture.ApplicationProcessId;
         var listOfControls = new ListOfControls(processId, "ProcessId:" + processId);
         var result = listOfControls.DoTable();

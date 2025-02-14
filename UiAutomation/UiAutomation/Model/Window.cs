@@ -64,4 +64,10 @@ internal class Window(IUIAutomationElement window)
     }
 
     public bool WaitTillOnScreen() => this.WaitWithTimeoutTill(x => x.IsTopmost());
+
+    public bool BringToTop()
+    {
+        return NativeMethods.SetWindowPos(window.CurrentNativeWindowHandle, NativeMethods.HWND_TOPMOST, 0, 0, 0, 0,
+            NativeMethods.SWP_NOMOVE | NativeMethods.SWP_NOSIZE);
+    }
 }

@@ -4,8 +4,8 @@ Test
 !define Standard {%1}
 !define Menu {name:Open Navigation}
 
-This demo is intended for newer versions of Windows 10, which uses an UWP application. Older versions of
-Windows use a classic application which has different element names.
+This demo is intended for newer versions of Windows 10 and Windows 11, which uses an UWP application. 
+Older versions of Windows use a classic application which has different element names.
 
 We can't automatically switch to the Calc application because it starts another process under the hood.
 So we wait for this process to start and then switch to it.

@@ -33,7 +33,8 @@ public class ScreenCaptureTest
             _fixture = new UiAutomationFixture();
             Assert.IsTrue(_fixture.StartApplication(FixtureTest.SystemInfoApp), "System Info started");
             Assert.IsTrue(_fixture.WaitForControl(@"System Summary"), "Found system summary");
-        }
+            _fixture.ResizeWindowTo(new Coordinate(800, 600));
+    }
 
     [TestMethod, TestCategory("DefaultApps")]
     public void ScreenCaptureTakeTest()

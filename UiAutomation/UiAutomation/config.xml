@@ -3,7 +3,7 @@
 <suiteConfig>
   <ApplicationUnderTest>
     <AddAssembly>UiAutomation.dll</AddAssembly>
-    <AddAssembly>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.11\System.Windows.Forms.dll</AddAssembly>
+    <AddAssembly>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\8.0.10\System.Windows.Forms.dll</AddAssembly>
     <AddNamespace>UIAutomation</AddNamespace>
   </ApplicationUnderTest>
   <Settings>
