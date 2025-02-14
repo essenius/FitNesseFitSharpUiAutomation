@@ -185,13 +185,19 @@ public class CalcTest
     public static void Win10SetupCalc(TestContext testContext)
     {
         _fixture = new UiAutomationFixture();
-        if (_fixture.SwitchToProcess("name:CalculatorApp")) return;
+        UiAutomationFixture.TimeoutSeconds = 3;
+        if (_fixture.SwitchToProcess("name:CalculatorApp"))
+        {
+            _fixture.BringWindowToTop();
+            return;
+        }
         _fixture.SetAutomaticSwitchToStartedApplication();
         Assert.IsTrue(_fixture.StartApplication("Microsoft.WindowsCalculator_8wekyb3d8bbwe"), "Calc started");
+        _fixture.BringWindowToTop();
     }
 
     [TestInitialize]
-    public void Win10SetUpTest()
+    public void SetUpCalcTest()
     {
         Debug.Print("Test #" + ++_testCounter);
         Assert.IsTrue(UiAutomationFixture.SearchBy("name"));
