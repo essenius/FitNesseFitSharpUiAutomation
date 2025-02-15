@@ -16,7 +16,7 @@ Differences are:
     * Go to fixture folder: `cd UiAutomation`
     * Publish, including selecting the right runtime:<br/> `dotnet publish -o bin\Deploy\net8.0-windows -f net8.0-windows -c release -r win-x64 UiAutomation.csproj`
     * Publish the demo app into the same folder: <br/> `dotnet publish -o bin\Deploy\net8.0-windows -f net8.0-windows -c release -r win-x64 ..\WpfDemoApp\WpfDemoApp.csproj`
-* If you don't have .NET 8 SDK installed: download `UiAutomation.zip` and `WpfDempApp.zip` from the latest [release](../../releases) and extract both into `UiAutomation\UiAutomation`, 
+* If you don't have .NET 8 SDK installed: download `UiAutomation.zip` and `WpfDemoApp.zip` from the latest [release](../../releases) and extract both into `UiAutomation\UiAutomation`, 
 * Go to the assemby folder `UiAutomation\UiAutomation\bin\Deploy\net8.0-windows`.
 * Edit `config.xml` and validate that it points to an existing `System.Windows.Forms.dll`. <br/>You can find out the right version via the command `dotnet --list-runtimes | find "Desktop.App 8"`
 * Run FitNesse
