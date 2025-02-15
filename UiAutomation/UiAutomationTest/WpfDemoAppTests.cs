@@ -675,7 +675,7 @@ public class WpfDemoAppTests
         var snapshotObject3 = Snapshot.Parse(snapshot3[index..^4]);
         var similarity2 = snapshotObject2.SimilarityTo(snapshotObject3);
         Console.WriteLine($@"Similarity: {similarity2} @ {stopwatch.Elapsed}");
-        Assert.IsTrue(similarity2 > 0.95, $"Snapshot similarity {similarity2} > 0.99");
+        Assert.IsTrue(similarity2 > 0.95, $"Snapshot similarity {similarity2} > 0.95");
         _fixture.ResizeWindowTo(originalSize);
         stopwatch.Stop();
     }
