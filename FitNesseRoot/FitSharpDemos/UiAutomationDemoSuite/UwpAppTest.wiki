@@ -1,0 +1,13 @@
+!|script             |UI Automation Fixture                                                              |
+|Set Timeout         |2                 |seconds                                                         |
+|Start Application   |windows.immersivecontrolpanel_cw5n1h2txyewy                                        |
+|ensure              |is UWP App                                                                         |
+|switch to parent window                                                                                 |
+|click control       |ControlType:ListItem && name:System                                                |
+|wait for control    |id:settingPagesList                                                                |
+|Set value of control|id:TextBox        |to                                                       |ab    |
+|wait for control    |Name:about your PC|and click                                                       |
+|wait for control    |ControlType:Text && name:About                                                     |
+|wait for control    |id:SystemSettings_PCSystem_ProcessorStatus_DescriptionTextBlock                    |
+|check               |value of control  |id:SystemSettings_PCSystem_ProcessorStatus_ValueTextBlock|=~/.+/|
+|Forced Close Application                                                                                |

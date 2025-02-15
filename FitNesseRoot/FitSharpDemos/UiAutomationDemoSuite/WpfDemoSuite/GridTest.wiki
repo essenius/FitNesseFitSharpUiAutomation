@@ -10,7 +10,7 @@
 |check              |value of control        |${Grid}[$location]|100                                                             |
 |check              |cell in control         |${Grid}           |containing|Create demo UI Automation application|row 2, column 3|
 |check              |cell in control         |${Grid}           |containing|Approved                             |row 3, column 2|
-|check              |row number of control   |${Grid}           |containing|Non-existing value                   |null           |
+|check              |cell in control   |${Grid}           |containing|Non-existing value                   |null           |
 |Doubleclick Control|${Grid} [row 2, column 1]                                                                                   |
 |check              |value of control        |GridTextBox       |101                                                             |
 |Click Control      |${Grid}[4,3]                                                                                                |

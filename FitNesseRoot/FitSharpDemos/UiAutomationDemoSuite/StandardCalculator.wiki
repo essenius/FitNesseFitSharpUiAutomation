@@ -2,7 +2,12 @@
 Test
 ---
 !define Standard {%1}
-!define Menu {name:Open Navigation}
+!define Menu {id:TogglePaneButton}
+!define InputUnit   {id:Units1}
+!define InputValue  {id:Value1}
+!define OutputUnit  {id:Units2}
+!define OutputValue {id:Value2}
+
 
 This demo is intended for newer versions of Windows 10 and Windows 11, which uses an UWP application. 
 Older versions of Windows use a classic application which has different element names.
@@ -10,40 +15,45 @@ Older versions of Windows use a classic application which has different element 
 We can't automatically switch to the Calc application because it starts another process under the hood.
 So we wait for this process to start and then switch to it.
 
-!|script           |UI Automation Fixture  |
-|Set Timeout       |5       |seconds       |
-|Search By         |Name                   |
-|no automatic switch to started application|
-|Start Application |Calc.exe               |
-|wait for process  |Calculator             |
-|switch to process |Calculator             |
-|Press Key         |${Standard}            |
-|Press Key         |{Esc}                  |
+!|script          |UI Automation Fixture                    |
+|Set Timeout      |3                |seconds                |
+|Search By        |Name                                     |
+|set automatic switch to started application                |
+|Start Application|Microsoft.WindowsCalculator_8wekyb3d8bbwe|
+|bring window to top                                        |
+|Press Key        |${Standard}                              |
+|Press Key        |{Esc}                                    |
 
-!|script                                                                 |
-|Click Control   |${Menu}                                                |
-|Wait for Control|Scientific Calculator|and Click                        |
-|Click Control   |id:DegButton                                           |
-|Wait for control|id:RadButton                                           |
-|Click Control   |One                                                    |
-|Click Control   |Two                                                    |
-|Click Control   |Three                                                  |
-|Click Control   |id:negateButton                                        |
-|Check           |Value Of Control     |id:CalculatorResults|-123        |
-|Toggle Control   |id:TrigButton                                         |
-|Wait for control|Sine                 |and click                        |
-|Check           |Value Of Control     |id:CalculatorResults|~=0.45990349|
+!|script                                                                   |
+|Click Control     |${Menu}                                                |
+|Wait for Control  |Scientific Calculator|and Click                        |
+|Click Control     |id:DegButton                                           |
+|Wait for control  |id:RadButton                                           |
+|Click Control     |One                                                    |
+|Click Control     |Two                                                    |
+|Click Control     |Three                                                  |
+|Click Control     |id:negateButton                                        |
+|Check             |Value Of Control     |id:CalculatorResults|-123        |
+|Toggle Control    |id:TrigButton                                          |
+|Wait for control  |Sine                 |and click                        |
+|Wait until control|Sine                 |disappears                       |
+|Check             |Value Of Control     |id:CalculatorResults|~=0.45990349|
+|Press Key        |{Esc}                                    |
 
-!|script                                                     |
-|Click Control       |${Menu}                                |
-|Wait for Control    |Volume Converter|and Click             |
-|Wait for Control    |id:Units1                              |
-|Set Value Of Control|id:Units1       |to       |Liters      |
-|Wait For Control    |id:units2       |and click             |
-|Press Key           |{PgDn}{PgDn}                           |
-|Set Value Of Control|id:units2       |to       |Gallons (US)|
-|Wait for Control    |id:Value2       |and click             |
-|press key           |10                                     |
-|check               |value of control|id:Value2|10          |
-|check               |value of control|id:Value1|37.85412    |
-|Forced Close Application                                    |
+!|script                                                          |
+|Click Control       |${Menu}                                     |
+|wait for control  |id:PaneRoot     |
+|Wait for Control    |Volume Converter|and click                  |
+|wait until control  |id:PaneRoot     |disappears                 |
+|wait for control    |Clear Entry     |and click                  |
+|wait for control    |${OutputUnit}   |and click                  |
+|Press keys          |{PgUp}{PgUp}{PgUp}                          |
+|Set Value Of Control|${OutputUnit}   |to            |Liters      |
+|Wait For Control    |${InputUnit}    |and click                  |
+|Press Key           |{PgDn}{PgDn}                                |
+|Set Value Of Control|${InputUnit}    |to            |Gallons (US)|
+|Wait for Control    |${InputValue}   |and click                  |
+|press keys          |10                                          |
+|check               |value of control|${InputValue} |10          |
+|check               |value of control|${OutputValue}|37.85412    |
+|Forced Close Application                                         |

@@ -54,8 +54,7 @@ public class UiAutomationFixture
     private static Version PlatformVersion { get; set; } = Environment.OSVersion.Version;
 
     /// <summary>
-    ///     Set/get the default timeout for all wait commands. Default value is 3 seconds. Max is 3600 * 24 * 24 (i.e. 24
-    ///     days)
+    ///     Set/get the default timeout for all wait commands. Default value is 3 seconds. Max is 3600 * 24 * 24 (i.e. 24 days)
     /// </summary>
     public static double TimeoutSeconds
     {

@@ -1,8 +1,0 @@
-!|script          |UI Automation Fixture                                            |
-|Search By        |ControlType                                                      |
-|Set Timeout      |2               |seconds                                         |
-|Start Application|Notepad.exe                                                      |
-|Click Control    |edit                                                             |
-|press key        |The Quick Brown Fox Jumps Over the Lazy Dog                      |
-|Check            |Value of control|edit|The Quick Brown Fox Jumps Over the Lazy Dog|
-|Forced Close Application                                                           |

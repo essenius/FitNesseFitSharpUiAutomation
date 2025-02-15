@@ -6,7 +6,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysysMode>AllEnabledByDefault</AnalysysMode>
-    <Version>3.6.1</Version>
+    <Version>3.6.2</Version>
     <Authors>Rik Essenius</Authors>
     <Description>FitNesse fixture for testing Windows thick client applications</Description>
     <Copyright>Copyright © Rik Essenius 2013-2025</Copyright>
